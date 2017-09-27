@@ -1,0 +1,52 @@
+{
+  "extensionName": {
+    "message": "Quick Dial",
+    "description": "Name of the extension."
+  },
+
+  "extensionDescription": {
+    "message": "Quick Dial, page nouvel onglet.",
+    "description": "Description of the extension."
+  },
+
+  "menuAddToQuickDial": {
+    "message": "Ajouter à Quick Dial",
+    "description": "Text of add bookmark menu item."
+  },
+
+  "menuAddBookmark": {
+    "message": "Ajouter un marque-page",
+    "description": "Text of add bookmark menu item."
+  },
+
+  "AddBookmarkPrompt": {
+    "message": "Entrez l'url du nouveau marque-page :",
+    "description": "Text of the add bookmark prompt."
+  },
+
+  "menuAddFolder": {
+    "message": "Ajouter un dossier",
+    "description": "Text of add folder menu item."
+  },
+
+  "AddFolderPrompt": {
+    "message": "Entrez le nom du nouveau dossier :",
+    "description": "Text of the add folder prompt."
+  },
+
+  "menuRefreshItem": {
+    "message": "Actualiser",
+    "description": "Text of refresh menu item."
+  },
+
+  "menuDeleteItem": {
+    "message": "Supprimer",
+    "description": "Text of delete menu item."
+  },
+
+  "deleteItemConfimation": {
+    "message": "Supprimer $1 ?",
+    "description": "Text of delete confirmation."
+  }
+
+}

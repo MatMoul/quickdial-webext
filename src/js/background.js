@@ -146,7 +146,7 @@ core.SiteInfos.loadInfos = function(url, args, callback){ // args: { icon: false
 	iframe.style.position = 'absolute';
 	iframe.style.visibility = 'hidden';
 	var xmlHttp = new XMLHttpRequest();
-	xmlHttp.timeout = 2000
+	xmlHttp.timeout = 10000
 	xmlHttp.open('GET', url, true);
 	xmlHttp.onload = function(){
 		document.body.appendChild(iframe);

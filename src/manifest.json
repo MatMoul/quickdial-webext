@@ -1,7 +1,7 @@
 {
 
   "manifest_version": 2,
-  "name": "__MSG_extensionName__",
+  "name": "Quick Dial",
   "version": "0.0.5",
  
   "description": "__MSG_extensionDescription__",
@@ -25,10 +25,6 @@
   
   "chrome_url_overrides" : {
     "newtab": "dial"
-  },
-
-  "options_ui": {
-    "page": "options.html"
   },
 
   "applications": {

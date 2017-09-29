@@ -1,9 +1,4 @@
 {
-  "extensionName": {
-    "message": "Quick Dial",
-    "description": "Name of the extension."
-  },
-
   "extensionDescription": {
     "message": "Quick Dial, page nouvel onglet.",
     "description": "Description of the extension."

@@ -18,7 +18,9 @@ window.onload = function(){
 							break;
 					}
 				});
-			} else initPage();
+			} else{
+				setTimeout(initPage, 100);
+			}
 		}, function(){});
 	}
 	initPage();

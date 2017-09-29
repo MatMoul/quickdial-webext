@@ -6,10 +6,22 @@ var dial = {
 };
 
 window.onload = function(){
-	browser.runtime.getBackgroundPage().then(function(page){
-		app = page.app;
-		dial.initUI();
-	}, function(){});
+	function initPage(){
+		browser.runtime.getBackgroundPage().then(function(page){
+			if(page.app.settings){
+				app = page.app;
+				dial.initUI();
+				browser.runtime.onMessage.addListener(function(request, sender, sendResponse){
+					switch(request.command){
+						case 'gridNodesSynced':
+							if(app.settings) dial.populateGrid(dial.Grid, app.settings.grid, dial.Node);
+							break;
+					}
+				});
+			} else initPage();
+		}, function(){});
+	}
+	initPage();
 }
 window.onresize = function(){
 	if(app && app.settings) dial.updateGridLayout(dial.Grid, app.settings.grid, dial.styles.grid);
@@ -29,13 +41,6 @@ window.onwheel = function(ev){
 		}
 	}
 }
-browser.runtime.onMessage.addListener(function(request, sender, sendResponse){
-	switch(request.command){
-		case 'gridNodesSynced':
-			if(app.settings) dial.populateGrid(dial.Grid, app.settings.grid, dial.Node);
-			break;
-	}
-});
 
 
 dial.initUI = function(){

@@ -5,13 +5,17 @@ var dial = {
 	maxpage: 1
 };
 
-browser.runtime.getBackgroundPage().then(function(page){ app = page.app; }, function(){});
-window.onload = function(){ if(app.settings) dial.initUI(); }
+window.onload = function(){
+	browser.runtime.getBackgroundPage().then(function(page){
+		app = page.app;
+		dial.initUI();
+	}, function(){});
+}
 window.onresize = function(){
-	if(app.settings) dial.updateGridLayout(dial.Grid, app.settings.grid, dial.styles.grid);
+	if(app && app.settings) dial.updateGridLayout(dial.Grid, app.settings.grid, dial.styles.grid);
 }
 window.onwheel = function(ev){
-	if(app.settings){
+	if(app && app.settings){
 		if(ev.deltaY > 0){
 			if(dial.page < dial.maxpage){
 				dial.page += 1;
@@ -30,10 +34,6 @@ browser.runtime.onMessage.addListener(function(request, sender, sendResponse){
 		case 'gridNodesSynced':
 			if(app.settings) dial.populateGrid(dial.Grid, app.settings.grid, dial.Node);
 			break;
-		case 'appReady':
-			browser.runtime.getBackgroundPage().then(function(page){ app = page.app; }, function(){});
-			dial.initUI();
-			break;
 	}
 });
 
@@ -48,10 +48,6 @@ dial.initUI = function(){
 	dial.Grid = dial.initGrid('Grid', app.settings.grid, dial.Body);
 	var url = new URL(window.location);
 	dial.path = url.searchParams.get('path');
-	/*
-	if(url.searchParams.get('path')) dial.Node = app.getNode(app.settings.grid.node, dial.path + '/');
-	else dial.Node = app.getNode(app.settings.grid.node, '/');
-	*/
 	if(url.searchParams.get('path')) {
 		dial.Node = app.getNode(app.settings.grid.node, dial.path + '/');
 	}	else {

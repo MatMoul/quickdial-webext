@@ -41,7 +41,6 @@ core.Settings.load = function(){ // Load settings and call core.init
 	}).then(function(obj){
 		app.settings = obj;
 		core._init();
-		browser.runtime.sendMessage({ command: 'appReady'}).then(function(){}, function(){});
 	},function(){});
 }
 core.Settings.save = function(){ // Save settings

@@ -47,6 +47,7 @@ window.onwheel = function(ev){
 
 dial.initUI = function(){
 	dial.Head = document.getElementById('head');
+	dial.Title = document.getElementById('title');
 	dial.Body = document.getElementById('body');
 	dial.Body.setAttribute('contextmenu', 'page');
 	dial.Body.setAttribute('contextmenu', 'page');
@@ -60,6 +61,7 @@ dial.initUI = function(){
 	}	else {
 		dial.Node = app.getNode(app.settings.grid.node, '/');
 	}
+	dial.Title.innerText = dial.Node.title;
 	dial.populateGrid(dial.Grid, app.settings.grid, dial.Node);
 }
 

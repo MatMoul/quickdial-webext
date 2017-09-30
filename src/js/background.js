@@ -112,7 +112,7 @@ core.Bookmarks.getItem = function(bookmarkItem, path){ // Return BookmarkItem fr
 
 core.SiteInfos = {} // Siteinfos helper object
 core.SiteInfos.loadInfos = function(url, args, callback){ // args: { icon: false; screenshot: false }, callback( { url, title, (/!\ Not handled now)icon, screenshot } || error: {} )
-	function pageLoaded(){
+	function pageLoaded(last){
 		var docTitle = iframe.contentWindow.document.title;
 		var docIcon = null;
 		var docScreenshot = null;
@@ -134,7 +134,7 @@ core.SiteInfos.loadInfos = function(url, args, callback){ // args: { icon: false
 			docScreenshot = canvas.toDataURL();
 		}
 
-		document.body.removeChild(iframe);
+		if(last) document.body.removeChild(iframe);
 		if(callback) callback({ url: url, title: docTitle, icon: docIcon, screenshot:docScreenshot });
 	}
 
@@ -150,14 +150,15 @@ core.SiteInfos.loadInfos = function(url, args, callback){ // args: { icon: false
 	xmlHttp.open('GET', url, true);
 	xmlHttp.onload = function(){
 		document.body.appendChild(iframe);
-		iframe.contentWindow.document.write(xmlHttp.responseText.replace('<head>', '<head><base href="' + url + '">'));
-		//iframe.contentWindow.document.write(xmlHttp.responseText.replace('<head>', '<head><base href="' + url + '"><script>window.top = window;</script>'));
+		iframe.srcdoc = xmlHttp.responseText.replace('<head>', '<head><base href="' + url + '">');
+		//iframe.srcdoc = xmlHttp.responseText.replace('<head>', '<head><base href="' + url + '"><script>window.top = window;</script>');
 		setTimeout(function(){ pageLoaded(); }, 2000); // /!\ Caution function can be shortcuted and sendtimeout is not the best way
+		setTimeout(function(){ pageLoaded(true); }, 6000); // /!\ Caution function can be shortcuted and sendtimeout is not the best way
 	}
 	xmlHttp.onabort = function(){ if(callback) callback(); }
 	xmlHttp.onerror = function(){ if(callback) callback(); }
 	xmlHttp.ontimeout = function(){ if(callback) callback(); }
-	xmlHttp.send(null);
+	xmlHttp.send();
 }
 
 core.GridNodes = {}; // GridNodes helper object

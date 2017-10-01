@@ -2,7 +2,7 @@
 
   "manifest_version": 2,
   "name": "Quick Dial",
-  "version": "0.0.5",
+  "version": "0.0.1",
  
   "description": "__MSG_extensionDescription__",
 
@@ -18,6 +18,8 @@
     "tabs",
     "<all_urls>"
   ],
+
+  "content_security_policy": "default-src * moz-extension: 'self' 'unsafe-inline' 'unsafe-eval'; script-src * moz-extension: 'self' 'unsafe-inline' 'unsafe-eval'; child-src * moz-extension: 'self' 'unsafe-inline' 'unsafe-eval'; frame-src * moz-extension: 'self' 'unsafe-inline' 'unsafe-eval'; object-src * moz-extension: 'self' 'unsafe-inline' 'unsafe-eval'; style-src * moz-extension: 'self' 'unsafe-inline' 'unsafe-eval'",
   
   "background": {
     "scripts": ["js/background.js"]

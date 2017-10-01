@@ -112,10 +112,12 @@ core.Bookmarks.getItem = function(bookmarkItem, path){ // Return BookmarkItem fr
 
 core.SiteInfos = {} // Siteinfos helper object
 core.SiteInfos.loadInfos = function(url, args, callback){ // args: { icon: false; screenshot: false }, callback( { url, title, (/!\ Not handled now)icon, screenshot } || error: {} )
-	function pageLoaded(last){
+	function pageLoaded(){
+		if(!iframe) return;
 		var docTitle = iframe.contentWindow.document.title;
 		var docIcon = null;
 		var docScreenshot = null;
+		if(docTitle == '') docTitle = url;
 		if(args && args.icon){
 			//
 		}
@@ -134,26 +136,29 @@ core.SiteInfos.loadInfos = function(url, args, callback){ // args: { icon: false
 			docScreenshot = canvas.toDataURL();
 		}
 
-		if(last) document.body.removeChild(iframe);
+		document.body.removeChild(iframe);
+		iframe = null;
 		if(callback) callback({ url: url, title: docTitle, icon: docIcon, screenshot:docScreenshot });
 	}
 
- 	var previewWidth = 1200; // Need to be linked to settings
+	var previewWidth = 1200; // Need to be linked to settings
 	var previewHeight = 710; // Need to be linked to settings
-	var iframe = document.createElement('iframe');
-	iframe.width = previewWidth
-	iframe.height = previewHeight
-	iframe.style.position = 'absolute';
-	iframe.style.visibility = 'hidden';
+	var iframe;
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.timeout = 10000
 	xmlHttp.open('GET', url, true);
 	xmlHttp.onload = function(){
+		iframe = document.createElement('iframe');
+		iframe.referrerPolicy = "unsafe-url";	
+		iframe.width = previewWidth
+		iframe.height = previewHeight
+		iframe.style.position = 'absolute';
+		iframe.style.visibility = 'hidden';
 		document.body.appendChild(iframe);
-		iframe.srcdoc = xmlHttp.responseText.replace('<head>', '<head><base href="' + url + '">');
-		//iframe.srcdoc = xmlHttp.responseText.replace('<head>', '<head><base href="' + url + '"><script>window.top = window;</script>');
-		setTimeout(function(){ pageLoaded(); }, 2000); // /!\ Caution function can be shortcuted and sendtimeout is not the best way
-		setTimeout(function(){ pageLoaded(true); }, 6000); // /!\ Caution function can be shortcuted and sendtimeout is not the best way
+		var content = xmlHttp.responseText.replace('<head>', '<head><base href="' + url + '">');
+		iframe.srcdoc = content;
+		iframe.onload = function(){ pageLoaded(); }
+		setTimeout(function(){ pageLoaded(); }, 6000);
 	}
 	xmlHttp.onabort = function(){ if(callback) callback(); }
 	xmlHttp.onerror = function(){ if(callback) callback(); }
@@ -230,6 +235,8 @@ core.GridNodes.getNode = function(gridNode, path){ // Return GridNode from RootG
 	return null;
 }
 core.GridNodes.refreshNode = function(gridNode, callback){ // Refresh content of a GridNode
+	if(gridNode.__isLoading == true) return;
+	gridNode.__isLoading = true;
 	core.SiteInfos.loadInfos(gridNode.url, { screenshot: true }, function(infos){
 		if(infos){
 			gridNode.title = infos.title;
@@ -239,6 +246,7 @@ core.GridNodes.refreshNode = function(gridNode, callback){ // Refresh content of
 			}).then(function(bookmarkItem){}, function(){});
 			core.Settings.save();
 		}
+		gridNode.__isLoading = false;
 		if(callback) callback(infos);
 	});
 }
@@ -270,6 +278,33 @@ core.GridNodes.setNodeIndex = function(gridNode, index, newIndex, callback){ // 
 	if(callback) callback();
 	browser.runtime.sendMessage({ command: 'gridNodesSynced'}).then(function(){}, function(){});
 }
+core.GridNodes.capturePage = function(gridNode, callback){
+	browser.tabs.create({url: gridNode.url, active: false}).then(function(tab){
+		setTimeout(function(){
+			tab.active = true;
+			browser.tabs.update(tab.id, {active: true}).then(function(){
+				browser.tabs.captureVisibleTab().then(function(img){
+					//gridNode.title = tab.title
+					browser.tabs.remove(tab.id);
+					gridNode.image = img;
+					browser.bookmarks.update(gridNode.id, {
+						title: gridNode.title
+					}).then(function(bookmarkItem){}, function(){});
+					core.Settings.save();
+					if(callback) callback();
+					browser.runtime.sendMessage({ command: 'gridNodesSynced'}).then(function(){}, function(){});
+				}, function(){
+					browser.tabs.remove(tab.id);
+					if(callback) callback();
+				});
+			}, function(){
+				if(callback) callback();
+			});
+		}, 4000);
+	}, function(){
+		if(callback) callback();
+	});
+}
 
 // Public functions
 app.refreshNode = core.GridNodes.refreshNode;
@@ -278,3 +313,4 @@ app.createFolder = core.GridNodes.createFolder;
 app.createBookmark = core.GridNodes.createBookmark;
 app.deleteNode = core.GridNodes.delete;
 app.setNodeIndex = core.GridNodes.setNodeIndex;
+app.capturePage = core.GridNodes.capturePage;

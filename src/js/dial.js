@@ -108,13 +108,19 @@ dial.initMenus = function(){
 	dial.ItemMenuCreateFolder = document.createElement('menuitem');
 	dial.ItemMenuCreateFolder.label = browser.i18n.getMessage("menuAddFolder");
 	dial.ItemMenuCreateFolder.onclick = dial.createFolder;
+	/*
 	dial.ItemMenuEdit = document.createElement('menuitem');
 	dial.ItemMenuEdit.label = 'Edit';
 	//dial.ItemMenuEdit.onclick = dial.test;
+	*/
 	dial.ItemMenuRefresh = document.createElement('menuitem');
-	dial.ItemMenuRefresh.label = 'Refresh';
 	dial.ItemMenuRefresh.label = browser.i18n.getMessage("menuRefreshItem");
 	dial.ItemMenuRefresh.onclick = dial.refreshNode;
+
+	dial.ItemMenuCapture = document.createElement('menuitem');
+	dial.ItemMenuCapture.label = 'Capture' // browser.i18n.getMessage("menuRefreshItem");
+	dial.ItemMenuCapture.onclick = dial.capturePage;
+	
 	dial.ItemMenuDelete = document.createElement('menuitem');
 	dial.ItemMenuDelete.label = browser.i18n.getMessage("menuDeleteItem");
 	dial.ItemMenuDelete.onclick = dial.deleteNode;
@@ -123,6 +129,7 @@ dial.initMenus = function(){
 	dial.ItemMenu.appendChild(document.createElement('hr'));
 	//dial.ItemMenu.appendChild(dial.ItemMenuEdit);
 	dial.ItemMenu.appendChild(dial.ItemMenuRefresh);
+	dial.ItemMenu.appendChild(dial.ItemMenuCapture);
 	dial.ItemMenu.appendChild(dial.ItemMenuDelete);
 	dial.Body.appendChild(dial.ItemMenu);
 }
@@ -307,4 +314,10 @@ dial.deleteNode = function(){
 	if(confirm(browser.i18n.getMessage("deleteItemConfimation", dial._selectedItem.Node.title))){
 		app.deleteNode(dial._selectedItem.Node.id);
 	}
+}
+
+dial.capturePage = function(){
+	app.capturePage(dial._selectedItem.Node, function(){
+		//
+	})
 }

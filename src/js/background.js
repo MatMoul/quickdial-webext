@@ -1,12 +1,11 @@
 var core = {}; // Main app object in background.js
 var app = {};  // Shared app object with pages
 
-core._init = function(){ // Called from core.Settings.load()
-	core.Bookmarks.initRoot(function(){
-		core.GridNodes.sync(app.settings.grid.node, app.settings.grid.root); // Sync bookmarks with stored data
+core.init = function(){ // Called from core.Settings.load()
+	core.GridNodes.sync(app.settings.grid.node, app.settings.grid.root, function(){ // Sync bookmarks with stored data
 		core.ContextMenus.initMenu();
 		core.Bookmarks.initListener();
-	})
+	});
 }
 
 core.Settings = {}; // Settings helper object
@@ -40,16 +39,17 @@ core.Settings.load = function(){ // Load settings and call core.init
 		}
 	}).then(function(obj){
 		app.settings = obj;
-		core._init();
-	},function(){});
+		core.init();
+	});
 }
 core.Settings.save = function(){ // Save settings
 	browser.storage.local.set(app.settings);
+	browser.runtime.sendMessage({ command: 'SettingsChanged' });
 }
 core.Settings.load(); // Need to be loaded first and call core.init when ready
 
 core.ContextMenus = {} // ContextMenu helper Object
-core.ContextMenus.initMenu = function(){ // (Called from core._init) Init context menu in all pages
+core.ContextMenus.initMenu = function(){ // (Called from core.init) Init context menu in all pages
 	browser.contextMenus.create({ // Create Context menu
 		id: 'AddToQuickDial',
 		title: browser.i18n.getMessage("menuAddToQuickDial"),
@@ -63,51 +63,33 @@ core.ContextMenus.initMenu = function(){ // (Called from core._init) Init contex
 }
 
 core.Bookmarks = {} // Bookmarks helper object
-core.Bookmarks.initListener = function(){ // (Called from core._init) (/!\ Need filter to root tree only) Init listener of bookmarks
+core.Bookmarks.initListener = function(){ // (Called from core.init) (/!\ Need filter to root tree only) Init listener of bookmarks
 	function notifyBookmarksChanged(){ core.GridNodes.sync(app.settings.grid.node, app.settings.grid.root); }
 	browser.bookmarks.onCreated.addListener(notifyBookmarksChanged);
-	browser.bookmarks.onChanged.addListener(notifyBookmarksChanged);
+	//browser.bookmarks.onChanged.addListener(notifyBookmarksChanged); // /!\ Need to be removed
 	browser.bookmarks.onMoved.addListener(notifyBookmarksChanged);
 	browser.bookmarks.onRemoved.addListener(notifyBookmarksChanged);		
 }
-core.Bookmarks.initRoot = function(callback){ // (Called from core._init) Create the root folder if not exist
+core.Bookmarks.load = function(rootPath, callback){ // Load root bookmark and create it if not exist
+	if(!callback) return;
 	browser.bookmarks.getSubTree('menu________').then(function(bookmarkItems){
-		getChildItem = function(bookmarkItem, path, callback){
+		function getChildItem(bookmarkItem, path, callback){
 			if(path.length == 0){
-				if(callback) callback(bookmarkItem);
+				callback(bookmarkItem);
 				return;
 			}
-			for(var child of bookmarkItem.children){
-				if((path + '/').startsWith(child.title + '/')){
-					getChildItem(child, path.substr(child.title.length + 1), callback);
-					return;
-				}
-			}
+			for(var child of bookmarkItem.children)
+				if((path + '/').startsWith(child.title + '/'))
+					return getChildItem(child, path.substr(child.title.length + 1), callback);
 			browser.bookmarks.create({
 				parentId: bookmarkItem.id,
 				title: path.substr(0, (path + '/').indexOf('/'))
-			}).then(callback);
+			}).then(function(bookmarkItem){
+				return getChildItem(bookmarkItem, path.substr(bookmarkItem.title.length + 1), callback);
+			}, function(){ callback(); });
 		}
-		getChildItem(bookmarkItems[0], app.settings.grid.root, callback);
-	}, function(){
-		console.log('Can not load bookmarks');
-		if(callback) callback(null);
-	});
-}
-core.Bookmarks.load = function(rootPath, callback){ // callback(bookmarkItem) Return BookmarkItem from rootPath
-	browser.bookmarks.getSubTree('menu________').then(function(bookmarkItems){
-		if(callback) callback(core.Bookmarks.getItem(bookmarkItems[0], rootPath + '/'))
-	}, function(){
-		console.log('Can not load bookmarks');
-		if(callback) callback(null);
-	});
-}
-core.Bookmarks.getItem = function(bookmarkItem, path){ // Return BookmarkItem from path from bookmarkItem as root
-	if(path.length == 0) return bookmarkItem;
-	for(var child of bookmarkItem.children)
-		if(path.startsWith(child.title + '/'))
-			return core.Bookmarks.getItem(child, path.substr(child.title.length + 1));
-	return null;
+		getChildItem(bookmarkItems[0], rootPath, callback);
+	}, function(){ callback(); });
 }
 
 core.SiteInfos = {} // Siteinfos helper object
@@ -116,7 +98,7 @@ core.SiteInfos.fromTab = function(callback){ // Retrieve infos from current tab.
 		function whaitLoaded(){
 			browser.tabs.get(tab.id).then(function(tab){
 				if(tab.status == 'loading') setTimeout(whaitLoaded, 300);
-				else{
+				else {
 					browser.tabs.update(tab.id, {active: true}).then(function(){
 						setTimeout(function(){
 							browser.tabs.captureVisibleTab().then(function(img){
@@ -127,18 +109,12 @@ core.SiteInfos.fromTab = function(callback){ // Retrieve infos from current tab.
 								if(callback) callback();
 							});
 						}, 300);
-					}, function(){
-						if(callback) callback();
-					});
+					}, function(){ if(callback) callback(); });
 				}
-			}, function(){
-				if(callback) callback();
-			});
+			}, function(){ if(callback) callback(); });
 		}
 		setTimeout(whaitLoaded, 300);
-	}, function(){
-		if(callback) callback();
-	});
+	}, function(){ if(callback) callback();	});
 }
 core.SiteInfos.fromNewTab = function(url, callback){  // Retrieve infos from a new tab. callback( { url, title, icon, screenshot } || error: callback() )
 	browser.tabs.create({url: url, active: false}).then(function(tab){
@@ -146,7 +122,7 @@ core.SiteInfos.fromNewTab = function(url, callback){  // Retrieve infos from a n
 		function whaitLoaded(){
 			browser.tabs.get(tab.id).then(function(tab){
 				if(tab.status == 'loading') setTimeout(whaitLoaded, 300);
-				else{
+				else {
 					browser.tabs.update(tab.id, {active: true}).then(function(){
 						setTimeout(function(){
 							browser.tabs.captureVisibleTab().then(function(img){
@@ -157,18 +133,12 @@ core.SiteInfos.fromNewTab = function(url, callback){  // Retrieve infos from a n
 								if(callback) callback();
 							});
 						}, 300);
-					}, function(){
-						if(callback) callback();
-					});
+					}, function(){ if(callback) callback(); });
 				}
-			}, function(){
-				if(callback) callback();
-			});
+			}, function(){ if(callback) callback(); });
 		}
 		setTimeout(whaitLoaded, 300);
-	}, function(){
-		if(callback) callback();
-	});
+	}, function(){ if(callback) callback(); });
 }
 core.SiteInfos.fromFrame = function(url, callback){ // Retrieve infos from an iframe. callback( { url, title, (/!\ Not handled now)icon, screenshot } || error: callback() )
 	function pageLoaded(){
@@ -227,11 +197,31 @@ core.SiteInfos.fromWS = function(url, callback){ // Retrieve infos from a Web Se
 }
 
 core.GridNodes = {}; // GridNodes helper object
-core.GridNodes.sync = function(gridNode, rootPath){ // Sync GridNodes with Bookmarks
+/*
+core.GridNodes.GridNodeType = {
+	empty: 0,
+	back: 1,
+	folder: 2,
+	bookmark:3
+}
+core.GridNodes.GridNode = function(){
+	this.id = -1;
+	this.lastUpdate = new Date(0);
+	this.type = core.GridNodes.GridNodeType.empty;
+	this.path = '';
+	this.title = '';
+	this.icon = '';
+	this.image = '';
+	//this.url = '';
+	//this.children = [];
+}
+*/
+core.GridNodes.sync = function(gridNode, rootPath, callback){ // Sync GridNodes with Bookmarks
 	core.Bookmarks.load(rootPath, function(bookmarkItem){
 		core.GridNodes.syncItem(gridNode, bookmarkItem);
+		core.GridNodes.save();
 		browser.runtime.sendMessage({ command: 'gridNodesSynced'}).then(function(){}, function(){});
-		core.Settings.save();
+		if(callback) callback();
 	});
 }
 core.GridNodes.syncItem = function(gridNode, bookmarkItem){ // Sync GridNode with BookmarkItem
@@ -283,6 +273,12 @@ core.GridNodes.syncItem = function(gridNode, bookmarkItem){ // Sync GridNode wit
 		EmptyItems.length = 0;
 	} else node.type = 'empty';
 }
+core.GridNodes.save = function(){ // Save GridNode
+	browser.storage.local.set(app.settings);
+}
+core.GridNodes.saveNode = function(gridNode){ // Save GridNode
+	browser.storage.local.set(app.settings);
+}
 core.GridNodes.getChild = function(gridNode, id){ // Return child node by ID
 	for(var child of gridNode.children) if(child.id == id) return child;
 	return null;
@@ -304,7 +300,7 @@ core.GridNodes.refreshNode = function(gridNode, callback){ // Refresh content of
 			browser.bookmarks.update(gridNode.id, {
 				title: infos.title
 			}).then(function(bookmarkItem){}, function(){});
-			core.Settings.save();
+			core.GridNodes.saveNode(gridNode);
 		}
 		gridNode.__isLoading = false;
 		if(callback) callback(infos);
@@ -334,7 +330,7 @@ core.GridNodes.setNodeIndex = function(gridNode, index, newIndex, callback){ // 
 	var node2 = gridNode.children[newIndex];
 	gridNode.children[index] = node2;
 	gridNode.children[newIndex] = node1;
-	core.Settings.save();
+	core.GridNodes.saveNode(gridNode);
 	if(callback) callback();
 	browser.runtime.sendMessage({ command: 'gridNodesSynced'}).then(function(){}, function(){});
 }
@@ -355,7 +351,7 @@ core.GridNodes.capturePage = function(gridNode, callback){
 								browser.bookmarks.update(gridNode.id, {
 									title: gridNode.title
 								}).then(function(bookmarkItem){}, function(){});
-								core.Settings.save();
+								core.GridNodes.saveNode(gridNode);
 								if(callback) callback();
 								browser.runtime.sendMessage({ command: 'gridNodesSynced'}).then(function(){}, function(){});
 							}, function(){

@@ -111,30 +111,87 @@ core.Bookmarks.getItem = function(bookmarkItem, path){ // Return BookmarkItem fr
 }
 
 core.SiteInfos = {} // Siteinfos helper object
-core.SiteInfos.loadInfos = function(url, args, callback){ // args: { icon: false; screenshot: false }, callback( { url, title, (/!\ Not handled now)icon, screenshot } || error: {} )
+core.SiteInfos.fromTab = function(callback){ // Retrieve infos from current tab. callback( { url, title, icon, screenshot } || error: callback() )
+	browser.tabs.getCurrent().then(function(tab){
+		function whaitLoaded(){
+			browser.tabs.get(tab.id).then(function(tab){
+				if(tab.status == 'loading') setTimeout(whaitLoaded, 300);
+				else{
+					browser.tabs.update(tab.id, {active: true}).then(function(){
+						setTimeout(function(){
+							browser.tabs.captureVisibleTab().then(function(img){
+								browser.tabs.remove(tab.id);
+								if(callback) callback( { url: tab.url, title: tab.title, icon: tab.favIconUrl, screenshot: img } );
+							}, function(){
+								browser.tabs.remove(tab.id);
+								if(callback) callback();
+							});
+						}, 300);
+					}, function(){
+						if(callback) callback();
+					});
+				}
+			}, function(){
+				if(callback) callback();
+			});
+		}
+		setTimeout(whaitLoaded, 300);
+	}, function(){
+		if(callback) callback();
+	});
+}
+core.SiteInfos.fromNewTab = function(url, callback){  // Retrieve infos from a new tab. callback( { url, title, icon, screenshot } || error: callback() )
+	browser.tabs.create({url: url, active: false}).then(function(tab){
+		browser.tabs.update(tab.id, {muted: true}).then();
+		function whaitLoaded(){
+			browser.tabs.get(tab.id).then(function(tab){
+				if(tab.status == 'loading') setTimeout(whaitLoaded, 300);
+				else{
+					browser.tabs.update(tab.id, {active: true}).then(function(){
+						setTimeout(function(){
+							browser.tabs.captureVisibleTab().then(function(img){
+								browser.tabs.remove(tab.id);
+								if(callback) callback( { url: tab.url, title: tab.title, icon: tab.favIconUrl, screenshot: img } );
+							}, function(){
+								browser.tabs.remove(tab.id);
+								if(callback) callback();
+							});
+						}, 300);
+					}, function(){
+						if(callback) callback();
+					});
+				}
+			}, function(){
+				if(callback) callback();
+			});
+		}
+		setTimeout(whaitLoaded, 300);
+	}, function(){
+		if(callback) callback();
+	});
+}
+core.SiteInfos.fromFrame = function(url, callback){ // Retrieve infos from an iframe. callback( { url, title, (/!\ Not handled now)icon, screenshot } || error: callback() )
 	function pageLoaded(){
 		if(!iframe) return;
 		var docTitle = iframe.contentWindow.document.title;
 		var docIcon = null;
 		var docScreenshot = null;
+		//title
 		if(docTitle == '') docTitle = url;
-		if(args && args.icon){
-			//
-		}
-		if(args && args.screenshot){
-			var canvas = document.createElement('canvas');
-			canvas.style.width = previewWidth.toString() + 'px';
-			canvas.style.height = previewHeight.toString() + 'px';
-			canvas.width = previewWidth / 2;
-			canvas.height = previewHeight / 2;
-			var ctx = canvas.getContext('2d');
-			ctx.clearRect(0, 0, previewWidth, previewHeight);
-			ctx.save();
-			ctx.scale(0.5, 0.5);
-			ctx.drawWindow(iframe.contentWindow, 0, 0, previewWidth, previewHeight, 'rgb(255, 255, 255)');
-			ctx.restore();
-			docScreenshot = canvas.toDataURL();
-		}
+		//icon
+		//screenshot
+		var canvas = document.createElement('canvas');
+		canvas.style.width = previewWidth.toString() + 'px';
+		canvas.style.height = previewHeight.toString() + 'px';
+		canvas.width = previewWidth / 2;
+		canvas.height = previewHeight / 2;
+		var ctx = canvas.getContext('2d');
+		ctx.clearRect(0, 0, previewWidth, previewHeight);
+		ctx.save();
+		ctx.scale(0.5, 0.5);
+		ctx.drawWindow(iframe.contentWindow, 0, 0, previewWidth, previewHeight, 'rgb(255, 255, 255)');
+		ctx.restore();
+		docScreenshot = canvas.toDataURL();
 
 		document.body.removeChild(iframe);
 		iframe = null;
@@ -149,21 +206,24 @@ core.SiteInfos.loadInfos = function(url, args, callback){ // args: { icon: false
 	xmlHttp.open('GET', url, true);
 	xmlHttp.onload = function(){
 		iframe = document.createElement('iframe');
-		iframe.referrerPolicy = "unsafe-url";	
 		iframe.width = previewWidth
 		iframe.height = previewHeight
 		iframe.style.position = 'absolute';
-		iframe.style.visibility = 'hidden';
-		document.body.appendChild(iframe);
+		//iframe.style.visibility = 'hidden';
 		var content = xmlHttp.responseText.replace('<head>', '<head><base href="' + url + '">');
-		iframe.srcdoc = content;
 		iframe.onload = function(){ pageLoaded(); }
+		document.body.appendChild(iframe);
+		iframe.srcdoc = content;
 		setTimeout(function(){ pageLoaded(); }, 6000);
 	}
 	xmlHttp.onabort = function(){ if(callback) callback(); }
 	xmlHttp.onerror = function(){ if(callback) callback(); }
 	xmlHttp.ontimeout = function(){ if(callback) callback(); }
 	xmlHttp.send();
+}
+core.SiteInfos.fromWS = function(url, callback){ // Retrieve infos from a Web Service. callback( { url, title, (/!\ Not handled now)icon, screenshot } || error: callback() )
+	console.log('Not implemented');
+	return core.SiteInfos.fromFrame(url, callback);
 }
 
 core.GridNodes = {}; // GridNodes helper object
@@ -237,7 +297,7 @@ core.GridNodes.getNode = function(gridNode, path){ // Return GridNode from RootG
 core.GridNodes.refreshNode = function(gridNode, callback){ // Refresh content of a GridNode
 	if(gridNode.__isLoading == true) return;
 	gridNode.__isLoading = true;
-	core.SiteInfos.loadInfos(gridNode.url, { screenshot: true }, function(infos){
+	core.SiteInfos.fromFrame(gridNode.url, function(infos){
 		if(infos){
 			gridNode.title = infos.title;
 			gridNode.image = infos.screenshot;
@@ -280,27 +340,37 @@ core.GridNodes.setNodeIndex = function(gridNode, index, newIndex, callback){ // 
 }
 core.GridNodes.capturePage = function(gridNode, callback){
 	browser.tabs.create({url: gridNode.url, active: false}).then(function(tab){
-		setTimeout(function(){
-			tab.active = true;
-			browser.tabs.update(tab.id, {active: true}).then(function(){
-				browser.tabs.captureVisibleTab().then(function(img){
-					//gridNode.title = tab.title
-					browser.tabs.remove(tab.id);
-					gridNode.image = img;
-					browser.bookmarks.update(gridNode.id, {
-						title: gridNode.title
-					}).then(function(bookmarkItem){}, function(){});
-					core.Settings.save();
-					if(callback) callback();
-					browser.runtime.sendMessage({ command: 'gridNodesSynced'}).then(function(){}, function(){});
-				}, function(){
-					browser.tabs.remove(tab.id);
-					if(callback) callback();
-				});
-			}, function(){
-				if(callback) callback();
-			});
-		}, 4000);
+		browser.tabs.update(tab.id, {muted: true}).then(function(){}, function(){});
+		function whaitLoaded(){
+			browser.tabs.get(tab.id).then(function(tab){
+				if(tab.status == 'loading'){
+					setTimeout(whaitLoaded, 300);
+				} else{
+					browser.tabs.update(tab.id, {active: true}).then(function(){
+						setTimeout(function(){
+							browser.tabs.captureVisibleTab().then(function(img){
+								browser.tabs.remove(tab.id);
+								gridNode.title = tab.title
+								gridNode.image = img;
+								browser.bookmarks.update(gridNode.id, {
+									title: gridNode.title
+								}).then(function(bookmarkItem){}, function(){});
+								core.Settings.save();
+								if(callback) callback();
+								browser.runtime.sendMessage({ command: 'gridNodesSynced'}).then(function(){}, function(){});
+							}, function(){
+								browser.tabs.remove(tab.id);
+								if(callback) callback();
+							});
+						}, 300);
+					}, function(){
+						if(callback) callback();
+					});
+				}
+			}, function(){});
+			
+		}
+		setTimeout(whaitLoaded, 300);
 	}, function(){
 		if(callback) callback();
 	});

@@ -6,75 +6,111 @@
 		<title id="title">Quick Dial Settings</title>
 		<script type="text/javascript" src="/js/settings.js"></script>
 		<style>
-			body { font-family: Arial, Helvetica, sans-serif; font-size: 10pt; }
+			body { margin: 0px; padding: 4px; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; }
 			h1 { font-size: 11pt; text-decoration: underline; }
-			input[type=number] { width: 60px; }
+			input[type=number] { width: 56px; }
+			input[type=color] { width: 60px; }
+			.hidden { display: none; }
+			.Tab>table { width: 100%; border-collapse: collapse; }
+			.Tab .TabSpace { width: 100%; border-bottom: solid 1px #505050; }
+			.Tab .TabButton { border: solid 1px #505050; padding: 2px 6px 2px 6px; cursor: default; }
+			.Tab .TabButtonActive { border: solid 1px #505050; border-bottom: none; padding: 2px 6px 2px 6px; cursor: default; }
+			.Tab>div { padding: 8px; height: 330px; border-left: solid 1px #505050; border-bottom: solid 1px #505050; border-right: solid 1px #505050; }
 		</style>
 	</head>
 	<body id="body">
-		<h1>Page :</h1>
-		<table>
-			<tr>
-				<td><span>Background Color :</span></td>
-				<td><input id="BackgroundColor" type="color"></td>
-			</tr>
-			<tr>
-				<td><span>Background Image :</span></td>
-				<td>
-					<button id="BackgroundImageClear">Clear</button>
-					<input id="BackgroundImageFile" type="file">
-				</td>
-			</tr>
-		</table>
-		<h1>Grid :</h1>
-		<table>
-			<tr>
-				<td><span>Rows x Columns :</span></td>
-				<td>
-					<input id="GridRows" type="number">
-					<input id="GridColumns" type="number">
-				</td>
-			</tr>
-			<tr>
-				<td><span>Margins :</span></td>
-				<td><input id="GridMargins" type="number"></td>
-			</tr>
-		</table>
-		<h1>Grid Cells:</h1>
-		<table>
-			<tr>
-				<td></td>
-				<td>Default :</td>
-				<td>Hover :</td>
-			</tr>
-			<tr>
-				<td><span>Margins :</span></td>
-				<td><input id="GridCellsMargins" type="number"></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td><span>Border Radius:</span></td>
-				<td><input id="GridCellsBorderRadius" type="number"></td>
-				<td></td>
-			</tr>
-	
+		<div id="Tabs" class="Tab">
+			<table>
+				<tr>
+					<td class="TabButtonActive">Page</td>
+					<td class="TabButton">Grid</td>
+					<td class="TabButton">Cells</td>
+					<td class="TabSpace"></td>
+				</tr>
+			</table>
+			<div>
+				<div>
+					<table>
+						<tr>
+							<td><span>Background Color :</span></td>
+							<td><input id="BackgroundColor" type="color"></td>
+						</tr>
+						<tr>
+							<td><span>Background Image :</span></td>
+							<td>
+								<button id="BackgroundImageClear">Clear</button>
+								<input id="BackgroundImageFile" type="file" style="width:265px;">
+							</td>
+						</tr>
+						<tr>
+							<td>Preview :</td>
+							<td><div id="BackgroundPreview" style="width: 300px; height: 180px;"></div></td>
+						</tr>
+					</table>
+				</div>
+				<div class="hidden">
+					<table>
+						<tr>
+							<td><span>Rows x Columns :</span></td>
+							<td>
+								<input id="GridRows" type="number">
+								<input id="GridColumns" type="number">
+							</td>
+						</tr>
+						<tr>
+							<td><span>Margins :</span></td>
+							<td><input id="GridMargins" type="number"></td>
+						</tr>
+					</table>
+				</div>
+				<div class="hidden">
+					<table>
+						<tr>
+							<td></td>
+							<td>Default :</td>
+							<td>Hover :</td>
+						</tr>
+						<tr>
+							<td><span>Margins :</span></td>
+							<td><input id="GridCellsMargins" type="number"></td>
+							<td><input id="GridCellsMarginsHover" type="number" style="display: none;"></td>
+						</tr>
+						<tr>
+							<td><span>Border Radius:</span></td>
+							<td><input id="GridCellsBorderRadius" type="number"></td>
+							<td><input id="GridCellsBorderRadiusHover" type="number"></td>
+						</tr>
+						<tr>
+							<td><span>Border Color:</span></td>
+							<td><input id="GridCellsBorderColor" type="color"></td>
+							<td><input id="GridCellsBorderColorHover" type="color"></td>
+						</tr>
+						<tr>
+							<td><span>Title :</span></td>
+							<td><input id="GridCellsTitle" type="checkbox"></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td><span>Title Height :</span></td>
+							<td><input id="GridCellsTitleHeight" type="number"></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td><span>Title Font Size :</span></td>
+							<td><input id="GridCellsTitleFontSize" type="number"></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td><span>Title Color:</span></td>
+							<td><input id="GridCellsTitleColor" type="color"></td>
+							<td><input id="GridCellsTitleColorHover" type="color"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
 
-			<tr>
-				<td><span>Border Color:</span></td>
-				<td><input id="GridCellsBorderColor" type="color"></td>
-				<td><input id="GridCellsBorderColorHover" type="color"></td>
-			</tr>
-
-			<tr>
-				<td><span>Title Color:</span></td>
-				<td><input id="GridCellsTitleColor" type="color"></td>
-				<td><input id="GridCellsTitleColorHover" type="color"></td>
-			</tr>
-	
-	
-	
-		</table>
-		<div style="text-align: right;">
+		<div style="text-align: right; margin-top: 14px;">
 			<button id="BtnOk">OK</button>
 			<button id="BtnApply">Apply</button>
 			<button id="BtnCancel">Cancel</button>

@@ -15,10 +15,6 @@ window.onload = function(){
 					switch(request.command){
 						case 'SettingsChanged':
 							if(app.settings){
-								/*
-								dial.styles.body.backgroundColor = app.settings.backgroundColor;
-								dial.styles.body.backgroundImage = app.settings.backgroundImage;
-								*/
 								dial.Head.removeChild(dial.Style);
 								dial.Body.removeChild(dial.Grid);
 								dial.initStyles();
@@ -98,8 +94,9 @@ dial.initStyles = function(){
 	dial.styles.grid = {};
 	dial.styles.grid.grid = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid { border-collapse: collapse; margin: auto; }')].style;
 	dial.styles.grid.cell = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td { margin: 0px; padding: 0px; }')].style;
-	dial.styles.grid.link = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a { display: block; outline: none; text-decoration: none; margin: ' + app.settings.grid.cells.margin + 'px; border: 1px solid ' + app.settings.grid.cells.borderColor + '; border-radius: ' + app.settings.grid.cells.borderRadius + 'px; }')].style;
-	dial.styles.grid.linkHover = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a:hover { border-color: ' + app.settings.grid.cells.borderColorHover + '; }')].style;
+	dial.styles.grid.link = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a { display: block; outline: none; overflow: hidden; text-decoration: none; margin: ' + app.settings.grid.cells.margin + 'px; border: 1px solid ' + app.settings.grid.cells.borderColor + '; border-radius: ' + app.settings.grid.cells.borderRadius + 'px; }')].style;
+	//dial.styles.grid.linkHover = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a:hover { border-color: ' + app.settings.grid.cells.borderColorHover + '; border-radius: ' + app.settings.grid.cells.borderRadiusHover + 'px; }')].style;
+	dial.styles.grid.linkHover = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a:hover { border-color: ' + app.settings.grid.cells.borderColorHover + '; margin: ' + app.settings.grid.cells.marginHover + 'px; border-radius: ' + app.settings.grid.cells.borderRadiusHover + 'px; }')].style;
 	dial.styles.grid.linkPanel = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a>div:first-child { background-repeat: no-repeat; }')].style;
 	dial.styles.grid.linkTitle = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a>div:last-child { height: ' + app.settings.grid.cells.titleHeight + 'px; font-size: ' + app.settings.grid.cells.titleFontSize + 'pt; font-family: ' + app.settings.grid.cells.titleFont + 'pt; text-align: center; overflow: hidden; color: ' + app.settings.grid.cells.titleColor + '; border-top: 1px solid ' + app.settings.grid.cells.borderColor + '; }')].style;
 	dial.styles.grid.linkTitleHover = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a:hover>div:last-child { color: ' + app.settings.grid.cells.titleColorHover + '; border-top-color: ' + app.settings.grid.cells.borderColorHover + ' }')].style;
@@ -114,18 +111,21 @@ dial.initMenus = function(){
 	dial.PageMenu = document.createElement('menu');
 	dial.PageMenu.type = 'context';
 	dial.PageMenu.id = 'page'
+	dial.PageMenuNew = document.createElement('menu');
+	dial.PageMenuNew.label = browser.i18n.getMessage("menuNew");
 	dial.PageMenuCreateBookmark = document.createElement('menuitem');
-	dial.PageMenuCreateBookmark.label = 'Add bookmark';
+	dial.PageMenuCreateBookmark.label = browser.i18n.getMessage("menuNewBookmark");
 	dial.PageMenuCreateBookmark.onclick = dial.createBookmark;
 	dial.PageMenuCreateFolder = document.createElement('menuitem');
-	dial.PageMenuCreateFolder.label = 'Add folder';
+	dial.PageMenuCreateFolder.label = browser.i18n.getMessage("menuNewFolder");
 	dial.PageMenuCreateFolder.onclick = dial.createFolder;
 	dial.PageMenuSettings = document.createElement('menuitem');
 	dial.PageMenuSettings.label = browser.i18n.getMessage("menuSettings");
 	dial.PageMenuSettings.onclick = dial.editSettings;
 	
-	dial.PageMenu.appendChild(dial.PageMenuCreateBookmark);
-	dial.PageMenu.appendChild(dial.PageMenuCreateFolder);
+	dial.PageMenu.appendChild(dial.PageMenuNew);
+	dial.PageMenuNew.appendChild(dial.PageMenuCreateBookmark);
+	dial.PageMenuNew.appendChild(dial.PageMenuCreateFolder);
 	dial.PageMenu.appendChild(document.createElement('hr'));
 	dial.PageMenu.appendChild(dial.PageMenuSettings);
 	dial.Body.appendChild(dial.PageMenu);
@@ -133,11 +133,15 @@ dial.initMenus = function(){
 	dial.ItemMenu = document.createElement('menu');
 	dial.ItemMenu.type = 'context';
 	dial.ItemMenu.id = 'item'
+
+	dial.ItemMenuNew = document.createElement('menu');
+	dial.ItemMenuNew.label = browser.i18n.getMessage("menuNew");
+	
 	dial.ItemMenuCreateBookmark = document.createElement('menuitem');
-	dial.ItemMenuCreateBookmark.label = browser.i18n.getMessage("menuAddBookmark");
+	dial.ItemMenuCreateBookmark.label = browser.i18n.getMessage("menuNewBookmark");
 	dial.ItemMenuCreateBookmark.onclick = dial.createBookmark;
 	dial.ItemMenuCreateFolder = document.createElement('menuitem');
-	dial.ItemMenuCreateFolder.label = browser.i18n.getMessage("menuAddFolder");
+	dial.ItemMenuCreateFolder.label = browser.i18n.getMessage("menuNewFolder");
 	dial.ItemMenuCreateFolder.onclick = dial.createFolder;
 	/*
 	dial.ItemMenuEdit = document.createElement('menuitem');
@@ -160,8 +164,9 @@ dial.initMenus = function(){
 	dial.ItemMenuSettings.label = browser.i18n.getMessage("menuSettings");
 	dial.ItemMenuSettings.onclick = dial.editSettings;
 	
-	dial.ItemMenu.appendChild(dial.ItemMenuCreateBookmark);
-	dial.ItemMenu.appendChild(dial.ItemMenuCreateFolder);
+	dial.ItemMenu.appendChild(dial.ItemMenuNew);
+	dial.ItemMenuNew.appendChild(dial.ItemMenuCreateBookmark);
+	dial.ItemMenuNew.appendChild(dial.ItemMenuCreateFolder);
 	dial.ItemMenu.appendChild(document.createElement('hr'));
 	//dial.ItemMenu.appendChild(dial.ItemMenuEdit);
 	dial.ItemMenu.appendChild(dial.ItemMenuRefresh);
@@ -232,10 +237,13 @@ dial.updateGridLayout = function(grid, settings, styles){
 	var linkHeight = fullHeight / settings.rows;
 	if(linkWidth <= linkHeight * settings.cells.ratioX / settings.cells.ratioY) linkHeight = linkWidth / settings.cells.ratioX * settings.cells.ratioY;
 	else linkWidth = linkHeight / settings.cells.ratioY * settings.cells.ratioX;
+	
 	styles.cell.width = linkWidth.toString() + 'px';
 	styles.cell.height = linkHeight.toString() + 'px';
+
 	linkWidth = linkWidth - 2 * (settings.cells.margin + 1);
 	linkHeight = linkHeight - 2 * (settings.cells.margin + 1);
+	
 	styles.link.width = linkWidth.toString() + 'px';
 	styles.link.height = linkHeight.toString() + 'px';
 	if(settings.cells.title) styles.linkPanel.height = (linkHeight - settings.cells.titleHeight - 1).toString() + 'px';

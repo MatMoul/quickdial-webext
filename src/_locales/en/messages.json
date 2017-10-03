@@ -9,8 +9,13 @@
     "description": "Text of add bookmark menu item."
   },
 
-  "menuAddBookmark": {
-    "message": "Add Bookmark",
+  "menuNew": {
+    "message": "New",
+    "description": "Text of new menu item."
+  },
+
+  "menuNewBookmark": {
+    "message": "Bookmark",
     "description": "Text of add bookmark menu item."
   },
 
@@ -19,8 +24,8 @@
     "description": "Text of the add bookmark prompt."
   },
 
-  "menuAddFolder": {
-    "message": "Add Folder",
+  "menuNewFolder": {
+    "message": "Folder",
     "description": "Text of add folder menu item."
   },
 

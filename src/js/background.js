@@ -21,11 +21,13 @@ core.Settings.load = function(callback){ // Load settings
 			columns: 5,
 			cells: {
 				margin: 4,
+				marginHover: 4,
 				ratioX: 4,
 				ratioY: 3,
 				borderColor: '#333333',
 				borderColorHover: '#a9a9a9',
 				borderRadius: 4,
+				borderRadiusHover: 4,
 				title: true,
 				titleHeight: 16,
 				titleFontSize: 10,

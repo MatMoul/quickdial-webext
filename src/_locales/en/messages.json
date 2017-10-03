@@ -47,6 +47,11 @@
   "deleteItemConfimation": {
     "message": "Delete $1 ?",
     "description": "Text of delete confirmation."
+  },
+
+  "menuSettings": {
+    "message": "Quick Dial Settings",
+    "description": "Text of settings menu item."
   }
 
 }

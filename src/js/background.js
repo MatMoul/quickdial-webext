@@ -13,7 +13,8 @@ core.init = function(){ // Init module
 core.Settings = {}; // Settings helper object
 core.Settings.load = function(callback){ // Load settings
 	browser.storage.local.get({
-		background: '#3c4048',
+		backgroundColor: '#3c4048',
+		backgroundImage: null,
 		grid: {
 			margin: 10,
 			rows: 4,
@@ -26,8 +27,8 @@ core.Settings.load = function(callback){ // Load settings
 				borderColorHover: '#a9a9a9',
 				borderRadius: 4,
 				title: true,
-				titleHeight: 18,
-				titleFontSize: 11,
+				titleHeight: 16,
+				titleFontSize: 10,
 				titleFont: 'Arial, Verdana, Sans-serif',
 				titleColor: '#ffffff',
 				titleColorHover: '#33ccff',
@@ -440,3 +441,4 @@ app.createBookmark = core.GridNodes.createBookmark;
 app.deleteNode = core.GridNodes.deleteNode;
 app.setNodeIndex = core.GridNodes.setNodeIndex;
 app.capturePage = core.GridNodes.capturePage;
+app.saveSettings = core.Settings.save;

@@ -47,6 +47,11 @@
   "deleteItemConfimation": {
     "message": "Supprimer $1 ?",
     "description": "Text of delete confirmation."
+  },
+
+  "menuSettings": {
+    "message": "Paramètres Quick Dial",
+    "description": "Text of settings menu item."
   }
 
 }

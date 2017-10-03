@@ -34,6 +34,11 @@
     "description": "Text of refresh menu item."
   },
 
+  "menuCapturePage": {
+    "message": "Capturer dans un nouvel onglet",
+    "description": "Text of capture menu item."
+  },
+
   "menuDeleteItem": {
     "message": "Supprimer",
     "description": "Text of delete menu item."

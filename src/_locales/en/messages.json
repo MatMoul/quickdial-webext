@@ -34,6 +34,11 @@
     "description": "Text of refresh menu item."
   },
 
+  "menuCapturePage": {
+    "message": "Capture in a new tab",
+    "description": "Text of capture menu item."
+  },
+
   "menuDeleteItem": {
     "message": "Delete",
     "description": "Text of delete menu item."

@@ -13,7 +13,14 @@ window.onload = function(){
 				dial.initUI();
 				browser.runtime.onMessage.addListener(function(request, sender, sendResponse){
 					switch(request.command){
-						case 'gridNodesSynced':
+						case 'SettingsChanged':
+							//if(app.settings) dial.updateGridLayout(dial.Grid, app.settings.grid, dial.styles.grid);
+							break;
+						case 'GridNodesSaved':
+							if(app.settings) dial.populateGrid(dial.Grid, app.settings.grid, dial.Node);
+							break;
+						case 'GridNodeSaved':
+							// request.gridNode	
 							if(app.settings) dial.populateGrid(dial.Grid, app.settings.grid, dial.Node);
 							break;
 					}
@@ -118,7 +125,7 @@ dial.initMenus = function(){
 	dial.ItemMenuRefresh.onclick = dial.refreshNode;
 
 	dial.ItemMenuCapture = document.createElement('menuitem');
-	dial.ItemMenuCapture.label = 'Capture' // browser.i18n.getMessage("menuRefreshItem");
+	dial.ItemMenuCapture.label = browser.i18n.getMessage("menuCapturePage");
 	dial.ItemMenuCapture.onclick = dial.capturePage;
 	
 	dial.ItemMenuDelete = document.createElement('menuitem');
@@ -173,9 +180,7 @@ dial.initGrid = function(name, settings, container){
 					StartIndex-=1;
 					EndIndex-=1;
 				}
-				app.setNodeIndex(dial.Node, StartIndex, EndIndex, function(){
-					dial.populateGrid(grid, app.settings.grid, dial.Node);
-				});
+				app.setNodeIndex(dial.Node, StartIndex, EndIndex);
 			}
 			link.draggable = true;
 			link.ondragstart = dragstart_handler;
@@ -269,13 +274,13 @@ dial.populateGrid = function(grid, settings, node){
 	if(dial.page > 1) iBase = (dial.page -1) * maxCells;
 	for(var i = iBase; i<node.children.length && i<maxCells + iBase; i++) {
 		switch(node.children[i].type){
-			case 'empty':
+			case app.GridNodeType.empty:
 				populateEmpty(grid.getLink(linkItem));
 				break;
-			case 'folder':
+			case app.GridNodeType.folder:
 				populateFolder(grid.getLink(linkItem), node.children[i]);
 				break;
-			case 'bookmark':
+			case app.GridNodeType.bookmark:
 				populateBookmark(grid.getLink(linkItem), node.children[i]);
 				break;
 		}
@@ -298,7 +303,7 @@ dial.createFolder = function(){
 };
 
 dial.refreshNode = function(){
-	if(dial._selectedItem.Node.type == 'bookmark'){
+	if(dial._selectedItem.Node.type == app.GridNodeType.bookmark){
 		var link = dial._selectedItem;
 		link.className = 'BookmarkLoading';
 		link.childNodes[0].style.backgroundImage = '';
@@ -311,13 +316,11 @@ dial.refreshNode = function(){
 }
 
 dial.deleteNode = function(){
-	if(confirm(browser.i18n.getMessage("deleteItemConfimation", dial._selectedItem.Node.title))){
-		app.deleteNode(dial._selectedItem.Node.id);
-	}
+	if(confirm(browser.i18n.getMessage("deleteItemConfimation", dial._selectedItem.Node.title)))
+		app.deleteNode(dial.Node, dial._selectedItem.Node.id);
 }
 
 dial.capturePage = function(){
-	app.capturePage(dial._selectedItem.Node, function(){
-		//
-	})
+	if(dial._selectedItem.Node.type == app.GridNodeType.bookmark)
+		app.capturePage(dial._selectedItem.Node);
 }

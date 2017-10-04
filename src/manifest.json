@@ -3,7 +3,12 @@
   "manifest_version": 2,
   "name": "Quick Dial",
   "version": "0.0.1",
- 
+  "author": "MatMoul",
+  "homepage_url": "https://github.com/MatMoul/quickdial-webext",
+  "developer": {
+    "name": "MatMoul",
+    "url": "https://github.com/MatMoul/quickdial-webext"
+  },
   "description": "__MSG_extensionDescription__",
 
   "icons": {

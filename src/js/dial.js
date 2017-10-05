@@ -196,7 +196,10 @@ dial.initGrid = function(name, settings, container){
 			link.onmousedown = function(){ dial._selectedItem = this; };
 			
 			function dragstart_handler(ev) {
-				ev.dataTransfer.setData("text/plain", ev.target.parentElement.getAttribute('gridindex'));
+				var index = (dial.page - 1) * (app.settings.grid.rows * app.settings.grid.columns) + +(ev.target.parentElement.getAttribute('gridindex'));
+				if(settings.cells.backPanel && dial.path) index -= dial.page;
+				console.log(index);
+				ev.dataTransfer.setData("text/plain", index);
 			 }
 			 function dragover_handler(ev) {
 				ev.preventDefault();
@@ -208,14 +211,11 @@ dial.initGrid = function(name, settings, container){
 				var StartIndex = ev.dataTransfer.getData("text");
 				var EndIndex = 0;
 				if(ev.target.tagName == 'DIV'){
-					EndIndex = ev.target.parentElement.parentElement.getAttribute('gridindex')
+					EndIndex = (dial.page - 1) * (app.settings.grid.rows * app.settings.grid.columns) + +(ev.target.parentElement.parentElement.getAttribute('gridindex'));
 				} else{
-					EndIndex = ev.target.getAttribute('gridindex');
+					EndIndex =(dial.page - 1) * (app.settings.grid.rows * app.settings.grid.columns) + +(ev.target.getAttribute('gridindex'));
 				}
-				if(settings.cells.backPanel && dial.path){
-					StartIndex-=1;
-					EndIndex-=1;
-				}
+				if(settings.cells.backPanel && dial.path) EndIndex -= dial.page;
 				app.setNodeIndex(dial.Node, StartIndex, EndIndex);
 			}
 			link.draggable = true;

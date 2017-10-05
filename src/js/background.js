@@ -125,7 +125,7 @@ core.SiteInfos.fromTab = function(callback){ // Retrieve infos from current tab.
 		setTimeout(whaitLoaded, 300);
 	}, function(){ if(callback) callback();	});
 }
-core.SiteInfos.fromNewTab = function(url, callback){  // Retrieve infos from a new tab. callback( { url, title, icon, screenshot } || error: callback() )
+core.SiteInfos.fromNewTab1 = function(url, callback){  // Retrieve infos from a new tab. callback( { url, title, icon, screenshot } || error: callback() )
 	browser.tabs.create({url: url, active: false}).then(function(tab){
 		browser.tabs.update(tab.id, {muted: true}).then();
 		function whaitLoaded(){
@@ -133,9 +133,32 @@ core.SiteInfos.fromNewTab = function(url, callback){  // Retrieve infos from a n
 				if(tab.status == 'loading') setTimeout(whaitLoaded, 300);
 				else {
 					browser.tabs.update(tab.id, {active: true}).then(function(){
+console.log('Hello');						
 						setTimeout(function(){
 							browser.tabs.captureVisibleTab().then(function(img){
 								browser.tabs.remove(tab.id);
+								
+								var previewWidth = 1200; // Need to be linked to settings
+								var previewHeight = 710; // Need to be linked to settings
+								var imgObj = new Image;
+								imgObj.src = img;
+
+								var canvas = document.createElement('canvas');
+								canvas.style.width = previewWidth.toString() + 'px';
+								canvas.style.height = previewHeight.toString() + 'px';
+								canvas.width = previewWidth / 2;
+								canvas.height = previewHeight / 2;
+								var ctx = canvas.getContext('2d');
+								ctx.clearRect(0, 0, previewWidth, previewHeight);
+								ctx.save();
+								ctx.scale(0.5, 0.5);
+								//ctx.drawImage(img, 0, 0, previewWidth, previewHeight, 'rgb(255, 255, 255)');
+console.log(img);
+								ctx.drawImage(imgObj, 0, 0, 0, 0, 'rgb(255, 255, 255)');
+								ctx.restore();
+								img = canvas.toDataURL();
+														
+								
 								if(callback) callback( { url: tab.url, title: tab.title, icon: tab.favIconUrl, screenshot: img } );
 							}, function(){
 								browser.tabs.remove(tab.id);

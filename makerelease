@@ -35,7 +35,7 @@ version=$1
 
 sed -i "/\"version\":/c\ \ \"version\": \"$version\"," src/manifest.json
 
-git commit -m "Version $version" makefile src/*
+git commit -a -m "Version $version"
 git push
 
 git checkout master

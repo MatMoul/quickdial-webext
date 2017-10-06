@@ -202,7 +202,7 @@ dial.initGrid = function(name, settings, container){
 			
 			function dragstart_handler(ev) {
 				var index = (dial.page - 1) * (app.settings.grid.rows * app.settings.grid.columns) + +(ev.target.parentElement.getAttribute('gridindex'));
-				if(settings.cells.backPanel && dial.path) index -= dial.page;
+				if(settings.backNode && dial.path) index -= dial.page;
 				console.log(index);
 				ev.dataTransfer.setData("text/plain", index);
 			 }
@@ -220,7 +220,7 @@ dial.initGrid = function(name, settings, container){
 				} else{
 					EndIndex =(dial.page - 1) * (app.settings.grid.rows * app.settings.grid.columns) + +(ev.target.getAttribute('gridindex'));
 				}
-				if(settings.cells.backPanel && dial.path) EndIndex -= dial.page;
+				if(settings.backNode && dial.path) EndIndex -= dial.page;
 				app.setNodeIndex(dial.Node, StartIndex, EndIndex);
 			}
 			link.draggable = true;
@@ -307,7 +307,7 @@ dial.populateGrid = function(grid, settings, node){
 	var linkItem = 0;
 	var allCells = settings.rows * settings.columns;
 	var maxCells = allCells;
-	if(settings.cells.backPanel && dial.path){
+	if(settings.backNode && dial.path){
 		populateBack(grid.getLink(linkItem));
 		linkItem++;
 		maxCells -= 1;

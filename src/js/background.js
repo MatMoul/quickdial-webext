@@ -20,6 +20,7 @@ core.Settings.load = function(callback){ // Load settings
 			margin: 10,
 			rows: 4,
 			columns: 5,
+			backNode: true,
 			backIcon: 'url(/img/back.png)',
 			folderIcon: 'url(/img/folder.png)',
 			loadingIcon: 'url(/img/throbber.gif)',
@@ -41,8 +42,7 @@ core.Settings.load = function(callback){ // Load settings
 				titleColor: '#ffffff',
 				titleColorHover: '#33ccff',
 				titleBackgroundColor: null,
-				titleBackgroundColorHover: null,
-				backPanel: true
+				titleBackgroundColorHover: null
 			},
 			root: 'Quick Dial',
 			node: {}
@@ -50,6 +50,7 @@ core.Settings.load = function(callback){ // Load settings
 	}).then(function(obj){
 		if(!obj.version){ // Upgrade Data Version
 			obj.version = 2;
+			obj.grid.backNode = true;
 			obj.grid.backIcon = 'url(/img/back.png)';
 			obj.grid.folderIcon = 'url(/img/folder.png)';
 			obj.grid.loadingIcon = 'url(/img/throbber.gif)';
@@ -60,6 +61,7 @@ core.Settings.load = function(callback){ // Load settings
 			delete obj.grid.cells.backIcon;
 			delete obj.grid.cells.folderIcon;
 			delete obj.grid.cells.loadingIcon;
+			delete obj.grid.cells.backPanel;
 		}
 		app.settings = obj;
 		if(callback) callback();

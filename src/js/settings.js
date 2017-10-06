@@ -1,4 +1,6 @@
 var BackgroundImage = null;
+var GridBackImage = null;
+var GridFolderImage = null;
 
 window.onload = function(){
 	browser.runtime.getBackgroundPage().then(function(page){
@@ -12,6 +14,14 @@ window.onload = function(){
 		GridRows.value = app.settings.grid.rows;
 		GridMargins.value = app.settings.grid.margin;
 		GridColumns.value = app.settings.grid.columns;
+		GridBackImage = app.settings.grid.cells.backIcon;
+		GridBackPreview.style.backgroundImage = app.settings.grid.cells.backIcon;
+		GridBackPreview.style.backgroundRepeat = 'no-repeat';
+		GridBackPreview.style.backgroundPosition = '50% 50%';
+		GridFolderImage = app.settings.grid.cells.folderIcon;
+		GridFolderPreview.style.backgroundImage = app.settings.grid.cells.folderIcon;
+		GridFolderPreview.style.backgroundRepeat = 'no-repeat';
+		GridFolderPreview.style.backgroundSize = '100% 100%';
 		GridCellsMargins.value = app.settings.grid.cells.margin;
 		GridCellsMarginsHover.value = app.settings.grid.cells.marginHover;
 		GridCellsBorderRadius.value = app.settings.grid.cells.borderRadius;
@@ -35,6 +45,8 @@ window.onload = function(){
 		app.settings.grid.rows = +(GridRows.value);
 		app.settings.grid.margin = +(GridMargins.value);
 		app.settings.grid.columns = +(GridColumns.value);
+		app.settings.grid.cells.backIcon = GridBackImage;
+		app.settings.grid.cells.folderIcon = GridFolderImage;
 		app.settings.grid.cells.margin = +(GridCellsMargins.value);
 		//app.settings.grid.cells.marginHover = +(GridCellsMarginsHover.value);
 		app.settings.grid.cells.marginHover = +(GridCellsMargins.value);
@@ -89,4 +101,38 @@ window.onload = function(){
 		fileReader.readAsDataURL(BackgroundImageFile.files[0]);
 	}
 
+	GridBackImageReset.onclick = function(){
+		GridBackImage = 'url(/img/back.png)';
+		GridBackPreview.style.backgroundImage = GridBackImage;
+	}
+	GridBackImageFile.onclick = function(){
+		this.value = null;
+	}
+	GridBackImageFile.onchange = function(){
+		var fileReader = new FileReader();
+		fileReader.onload = function(e){
+			GridBackImage = 'url(' + e.target.result + ')';
+			GridBackImageFile.value = null;
+			GridBackPreview.style.backgroundImage = GridBackImage;
+		}
+		fileReader.readAsDataURL(GridBackImageFile.files[0]);
+	}
+
+	GridFolderImageReset.onclick = function(){
+		GridFolderImage = 'url(/img/folder.png)';
+		GridFolderPreview.style.backgroundImage = GridFolderImage;
+	}
+	GridFolderImageFile.onclick = function(){
+		this.value = null;
+	}
+	GridFolderImageFile.onchange = function(){
+		var fileReader = new FileReader();
+		fileReader.onload = function(e){
+			GridFolderImage = 'url(' + e.target.result + ')';
+			GridFolderImageFile.value = null;
+			GridFolderPreview.style.backgroundImage = GridFolderImage;
+		}
+		fileReader.readAsDataURL(GridFolderImageFile.files[0]);
+	}
+	
 }

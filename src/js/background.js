@@ -35,14 +35,19 @@ core.Settings.load = function(callback){ // Load settings
 				titleColor: '#ffffff',
 				titleColorHover: '#33ccff',
 				backPanel: true,
-				backIcon: 'img/back.png',
-				folderIcon: 'img/folder.png',
-				loadingIcon: 'img/throbber.gif'
+				backIcon: '/img/back.png',
+				folderIcon: '/img/folder.png',
+				loadingIcon: '/img/throbber.gif'
 			},
 			root: 'Quick Dial',
 			node: {}
 		}
 	}).then(function(obj){
+		if(obj.grid.cells.backIcon == 'img/back.png'){
+			obj.grid.cells.backIcon = 'url(/img/back.png)';
+			obj.grid.cells.folderIcon = 'url(/img/folder.png)';
+			obj.grid.cells.loadingIcon = 'url(/img/throbber.gif)';
+		}
 		app.settings = obj;
 		if(callback) callback();
 	});

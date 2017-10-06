@@ -19,6 +19,9 @@ core.Settings.load = function(callback){ // Load settings
 			margin: 10,
 			rows: 4,
 			columns: 5,
+			backIcon: 'url(/img/back.png)',
+			folderIcon: 'url(/img/folder.png)',
+			loadingIcon: 'url(/img/throbber.gif)',
 			cells: {
 				margin: 4,
 				marginHover: 4,
@@ -34,19 +37,19 @@ core.Settings.load = function(callback){ // Load settings
 				titleFont: 'Arial, Verdana, Sans-serif',
 				titleColor: '#ffffff',
 				titleColorHover: '#33ccff',
-				backPanel: true,
-				backIcon: '/img/back.png',
-				folderIcon: '/img/folder.png',
-				loadingIcon: '/img/throbber.gif'
+				backPanel: true
 			},
 			root: 'Quick Dial',
 			node: {}
 		}
 	}).then(function(obj){
-		if(obj.grid.cells.backIcon == 'img/back.png'){
-			obj.grid.cells.backIcon = 'url(/img/back.png)';
-			obj.grid.cells.folderIcon = 'url(/img/folder.png)';
-			obj.grid.cells.loadingIcon = 'url(/img/throbber.gif)';
+		if(!obj.grid.backIcon){ // Upgrade Data Version
+			obj.grid.backIcon = 'url(/img/back.png)';
+			obj.grid.folderIcon = 'url(/img/folder.png)';
+			obj.grid.loadingIcon = 'url(/img/throbber.gif)';
+			delete obj.grid.cells.backIcon;
+			delete obj.grid.cells.folderIcon;
+			delete obj.grid.cells.loadingIcon;
 		}
 		app.settings = obj;
 		if(callback) callback();

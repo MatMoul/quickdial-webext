@@ -13,6 +13,7 @@ core.init = function(){ // Init module
 core.Settings = {}; // Settings helper object
 core.Settings.load = function(callback){ // Load settings
 	browser.storage.local.get({
+		version: 2,
 		backgroundColor: '#3c4048',
 		backgroundImage: null,
 		grid: {
@@ -27,6 +28,8 @@ core.Settings.load = function(callback){ // Load settings
 				marginHover: 4,
 				ratioX: 4,
 				ratioY: 3,
+				backgroundColor: null,
+				backgroundColorHover: null,
 				borderColor: '#333333',
 				borderColorHover: '#a9a9a9',
 				borderRadius: 4,
@@ -37,16 +40,23 @@ core.Settings.load = function(callback){ // Load settings
 				titleFont: 'Arial, Verdana, Sans-serif',
 				titleColor: '#ffffff',
 				titleColorHover: '#33ccff',
+				titleBackgroundColor: null,
+				titleBackgroundColorHover: null,
 				backPanel: true
 			},
 			root: 'Quick Dial',
 			node: {}
 		}
 	}).then(function(obj){
-		if(!obj.grid.backIcon){ // Upgrade Data Version
+		if(!obj.version){ // Upgrade Data Version
+			obj.version = 2;
 			obj.grid.backIcon = 'url(/img/back.png)';
 			obj.grid.folderIcon = 'url(/img/folder.png)';
 			obj.grid.loadingIcon = 'url(/img/throbber.gif)';
+			obj.grid.cells.backgroundColor = null;
+			obj.grid.cells.backgroundColorHover = null;
+			obj.grid.cells.titleBackgroundColor = null;
+			obj.grid.cells.titleBackgroundColorHover = null;
 			delete obj.grid.cells.backIcon;
 			delete obj.grid.cells.folderIcon;
 			delete obj.grid.cells.loadingIcon;

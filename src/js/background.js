@@ -48,7 +48,7 @@ core.Settings.load = function(callback){ // Load settings
 			node: {}
 		}
 	}).then(function(obj){
-		if(!obj.version){ // Upgrade Data Version
+		if(obj.grid.cells.backIcon){ // Upgrade Data Version
 			obj.version = 2;
 			obj.grid.backNode = true;
 			obj.grid.backIcon = 'url(/img/back.png)';

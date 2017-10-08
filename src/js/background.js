@@ -45,7 +45,7 @@ core.Settings.load = function(callback){ // Load settings
 				titleBackgroundColorHover: null
 			},
 			root: 'Quick Dial',
-			node: {}
+			node: { children: [] }
 		}
 	}).then(function(obj){
 		if(obj.grid.cells.backIcon){ // Upgrade Data Version

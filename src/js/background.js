@@ -184,20 +184,13 @@ core.ContextMenus.initMenu = function(){ // (Called from core.init) Init context
 }
 
 core.Bookmarks = {} // Bookmarks helper object
-core.Bookmarks._onCreated = function(){ }
-core.Bookmarks._onChanged = function(){ }
-core.Bookmarks._onMoved = function(){ }
-core.Bookmarks._onRemoved = function(){ }
-/*
-core.Bookmarks._onCreated = function(){ core.GridNodes.sync(core.settings.grid.node, core.settings.grid.root); }
-core.Bookmarks._onChanged = function(){ core.GridNodes.sync(core.settings.grid.node, core.settings.grid.root); }
-core.Bookmarks._onMoved = function(){ core.GridNodes.sync(core.settings.grid.node, core.settings.grid.root); }
-core.Bookmarks._onRemoved = function(){ core.GridNodes.sync(core.settings.grid.node, core.settings.grid.root); }
-*/
-// ---------
+core.Bookmarks._onCreated = function(){ core.GridNodes.sync(core.node, core.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: core.Messages.Commands.gridNodesLoaded }); }); }
+core.Bookmarks._onChanged = function(){ core.GridNodes.sync(core.node, core.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: core.Messages.Commands.gridNodesLoaded }); }); }
+core.Bookmarks._onMoved = function(){ core.GridNodes.sync(core.node, core.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: core.Messages.Commands.gridNodesLoaded }); }); }
+core.Bookmarks._onRemoved = function(){ core.GridNodes.sync(core.node, core.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: core.Messages.Commands.gridNodesLoaded }); }); }
 core.Bookmarks.initListener = function(){ // (Called from core.init) (/!\ Need filter to root tree only) Init listener of bookmarks
 	browser.bookmarks.onCreated.addListener(core.Bookmarks._onCreated);
-	browser.bookmarks.onChanged.addListener(core.Bookmarks._onChanged);
+	//browser.bookmarks.onChanged.addListener(core.Bookmarks._onChanged);
 	browser.bookmarks.onMoved.addListener(core.Bookmarks._onMoved);
 	browser.bookmarks.onRemoved.addListener(core.Bookmarks._onRemoved);		
 }

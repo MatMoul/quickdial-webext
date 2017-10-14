@@ -404,6 +404,31 @@ core.GridNodes.getNode = function(gridNode, path){ // Return GridNode from RootG
 			return core.GridNodes.getNode(child, path.substr(child.title.length + 1));
 	return null;
 }
+core.GridNodes.getNodeWithParent = function(id){
+	
+	var parents = [];
+
+	function findNode(gridNode){
+		if(gridNode.id == id){
+			parents.unshift(gridNode);
+			return gridNode;
+		}
+		if(gridNode.children){
+			for(var i=0; i<gridNode.children.length; i++){
+				var result = findNode(gridNode.children[i]);
+				if(result){
+					parents.unshift(gridNode);
+					return result;
+				}
+			}
+		}
+		return null;
+	}
+
+	findNode(core.node, id);
+	if(parents.length>0) return parents;
+	return null;
+}
 core.GridNodes.getChildNode = function(gridNode, id){ // Return child node by ID
 	for(var child of gridNode.children) if(child.id == id) return child;
 	return null;
@@ -498,30 +523,61 @@ core.GridNodes.deleteNode = function(gridNode, id, callback){ // Delete a GridNo
 core.GridNodes.refreshNode = function(gridNode, callback){ // Refresh content of a GridNode
 	if(gridNode.__isLoading == true) return;
 	gridNode.__isLoading = true;
-	core.SiteInfos.fromFrame(gridNode.url, function(infos){
-		if(infos){
-			gridNode.title = infos.title;
-			gridNode.image = infos.screenshot;
-		} else {
-			gridNode.image = '0';
-		}
-		delete gridNode.__isLoading;
-		core.GridNodes.saveNode(gridNode);
-		if(callback) callback(infos);
-	});
+	switch(gridNode.type){
+		case core.GridNodes.GridNodeType.folder:
+			delete gridNode.image;
+			delete gridNode.__isLoading;
+			core.GridNodes.saveNode(gridNode);
+			if(callback) callback({ title: gridNode.title, screenshot: gridNode.image });
+			break;
+		case core.GridNodes.GridNodeType.bookmark:
+			core.SiteInfos.fromFrame(gridNode.url, function(infos){
+				if(infos){
+					gridNode.title = infos.title;
+					gridNode.image = infos.screenshot;
+				} else {
+					gridNode.image = '0';
+				}
+				delete gridNode.__isLoading;
+				core.GridNodes.saveNode(gridNode);
+				if(callback) callback(infos);
+			});
+			break;
+	}
 }
 core.GridNodes.capturePage = function(gridNode, callback){
 	if(gridNode.__isLoading == true) return;
 	gridNode.__isLoading = true;
-	core.SiteInfos.fromNewTab(gridNode.url, function(infos){
-		if(infos){
-			gridNode.title = infos.title;
-			gridNode.image = infos.screenshot;
-		} else {
-			gridNode.image = '0';
-		}
-		delete gridNode.__isLoading;
-		core.GridNodes.saveNode(gridNode);
-		if(callback) callback(infos);
-	});
+	switch(gridNode.type){
+		case core.GridNodes.GridNodeType.folder:
+			var nodes = core.GridNodes.getNodeWithParent(gridNode.id);
+			if(nodes){
+				var path = '';
+				for(var i=1; i<nodes.length; i++) path = path + '/' + nodes[i].title;
+				core.SiteInfos.fromNewTab('/dial?path=' + path, function(infos){
+					if(infos){
+						gridNode.image = infos.screenshot;
+					} else {
+						delete gridNode.image;
+					}
+					delete gridNode.__isLoading;
+					core.GridNodes.saveNode(gridNode);
+					if(callback) callback({ title: gridNode.title, screenshot: gridNode.image });
+				});
+			}
+			break;
+		case core.GridNodes.GridNodeType.bookmark:
+			core.SiteInfos.fromNewTab(gridNode.url, function(infos){
+				if(infos){
+					gridNode.title = infos.title;
+					gridNode.image = infos.screenshot;
+				} else {
+					gridNode.image = '0';
+				}
+				delete gridNode.__isLoading;
+				core.GridNodes.saveNode(gridNode);
+				if(callback) callback(infos);
+			});
+			break;
+	}
 }

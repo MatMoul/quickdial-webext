@@ -20,11 +20,12 @@ app.init = function(){
 					if(node.image){
 						if(node.image.indexOf('url(')>0) Image = node.image;
 						else Image = 'url(' + node.image + ')';
-					} else Image = app.settings.grid.folderIcon;
-
-					ImagePreview.style.backgroundImage = Image;
+					} else Image = null;
+					if(Image==null) ImagePreview.style.backgroundImage = app.settings.grid.folderIcon;
+					else ImagePreview.style.backgroundImage = Image;
 					break;
 				case app.GridNodes.GridNodeType.bookmark:
+					ImageDefault.style.display = 'none';
 					Url.value = node.url;
 					Image = 'url(' + node.image + ')';
 					ImagePreview.style.backgroundImage = Image;
@@ -45,6 +46,17 @@ app.init = function(){
 					case app.GridNodes.GridNodeType.bookmark:
 						Image = node.image;
 						ImagePreview.style.backgroundImage = 'url(' + Image + ')';
+						break;
+				}
+			};
+
+			ImageDefault.onclick = function(){
+				switch(node.type){
+					case app.GridNodes.GridNodeType.folder:
+						Image = null;
+						ImagePreview.style.backgroundImage = app.settings.grid.folderIcon;
+						break;
+					case app.GridNodes.GridNodeType.bookmark:
 						break;
 				}
 			};

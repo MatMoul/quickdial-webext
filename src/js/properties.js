@@ -19,7 +19,7 @@ app.init = function(){
 					Url.parentNode.parentNode.style.display = 'none';
 					if(node.image) Image = node.image;
 					else Image = app.settings.grid.folderIcon;
-					ImagePreview.style.backgroundImage = Image;
+					ImagePreview.style.backgroundImage = 'url(' + Image + ')';
 					break;
 				case app.GridNodes.GridNodeType.bookmark:
 					Url.value = node.url;

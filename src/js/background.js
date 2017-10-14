@@ -1,22 +1,21 @@
-var core = {}; // Main app object in background.js
-var app = {};  // Shared app object with pages
+var app = {};  // App object
 
-core.init = function(){ // Init module
-	core.Settings.init(function(){
-		core.Messages.init();
-		browser.runtime.sendMessage({ cmd: core.Messages.Commands.settingsChanged });
+app.init = function(){ // Init module
+	app.Settings.init(function(){
+		app.Messages.init();
+		browser.runtime.sendMessage({ cmd: app.Messages.Commands.settingsChanged });
 		browser.browserAction.onClicked.addListener(function(){
 			browser.tabs.create({});
 		});
-		core.GridNodes.sync(core.node, core.settings.grid.root, function(){
-			browser.runtime.sendMessage({ cmd: core.Messages.Commands.gridNodesLoaded });
-			core.Bookmarks.initListener();
+		app.GridNodes.sync(app.node, app.settings.grid.root, function(){
+			browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded });
+			app.Bookmarks.initListener();
 		});
 	});
 };
 
-core.Messages = {}; // Messages helper object
-core.Messages.Commands = {
+app.Messages = {}; // Messages helper object
+app.Messages.Commands = {
 	getSettings: 0,
 	setSettings: 1,
 	getNode: 2,
@@ -31,68 +30,68 @@ core.Messages.Commands = {
 	settingsChanged: 100,
 	gridNodesLoaded: 101
 };
-core.Messages.init = function(){ // Init Messages Listeners
+app.Messages.init = function(){ // Init Messages Listeners
 	browser.runtime.onMessage.addListener(function(request, sender, sendResponse){
 		switch(request.cmd){
-			case core.Messages.Commands.getSettings:
-				sendResponse(core.settings);
+			case app.Messages.Commands.getSettings:
+				sendResponse(app.settings);
 				break;
-			case core.Messages.Commands.setSettings:
-				core.settings = request.settings;
-				core.Settings.save();
-				sendResponse(core.settings);
-				browser.runtime.sendMessage( { cmd: core.Messages.Commands.settingsChanged } );
-				browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
+			case app.Messages.Commands.setSettings:
+				app.settings = request.settings;
+				app.Settings.save();
+				sendResponse(app.settings);
+				browser.runtime.sendMessage( { cmd: app.Messages.Commands.settingsChanged } );
+				browser.runtime.sendMessage( { cmd: app.Messages.Commands.gridNodesLoaded } );
 				break;
-			case core.Messages.Commands.getNodeByID:
-				var nodes = core.GridNodes.getNodeWithParents(request.id);
+			case app.Messages.Commands.getNodeByID:
+				var nodes = app.GridNodes.getNodeWithParents(request.id);
 				if(nodes) sendResponse(nodes[nodes.length-1]);
 				else sendResponse(null);
 				break;
-			case core.Messages.Commands.updateNode:
-				core.GridNodes.updateNode(core.GridNodes.getNodeById(request.id), request.value, function(){
-					browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
+			case app.Messages.Commands.updateNode:
+				app.GridNodes.updateNode(app.GridNodes.getNodeById(request.id), request.value, function(){
+					browser.runtime.sendMessage( { cmd: app.Messages.Commands.gridNodesLoaded } );
 				});
 				break;
-			case core.Messages.Commands.getNode:
-				sendResponse(core.GridNodes.getNode(core.node, request.path.substr(1)));
+			case app.Messages.Commands.getNode:
+				sendResponse(app.GridNodes.getNode(app.node, request.path.substr(1)));
 				break;
-			case core.Messages.Commands.setNodeIndex:
-				core.GridNodes.setNodeIndex(core.GridNodes.getNode(core.node, request.path.substr(1)), request.index, request.newIndex, function(){
-					browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
+			case app.Messages.Commands.setNodeIndex:
+				app.GridNodes.setNodeIndex(app.GridNodes.getNode(app.node, request.path.substr(1)), request.index, request.newIndex, function(){
+					browser.runtime.sendMessage( { cmd: app.Messages.Commands.gridNodesLoaded } );
 				});
 				break;
-			case core.Messages.Commands.createBookmark:
-				core.GridNodes.createBookmark(core.GridNodes.getNode(core.node, request.path.substr(1)), request.url, request.title, function(){
-					browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
+			case app.Messages.Commands.createBookmark:
+				app.GridNodes.createBookmark(app.GridNodes.getNode(app.node, request.path.substr(1)), request.url, request.title, function(){
+					browser.runtime.sendMessage( { cmd: app.Messages.Commands.gridNodesLoaded } );
 				});
 				break;
-			case core.Messages.Commands.createFolder:
-				core.GridNodes.createFolder(core.GridNodes.getNode(core.node, request.path.substr(1)), request.name, function(){
-					browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
+			case app.Messages.Commands.createFolder:
+				app.GridNodes.createFolder(app.GridNodes.getNode(app.node, request.path.substr(1)), request.name, function(){
+					browser.runtime.sendMessage( { cmd: app.Messages.Commands.gridNodesLoaded } );
 				});
 				break;
-			case core.Messages.Commands.deleteNode:
-				core.GridNodes.deleteNode(core.GridNodes.getNode(core.node, request.path.substr(1)), request.id, function(){
-					browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
+			case app.Messages.Commands.deleteNode:
+				app.GridNodes.deleteNode(app.GridNodes.getNode(app.node, request.path.substr(1)), request.id, function(){
+					browser.runtime.sendMessage( { cmd: app.Messages.Commands.gridNodesLoaded } );
 				});
 				break;
-			case core.Messages.Commands.refreshNode:
-				core.GridNodes.refreshNode(core.GridNodes.getChildNode(core.GridNodes.getNode(core.node, request.path.substr(1)), request.id), function(){
-					browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
+			case app.Messages.Commands.refreshNode:
+				app.GridNodes.refreshNode(app.GridNodes.getChildNode(app.GridNodes.getNode(app.node, request.path.substr(1)), request.id), function(){
+					browser.runtime.sendMessage( { cmd: app.Messages.Commands.gridNodesLoaded } );
 				});
 				break;
-			case core.Messages.Commands.capturePage:
-				core.GridNodes.capturePage(core.GridNodes.getChildNode(core.GridNodes.getNode(core.node, request.path.substr(1)), request.id), function(){
-					browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
+			case app.Messages.Commands.capturePage:
+				app.GridNodes.capturePage(app.GridNodes.getChildNode(app.GridNodes.getNode(app.node, request.path.substr(1)), request.id), function(){
+					browser.runtime.sendMessage( { cmd: app.Messages.Commands.gridNodesLoaded } );
 				});
 				break;
 		}
 	});
 };
 
-core.Settings = {}; // Settings helper object
-core.Settings.init = function(callback){ // Load settings and nodes
+app.Settings = {}; // Settings helper object
+app.Settings.init = function(callback){ // Load settings and nodes
 	browser.storage.local.get().then(function(data){
 		if(Object.keys(data).length == 0) {
 			data = {
@@ -157,34 +156,34 @@ core.Settings.init = function(callback){ // Load settings and nodes
 			data.node = oldData.grid.node;
 			delete data.settings.version;
 			delete data.settings.grid.node;
-			core.settings = data.settings;
-			core.node = data.node;
+			app.settings = data.settings;
+			app.node = data.node;
 			browser.storage.local.clear().then(function(){
-				core.Settings.save();
+				app.Settings.save();
 			});
 		}
-		core.settings = data.settings;
-		core.node = data.node;
+		app.settings = data.settings;
+		app.node = data.node;
 		if(callback) callback();
 	}, function(){ console.log('Error loading data'); });
 };
-core.Settings.update = function(settings, callback){ // Save new settings
-	core.settings = settings;
-	core.Settings.save(callback);
+app.Settings.update = function(settings, callback){ // Save new settings
+	app.settings = settings;
+	app.Settings.save(callback);
 };
-core.Settings.save = function(callback){ // Save settings
+app.Settings.save = function(callback){ // Save settings
 	var data = { version: 3 };
-	data.settings = core.settings;
-	data.node = core.node;
+	data.settings = app.settings;
+	data.node = app.node;
 	browser.storage.local.set(data).then(function(){
 		if(callback) callback();
 	}, function(){ console.log('Error saving settings'); });
 }
 
-core.init();
+app.init();
 
-core.ContextMenus = {} // ContextMenu helper Object
-core.ContextMenus.initMenu = function(){ // (Called from core.init) Init context menu in all pages
+app.ContextMenus = {} // ContextMenu helper Object
+app.ContextMenus.initMenu = function(){ // (Called from app.init) Init context menu in all pages
 	browser.contextMenus.create({ // Create Context menu
 		id: 'AddToQuickDial',
 		title: browser.i18n.getMessage("menuAddToQuickDial"),
@@ -193,22 +192,22 @@ core.ContextMenus.initMenu = function(){ // (Called from core.init) Init context
 	}, function(){});
 	browser.contextMenus.onClicked.addListener(function(info, tab) { // Context menu click event
 		//if (info.menuItemId == "AddToQuickDial")
-			//core.GridNodes.createBookmark(app.settings.grid.node, info.pageUrl, tab.title, function(){});
+			//app.GridNodes.createBookmark(app.settings.grid.node, info.pageUrl, tab.title, function(){});
 	});
 }
 
-core.Bookmarks = {} // Bookmarks helper object
-core.Bookmarks._onCreated = function(){ core.GridNodes.sync(core.node, core.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: core.Messages.Commands.gridNodesLoaded }); }); }
-core.Bookmarks._onChanged = function(){ core.GridNodes.sync(core.node, core.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: core.Messages.Commands.gridNodesLoaded }); }); }
-core.Bookmarks._onMoved = function(){ core.GridNodes.sync(core.node, core.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: core.Messages.Commands.gridNodesLoaded }); }); }
-core.Bookmarks._onRemoved = function(){ core.GridNodes.sync(core.node, core.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: core.Messages.Commands.gridNodesLoaded }); }); }
-core.Bookmarks.initListener = function(){ // (Called from core.init) (/!\ Need filter to root tree only) Init listener of bookmarks
-	browser.bookmarks.onCreated.addListener(core.Bookmarks._onCreated);
-	//browser.bookmarks.onChanged.addListener(core.Bookmarks._onChanged);
-	browser.bookmarks.onMoved.addListener(core.Bookmarks._onMoved);
-	browser.bookmarks.onRemoved.addListener(core.Bookmarks._onRemoved);		
+app.Bookmarks = {} // Bookmarks helper object
+app.Bookmarks._onCreated = function(){ app.GridNodes.sync(app.node, app.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded }); }); }
+app.Bookmarks._onChanged = function(){ app.GridNodes.sync(app.node, app.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded }); }); }
+app.Bookmarks._onMoved = function(){ app.GridNodes.sync(app.node, app.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded }); }); }
+app.Bookmarks._onRemoved = function(){ app.GridNodes.sync(app.node, app.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded }); }); }
+app.Bookmarks.initListener = function(){ // (Called from app.init) (/!\ Need filter to root tree only) Init listener of bookmarks
+	browser.bookmarks.onCreated.addListener(app.Bookmarks._onCreated);
+	//browser.bookmarks.onChanged.addListener(app.Bookmarks._onChanged);
+	browser.bookmarks.onMoved.addListener(app.Bookmarks._onMoved);
+	browser.bookmarks.onRemoved.addListener(app.Bookmarks._onRemoved);		
 }
-core.Bookmarks.load = function(rootPath, callback){ // Load root bookmark and create it if not exist
+app.Bookmarks.load = function(rootPath, callback){ // Load root bookmark and create it if not exist
 	if(!callback) return;
 	browser.bookmarks.getSubTree('menu________').then(function(bookmarkItems){
 		function getChildItem(bookmarkItem, path, callback){
@@ -230,8 +229,8 @@ core.Bookmarks.load = function(rootPath, callback){ // Load root bookmark and cr
 	}, function(){ callback(); });
 }
 
-core.SiteInfos = {} // Siteinfos helper object
-core.SiteInfos.fromNewTab = function(url, callback){  // Retrieve infos from a new tab. callback( { url, title, icon, screenshot } || error: callback() )
+app.SiteInfos = {} // Siteinfos helper object
+app.SiteInfos.fromNewTab = function(url, callback){  // Retrieve infos from a new tab. callback( { url, title, icon, screenshot } || error: callback() )
 	browser.tabs.create({url: url, active: false}).then(function(tab){
 		browser.tabs.update(tab.id, {muted: true}).then();
 		function whaitLoaded(){
@@ -284,7 +283,7 @@ core.SiteInfos.fromNewTab = function(url, callback){  // Retrieve infos from a n
 		setTimeout(whaitLoaded, 300);
 	}, function(){ if(callback) callback(); });
 }
-core.SiteInfos.fromFrame = function(url, callback){ // Retrieve infos from an iframe. callback( { url, title, (/!\ Not handled now)icon, screenshot } || error: callback() )
+app.SiteInfos.fromFrame = function(url, callback){ // Retrieve infos from an iframe. callback( { url, title, (/!\ Not handled now)icon, screenshot } || error: callback() )
 	function pageLoaded(){
 		if(!iframe) return;
 		var docTitle = iframe.contentWindow.document.title;
@@ -335,33 +334,33 @@ core.SiteInfos.fromFrame = function(url, callback){ // Retrieve infos from an if
 	xmlHttp.ontimeout = function(){ if(callback) callback(); }
 	xmlHttp.send();
 	}
-	core.SiteInfos.fromWS = function(url, callback){ // Retrieve infos from a Web Service. callback( { url, title, (/!\ Not handled now)icon, screenshot } || error: callback() )
+	app.SiteInfos.fromWS = function(url, callback){ // Retrieve infos from a Web Service. callback( { url, title, (/!\ Not handled now)icon, screenshot } || error: callback() )
 	console.log('Not implemented');
-	return core.SiteInfos.fromFrame(url, callback);
+	return app.SiteInfos.fromFrame(url, callback);
 }
 
-core.GridNodes = {}; // GridNodes helper object
-core.GridNodes.GridNodeType = { // GridNodeType
+app.GridNodes = {}; // GridNodes helper object
+app.GridNodes.GridNodeType = { // GridNodeType
 	back: -1,
 	empty: 0,
 	folder: 1,
 	bookmark: 2
 }
-core.GridNodes.sync = function(gridNode, rootPath, callback){ // Sync GridNodes with Bookmarks
-	core.Bookmarks.load(rootPath, function(bookmarkItem){
+app.GridNodes.sync = function(gridNode, rootPath, callback){ // Sync GridNodes with Bookmarks
+	app.Bookmarks.load(rootPath, function(bookmarkItem){
 		function syncNode(gridNode, bookmarkItem){
 			gridNode.id = bookmarkItem.id;
 			if(!gridNode.title) gridNode.title = bookmarkItem.title;
 			if(bookmarkItem.url){
-				gridNode.type = core.GridNodes.GridNodeType.bookmark;
+				gridNode.type = app.GridNodes.GridNodeType.bookmark;
 				if(!gridNode.url) gridNode.url = bookmarkItem.url;
 			} else if(bookmarkItem.children){
-				gridNode.type = core.GridNodes.GridNodeType.folder;
+				gridNode.type = app.GridNodes.GridNodeType.folder;
 				var EmptyNodes = [];
 				if(! gridNode.children) gridNode.children = [];
 				else {
 					for(var i=gridNode.children.length-1; i>=0; i--){
-						if(gridNode.children[i].type==core.GridNodes.GridNodeType.empty){
+						if(gridNode.children[i].type==app.GridNodes.GridNodeType.empty){
 							EmptyNodes.unshift(gridNode.children[i]);
 						} else {
 							var found = false;
@@ -373,7 +372,7 @@ core.GridNodes.sync = function(gridNode, rootPath, callback){ // Sync GridNodes 
 							}
 							if(! found){
 								if(i<gridNode.children.length - 1){
-									gridNode.children[i] = { type: core.GridNodes.GridNodeType.empty };
+									gridNode.children[i] = { type: app.GridNodes.GridNodeType.empty };
 									EmptyNodes.unshift(gridNode.children[i]);
 								} else {
 									gridNode.children.pop();
@@ -383,7 +382,7 @@ core.GridNodes.sync = function(gridNode, rootPath, callback){ // Sync GridNodes 
 					}
 				}
 				for(var child of bookmarkItem.children){
-					var childGridNode = core.GridNodes.getChildNode(gridNode, child.id);
+					var childGridNode = app.GridNodes.getChildNode(gridNode, child.id);
 					if(!childGridNode){
 						if(EmptyNodes.length>0){
 							childGridNode = EmptyNodes[0];
@@ -397,31 +396,31 @@ core.GridNodes.sync = function(gridNode, rootPath, callback){ // Sync GridNodes 
 				}
 				EmptyNodes.length = 0;
 			} else {
-				gridNode.type = core.GridNodes.GridNodeType.empty;
+				gridNode.type = app.GridNodes.GridNodeType.empty;
 			}
 		}
 
 		syncNode(gridNode, bookmarkItem);
-		core.GridNodes.save();
+		app.GridNodes.save();
 		if(callback) callback();
 	});
 }
-core.GridNodes.save = function(callback){ // Save GridNodes
-	core.Settings.save(callback);
+app.GridNodes.save = function(callback){ // Save GridNodes
+	app.Settings.save(callback);
 }
-core.GridNodes.getNode = function(gridNode, path){ // Return GridNode from RootGridNode path
+app.GridNodes.getNode = function(gridNode, path){ // Return GridNode from RootGridNode path
 	if(path.length == 0 || path == '/') return gridNode;
 	for(var child of gridNode.children)
 		if(path.startsWith(child.title + '/'))
-			return core.GridNodes.getNode(child, path.substr(child.title.length + 1));
+			return app.GridNodes.getNode(child, path.substr(child.title.length + 1));
 	return null;
 }
-core.GridNodes.getNodeById = function(id){
-	var nodes = core.GridNodes.getNodeWithParents(id);
+app.GridNodes.getNodeById = function(id){
+	var nodes = app.GridNodes.getNodeWithParents(id);
 	if(nodes) return nodes[nodes.length-1];
 	return null;
 }
-core.GridNodes.getNodeWithParents = function(id){
+app.GridNodes.getNodeWithParents = function(id){
 	
 	var parents = [];
 
@@ -442,125 +441,125 @@ core.GridNodes.getNodeWithParents = function(id){
 		return null;
 	}
 
-	findNode(core.node, id);
+	findNode(app.node, id);
 	if(parents.length>0) return parents;
 	return null;
 }
-core.GridNodes.updateNode = function(gridNode, value, callback){
+app.GridNodes.updateNode = function(gridNode, value, callback){
 	if(value){
 		if(value.title) gridNode.title = value.title;
-		if(gridNode.type == core.GridNodes.GridNodeType.bookmark && value.url && gridNode.url != value.url){
+		if(gridNode.type == app.GridNodes.GridNodeType.bookmark && value.url && gridNode.url != value.url){
 			gridNode.url = value.url;
 			delete gridNode.image;
 		}
 		//gridNode.image = infos.screenshot;
-		core.GridNodes.saveNode(gridNode);
+		app.GridNodes.saveNode(gridNode);
 	}
 	if(callback) callback(gridNode);
 }
-core.GridNodes.getChildNode = function(gridNode, id){ // Return child node by ID
+app.GridNodes.getChildNode = function(gridNode, id){ // Return child node by ID
 	for(var child of gridNode.children) if(child.id == id) return child;
 	return null;
 }
-core.GridNodes.saveNode = function(gridNode, callback){ // Save GridNode
-	core.Settings.save(callback);
+app.GridNodes.saveNode = function(gridNode, callback){ // Save GridNode
+	app.Settings.save(callback);
 }
-core.GridNodes.setNodeIndex = function(gridNode, index, newIndex, callback){ // Set Child GridNodeIndex. callback(gridNode, node1, node2)
+app.GridNodes.setNodeIndex = function(gridNode, index, newIndex, callback){ // Set Child GridNodeIndex. callback(gridNode, node1, node2)
 	while(newIndex>=gridNode.children.length)
-		gridNode.children.push({ type: core.GridNodes.GridNodeType.empty });
+		gridNode.children.push({ type: app.GridNodes.GridNodeType.empty });
 	var node1 = gridNode.children[index];
 	var node2 = gridNode.children[newIndex];
 	gridNode.children[index] = node2;
 	gridNode.children[newIndex] = node1;
 	for(var i=gridNode.children.length-1; i>=0; i--){
-		if(gridNode.children[i].type != core.GridNodes.GridNodeType.empty) break;
+		if(gridNode.children[i].type != app.GridNodes.GridNodeType.empty) break;
 		gridNode.children.pop();
 	}
-	core.GridNodes.saveNode(gridNode);
+	app.GridNodes.saveNode(gridNode);
 	if(callback) callback(gridNode, node1, node2);
 }
-core.GridNodes.createBookmark = function(gridNode, url, title, callback){ // Create a new Bookmark in a GridNode.  callback(gridNode, newGridNode)
-	browser.bookmarks.onCreated.removeListener(core.Bookmarks._onCreated);
+app.GridNodes.createBookmark = function(gridNode, url, title, callback){ // Create a new Bookmark in a GridNode.  callback(gridNode, newGridNode)
+	browser.bookmarks.onCreated.removeListener(app.Bookmarks._onCreated);
 	browser.bookmarks.create({
 		parentId: gridNode.id,
 		title: title || url,
 		url: url
 	}).then(function(bookmarkItem){
 		if(!gridNode) return; // ??? Why this method are called a second time with gridNode = null ???
-		browser.bookmarks.onCreated.addListener(core.Bookmarks._onCreated);
-		var newGridNode = { id: bookmarkItem.id, type: core.GridNodes.GridNodeType.bookmark, url: url, title };
+		browser.bookmarks.onCreated.addListener(app.Bookmarks._onCreated);
+		var newGridNode = { id: bookmarkItem.id, type: app.GridNodes.GridNodeType.bookmark, url: url, title };
 		var EmptyCellFound = false;
 		for(var i=0; i<gridNode.children.length; i++){
-			if(gridNode.children[i].type == core.GridNodes.GridNodeType.empty){
+			if(gridNode.children[i].type == app.GridNodes.GridNodeType.empty){
 				EmptyCellFound = true;
 				gridNode.children[i] = newGridNode;
 				break;
 			}
 		}
 		if(EmptyCellFound == false) gridNode.children.push(newGridNode);
-		core.GridNodes.saveNode(newGridNode);
+		app.GridNodes.saveNode(newGridNode);
 		if(callback) callback(gridNode, newGridNode);
 	}, function(){
-		browser.bookmarks.onCreated.addListener(core.Bookmarks._onCreated);
+		browser.bookmarks.onCreated.addListener(app.Bookmarks._onCreated);
 	});
 }
-core.GridNodes.createFolder = function(gridNode, name, callback){ // Create a new folder in a GridNode. callback(gridNode, newGridNode)
-	browser.bookmarks.onCreated.removeListener(core.Bookmarks._onCreated);
+app.GridNodes.createFolder = function(gridNode, name, callback){ // Create a new folder in a GridNode. callback(gridNode, newGridNode)
+	browser.bookmarks.onCreated.removeListener(app.Bookmarks._onCreated);
 	browser.bookmarks.create({
 		parentId: gridNode.id,
 		title: name
 	}).then(function(bookmarkItem){
 		if(!gridNode) return; // ??? Why this method are called a second time with gridNode = null ???
-		browser.bookmarks.onCreated.addListener(core.Bookmarks._onCreated);
-		var newGridNode = { id: bookmarkItem.id, type: core.GridNodes.GridNodeType.folder, title: name, children: [] };
+		browser.bookmarks.onCreated.addListener(app.Bookmarks._onCreated);
+		var newGridNode = { id: bookmarkItem.id, type: app.GridNodes.GridNodeType.folder, title: name, children: [] };
 		var EmptyCellFound = false;
 		for(var i=0; i<gridNode.children.length; i++){
-			if(gridNode.children[i].type == core.GridNodes.GridNodeType.empty){
+			if(gridNode.children[i].type == app.GridNodes.GridNodeType.empty){
 				EmptyCellFound = true;
 				gridNode.children[i] = newGridNode;
 				break;
 			}
 		}
 		if(EmptyCellFound == false) gridNode.children.push(newGridNode);
-		core.GridNodes.saveNode(newGridNode);
+		app.GridNodes.saveNode(newGridNode);
 		if(callback) callback(gridNode, newGridNode);
 	}, function(){
-		browser.bookmarks.onCreated.addListener(core.Bookmarks._onCreated);
+		browser.bookmarks.onCreated.addListener(app.Bookmarks._onCreated);
 	});
 }
-core.GridNodes.deleteNode = function(gridNode, id, callback){ // Delete a GridNode. callback(gridNode, id)
+app.GridNodes.deleteNode = function(gridNode, id, callback){ // Delete a GridNode. callback(gridNode, id)
 	for(var i=0; i<gridNode.children.length; i++){
 		if(gridNode.children[i].id == id){
-			gridNode.children[i] = { type: core.GridNodes.GridNodeType.empty };
-			core.GridNodes.saveNode(gridNode);
+			gridNode.children[i] = { type: app.GridNodes.GridNodeType.empty };
+			app.GridNodes.saveNode(gridNode);
 			break;
 		}
 	}
 	for(var i=gridNode.children.length-1; i>=0; i--){
-		if(gridNode.children[i].type != core.GridNodes.GridNodeType.empty) break;
+		if(gridNode.children[i].type != app.GridNodes.GridNodeType.empty) break;
 		gridNode.children.pop();
 	}
-	browser.bookmarks.onRemoved.removeListener(core.Bookmarks._onRemoved);
+	browser.bookmarks.onRemoved.removeListener(app.Bookmarks._onRemoved);
 	browser.bookmarks.removeTree(id).then(function(){
-		browser.bookmarks.onRemoved.addListener(core.Bookmarks._onRemoved);
+		browser.bookmarks.onRemoved.addListener(app.Bookmarks._onRemoved);
 	}, function(){
-		browser.bookmarks.onRemoved.addListener(core.Bookmarks._onRemoved);
+		browser.bookmarks.onRemoved.addListener(app.Bookmarks._onRemoved);
 	});
 	if(callback) callback(gridNode, id);
 }
 
-core.GridNodes.refreshNode = function(gridNode, callback){ // Refresh content of a GridNode
+app.GridNodes.refreshNode = function(gridNode, callback){ // Refresh content of a GridNode
 	if(gridNode.__isLoading == true) return;
 	gridNode.__isLoading = true;
 	switch(gridNode.type){
-		case core.GridNodes.GridNodeType.folder:
+		case app.GridNodes.GridNodeType.folder:
 			delete gridNode.image;
 			delete gridNode.__isLoading;
-			core.GridNodes.saveNode(gridNode);
+			app.GridNodes.saveNode(gridNode);
 			if(callback) callback({ title: gridNode.title, screenshot: gridNode.image });
 			break;
-		case core.GridNodes.GridNodeType.bookmark:
-			core.SiteInfos.fromFrame(gridNode.url, function(infos){
+		case app.GridNodes.GridNodeType.bookmark:
+			app.SiteInfos.fromFrame(gridNode.url, function(infos){
 				if(infos){
 					gridNode.title = infos.title;
 					gridNode.image = infos.screenshot;
@@ -568,35 +567,35 @@ core.GridNodes.refreshNode = function(gridNode, callback){ // Refresh content of
 					gridNode.image = '0';
 				}
 				delete gridNode.__isLoading;
-				core.GridNodes.saveNode(gridNode);
+				app.GridNodes.saveNode(gridNode);
 				if(callback) callback(infos);
 			});
 			break;
 	}
 }
-core.GridNodes.capturePage = function(gridNode, callback){
+app.GridNodes.capturePage = function(gridNode, callback){
 	if(gridNode.__isLoading == true) return;
 	gridNode.__isLoading = true;
 	switch(gridNode.type){
-		case core.GridNodes.GridNodeType.folder:
-			var nodes = core.GridNodes.getNodeWithParents(gridNode.id);
+		case app.GridNodes.GridNodeType.folder:
+			var nodes = app.GridNodes.getNodeWithParents(gridNode.id);
 			if(nodes){
 				var path = '';
 				for(var i=1; i<nodes.length; i++) path = path + '/' + nodes[i].title;
-				core.SiteInfos.fromNewTab('/dial?path=' + path, function(infos){
+				app.SiteInfos.fromNewTab('/dial?path=' + path, function(infos){
 					if(infos){
 						gridNode.image = infos.screenshot;
 					} else {
 						delete gridNode.image;
 					}
 					delete gridNode.__isLoading;
-					core.GridNodes.saveNode(gridNode);
+					app.GridNodes.saveNode(gridNode);
 					if(callback) callback({ title: gridNode.title, screenshot: gridNode.image });
 				});
 			}
 			break;
-		case core.GridNodes.GridNodeType.bookmark:
-			core.SiteInfos.fromNewTab(gridNode.url, function(infos){
+		case app.GridNodes.GridNodeType.bookmark:
+			app.SiteInfos.fromNewTab(gridNode.url, function(infos){
 				if(infos){
 					gridNode.title = infos.title;
 					gridNode.image = infos.screenshot;
@@ -604,7 +603,7 @@ core.GridNodes.capturePage = function(gridNode, callback){
 					gridNode.image = '0';
 				}
 				delete gridNode.__isLoading;
-				core.GridNodes.saveNode(gridNode);
+				app.GridNodes.saveNode(gridNode);
 				if(callback) callback(infos);
 			});
 			break;

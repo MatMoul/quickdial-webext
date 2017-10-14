@@ -452,7 +452,7 @@ app.GridNodes.updateNode = function(gridNode, value, callback){
 			gridNode.url = value.url;
 			delete gridNode.image;
 		}
-		//gridNode.image = infos.screenshot;
+		if(value.image) gridNode.image = value.image;
 		app.GridNodes.saveNode(gridNode);
 	}
 	if(callback) callback(gridNode);

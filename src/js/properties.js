@@ -1,5 +1,7 @@
 var app = {};
 
+var Image = null;
+
 document.addEventListener("DOMContentLoaded", function(event) {
 	app.init();
 });
@@ -15,15 +17,50 @@ app.init = function(){
 			switch(node.type){
 				case app.GridNodes.GridNodeType.folder:
 					Url.parentNode.parentNode.style.display = 'none';
-					if(node.image) ImagePreview.style.backgroundImage = 'url(' + node.image + ')';
-					else ImagePreview.style.backgroundImage = app.settings.grid.folderIcon;
+					if(node.image) Image = node.image;
+					else Image = app.settings.grid.folderIcon;
+					ImagePreview.style.backgroundImage = Image;
 					break;
 				case app.GridNodes.GridNodeType.bookmark:
-					ImageReset.style.display = 'none';
 					Url.value = node.url;
-					ImagePreview.style.backgroundImage = 'url(' + node.image + ')';
+					Image = 'url(' + node.image + ')';
+					ImagePreview.style.backgroundImage = Image;
 					break;
 			}
+
+			ImageReset.onclick = function(){
+				switch(node.type){
+					case app.GridNodes.GridNodeType.folder:
+						if(node.image){
+							Image = node.image;
+							ImagePreview.style.backgroundImage = 'url(' + Image + ')';
+						} else {
+							Image = null;
+							ImagePreview.style.backgroundImage = app.settings.grid.folderIcon;
+						} 
+						break;
+					case app.GridNodes.GridNodeType.bookmark:
+						Image = node.image;
+						ImagePreview.style.backgroundImage = 'url(' + Image + ')';
+						break;
+				}
+			};
+
+
+			ImageFile.onclick = function(){
+				this.value = null;
+			}
+			ImageFile.onchange = function(){
+				var fileReader = new FileReader();
+				fileReader.onload = function(e){
+					Image = e.target.result;
+					ImageFile.value = null;
+					ImagePreview.style.backgroundImage = 'url(' + Image + ')';
+				}
+				fileReader.readAsDataURL(ImageFile.files[0]);
+			}
+					
+
 		});
 	});
 
@@ -35,10 +72,10 @@ app.init = function(){
 	BtnApply.onclick = function(){
 		switch(app.node.type){
 			case app.GridNodes.GridNodeType.folder:
-				app.Messages.updateNode(app.node.id, { title: Title.value })
+				app.Messages.updateNode(app.node.id, { title: Title.value, image: Image })
 				break;
 			case app.GridNodes.GridNodeType.bookmark:
-				app.Messages.updateNode(app.node.id, { title: Title.value, url: Url.value })
+				app.Messages.updateNode(app.node.id, { title: Title.value, url: Url.value, image: Image })
 				break;
 		}
 	}

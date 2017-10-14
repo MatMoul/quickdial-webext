@@ -1,10 +1,12 @@
+var app = {};
+
 var BackgroundImage = null;
 var GridBackImage = null;
 var GridFolderImage = null;
 
-window.onload = function(){
-	browser.runtime.getBackgroundPage().then(function(page){
-		app = page.app;
+app.init = function(){
+	app.Messages.getSettings(function(settings){
+		app.settings = settings;
 		BackgroundColor.value = app.settings.backgroundColor;
 		BackgroundImage = app.settings.backgroundImage;
 		BackgroundPreview.style.backgroundColor = app.settings.backgroundColor;
@@ -77,7 +79,7 @@ window.onload = function(){
 		else app.settings.grid.cells.titleBackgroundColor = GridCellsTitleBackgroundColor.value;
 		if(GridCellsTitleBackgroundTransparentHover.checked == true) app.settings.grid.cells.titleBackgroundColorHover = null;
 		else app.settings.grid.cells.titleBackgroundColorHover = GridCellsTitleBackgroundColorHover.value;
-		app.saveSettings();
+		browser.runtime.sendMessage( { cmd: 'SetSettings', settings: app.settings } );
 	}
 	BtnCancel.onclick = function(){
 		window.frameElement.popup.close();
@@ -152,5 +154,17 @@ window.onload = function(){
 		}
 		fileReader.readAsDataURL(GridFolderImageFile.files[0]);
 	}
-	
-}
+};
+
+app.Messages = {};
+app.Messages.getSettings = function(callback){
+	browser.runtime.sendMessage({ cmd: 'GetSettings' }).then(callback);
+};
+
+
+
+
+window.onload = function(){
+	app.init();
+};
+

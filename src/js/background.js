@@ -2,74 +2,155 @@ var core = {}; // Main app object in background.js
 var app = {};  // Shared app object with pages
 
 core.init = function(){ // Init module
-	core.Settings.load(function(){
-		core.GridNodes.sync(app.settings.grid.node, app.settings.grid.root, function(){ // Sync bookmarks with stored data
-			core.ContextMenus.initMenu();
+	core.Settings.init(function(){
+		core.GridNodes.sync(core.node, core.settings.grid.root, function(){
+			core.Messages.init();
+			browser.runtime.sendMessage({ cmd: 'SettingsChanged' });
+			browser.runtime.sendMessage({ cmd: 'GridNodesLoaded' });
 			core.Bookmarks.initListener();
 		});
 	});
-}
+};
+
+core.Messages = {}; // Messages helper object
+core.Messages.init = function(){ // Init Messages Listeners
+	browser.runtime.onMessage.addListener(function(request, sender, sendResponse){
+		switch(request.cmd){
+			case 'GetSettings':
+				sendResponse(core.settings);
+				break;
+			case 'SetSettings':
+				core.settings = request.settings;
+				core.Settings.save();
+				sendResponse(core.settings);
+				browser.runtime.sendMessage( { cmd: 'SettingsChanged' } );
+				browser.runtime.sendMessage( { cmd: 'GridNodesLoaded' } );
+				break;
+			case 'GetNode':
+				sendResponse(core.GridNodes.getNode(core.node, request.path.substr(1)));
+				break;
+			case 'SetNodeIndex':
+				core.GridNodes.setNodeIndex(core.GridNodes.getNode(core.node, request.path.substr(1)), request.index, request.newIndex, function(){
+					browser.runtime.sendMessage( { cmd: 'GridNodesLoaded' } );
+				});
+				break;
+			case 'CreateBookmark':
+				core.GridNodes.createBookmark(core.GridNodes.getNode(core.node, request.path.substr(1)), request.url, request.title, function(){
+					browser.runtime.sendMessage( { cmd: 'GridNodesLoaded' } );
+				});
+				break;
+			case 'CreateFolder':
+				core.GridNodes.createFolder(core.GridNodes.getNode(core.node, request.path.substr(1)), request.name, function(){
+					browser.runtime.sendMessage( { cmd: 'GridNodesLoaded' } );
+				});
+				break;
+			case 'DeleteNode':
+				core.GridNodes.deleteNode(core.GridNodes.getNode(core.node, request.path.substr(1)), request.id, function(){
+					browser.runtime.sendMessage( { cmd: 'GridNodesLoaded' } );
+				});
+				break;
+			case 'RefreshNode':
+				core.GridNodes.refreshNode(core.GridNodes.getChildNode(core.GridNodes.getNode(core.node, request.path.substr(1)), request.id), function(){
+					browser.runtime.sendMessage( { cmd: 'GridNodesLoaded' } );
+				});
+				break;
+			case 'CapturePage':
+				core.GridNodes.capturePage(core.GridNodes.getChildNode(core.GridNodes.getNode(core.node, request.path.substr(1)), request.id), function(){
+					browser.runtime.sendMessage( { cmd: 'GridNodesLoaded' } );
+				});
+				break;
+		}
+	});
+};
 
 core.Settings = {}; // Settings helper object
-core.Settings.load = function(callback){ // Load settings
-	browser.storage.local.get({
-		version: 2,
-		backgroundColor: '#3c4048',
-		backgroundImage: null,
-		grid: {
-			margin: 10,
-			rows: 4,
-			columns: 5,
-			backNode: true,
-			backIcon: 'url(/img/back.png)',
-			folderIcon: 'url(/img/folder.png)',
-			loadingIcon: 'url(/img/throbber.gif)',
-			cells: {
-				margin: 4,
-				marginHover: 4,
-				ratioX: 4,
-				ratioY: 3,
-				backgroundColor: null,
-				backgroundColorHover: null,
-				borderColor: '#333333',
-				borderColorHover: '#a9a9a9',
-				borderRadius: 4,
-				borderRadiusHover: 4,
-				title: true,
-				titleHeight: 16,
-				titleFontSize: 10,
-				titleFont: 'Arial, Verdana, Sans-serif',
-				titleColor: '#ffffff',
-				titleColorHover: '#33ccff',
-				titleBackgroundColor: null,
-				titleBackgroundColorHover: null
-			},
-			root: 'Quick Dial',
-			node: { children: [] }
+core.Settings.init = function(callback){ // Load settings and nodes
+	browser.storage.local.get().then(function(data){
+		if(Object.keys(data).length == 0) {
+			data = {
+				version: 3,
+				settings: {
+					backgroundColor: '#3c4048',
+					backgroundImage: null,
+					grid: {
+						margin: 10,
+						rows: 4,
+						columns: 5,
+						backNode: true,
+						backIcon: 'url(/img/back.png)',
+						folderIcon: 'url(/img/folder.png)',
+						loadingIcon: 'url(/img/throbber.gif)',
+						cells: {
+							margin: 4,
+							marginHover: 4,
+							backgroundColor: null,
+							backgroundColorHover: null,
+							borderColor: '#333333',
+							borderColorHover: '#a9a9a9',
+							borderRadius: 4,
+							borderRadiusHover: 4,
+							title: true,
+							titleHeight: 16,
+							titleFontSize: 10,
+							titleFont: 'Arial, Verdana, Sans-serif',
+							titleColor: '#ffffff',
+							titleColorHover: '#33ccff',
+							titleBackgroundColor: null,
+							titleBackgroundColorHover: null,
+							previewWidth: 1200,
+							previewHeight: 710
+						},
+						root: 'Quick Dial',
+					}
+				},
+				node: { children: [] }
+			}
 		}
-	}).then(function(obj){
-		if(obj.grid.cells.backIcon){ // Upgrade Data Version
-			obj.version = 2;
-			obj.grid.backNode = true;
-			obj.grid.backIcon = 'url(/img/back.png)';
-			obj.grid.folderIcon = 'url(/img/folder.png)';
-			obj.grid.loadingIcon = 'url(/img/throbber.gif)';
-			obj.grid.cells.backgroundColor = null;
-			obj.grid.cells.backgroundColorHover = null;
-			obj.grid.cells.titleBackgroundColor = null;
-			obj.grid.cells.titleBackgroundColorHover = null;
-			delete obj.grid.cells.backIcon;
-			delete obj.grid.cells.folderIcon;
-			delete obj.grid.cells.loadingIcon;
-			delete obj.grid.cells.backPanel;
+		if(!data.version){ // Upgrade Data Version
+			data.version = 2;
+			data.grid.backNode = true;
+			data.grid.backIcon = 'url(/img/back.png)';
+			data.grid.folderIcon = 'url(/img/folder.png)';
+			data.grid.loadingIcon = 'url(/img/throbber.gif)';
+			data.grid.cells.backgroundColor = null;
+			data.grid.cells.backgroundColorHover = null;
+			data.grid.cells.titleBackgroundColor = null;
+			data.grid.cells.titleBackgroundColorHover = null;
+			delete data.grid.cells.backIcon;
+			delete data.grid.cells.folderIcon;
+			delete data.grid.cells.loadingIcon;
+			delete data.grid.cells.backPanel;
 		}
-		app.settings = obj;
+		if(data.version == 2){ // Upgrade Data Version
+			var oldData = data;
+			data = {};
+			data.version = 3;
+			data.settings = oldData;
+			data.node = oldData.grid.node;
+			delete data.settings.version;
+			delete data.settings.grid.node;
+			core.settings = data.settings;
+			core.node = data.node;
+			browser.storage.local.clear().then(function(){
+				core.Settings.save();
+			});
+		}
+		core.settings = data.settings;
+		core.node = data.node;
 		if(callback) callback();
-	});
-}
-core.Settings.save = function(){ // Save settings
-	browser.storage.local.set(app.settings);
-	browser.runtime.sendMessage({ command: 'SettingsChanged' });
+	}, function(){ console.log('Error loading data'); });
+};
+core.Settings.update = function(settings, callback){ // Save new settings
+	core.settings = settings;
+	core.Settings.save(callback);
+};
+core.Settings.save = function(callback){ // Save settings
+	var data = { version: 3 };
+	data.settings = core.settings;
+	data.node = core.node;
+	browser.storage.local.set(data).then(function(){
+		if(callback) callback();
+	}, function(){ console.log('Error saving settings'); });
 }
 
 core.init();
@@ -83,19 +164,26 @@ core.ContextMenus.initMenu = function(){ // (Called from core.init) Init context
 		documentUrlPatterns: [ 'http://*/*', 'https://*/*', 'file://*/*' ]
 	}, function(){});
 	browser.contextMenus.onClicked.addListener(function(info, tab) { // Context menu click event
-		if (info.menuItemId == "AddToQuickDial")
-			core.GridNodes.createBookmark(app.settings.grid.node, info.pageUrl, tab.title, function(){});
+		//if (info.menuItemId == "AddToQuickDial")
+			//core.GridNodes.createBookmark(app.settings.grid.node, info.pageUrl, tab.title, function(){});
 	});
 }
 
 core.Bookmarks = {} // Bookmarks helper object
-core.Bookmarks._onCreated = function(){ core.GridNodes.sync(app.settings.grid.node, app.settings.grid.root); }
-core.Bookmarks._onChanged = function(){ core.GridNodes.sync(app.settings.grid.node, app.settings.grid.root); }
-core.Bookmarks._onMoved = function(){ core.GridNodes.sync(app.settings.grid.node, app.settings.grid.root); }
-core.Bookmarks._onRemoved = function(){ core.GridNodes.sync(app.settings.grid.node, app.settings.grid.root); }
+core.Bookmarks._onCreated = function(){ }
+core.Bookmarks._onChanged = function(){ }
+core.Bookmarks._onMoved = function(){ }
+core.Bookmarks._onRemoved = function(){ }
+/*
+core.Bookmarks._onCreated = function(){ core.GridNodes.sync(core.settings.grid.node, core.settings.grid.root); }
+core.Bookmarks._onChanged = function(){ core.GridNodes.sync(core.settings.grid.node, core.settings.grid.root); }
+core.Bookmarks._onMoved = function(){ core.GridNodes.sync(core.settings.grid.node, core.settings.grid.root); }
+core.Bookmarks._onRemoved = function(){ core.GridNodes.sync(core.settings.grid.node, core.settings.grid.root); }
+*/
+// ---------
 core.Bookmarks.initListener = function(){ // (Called from core.init) (/!\ Need filter to root tree only) Init listener of bookmarks
 	browser.bookmarks.onCreated.addListener(core.Bookmarks._onCreated);
-	//browser.bookmarks.onChanged.addListener(core.Bookmarks._onChanged);
+	browser.bookmarks.onChanged.addListener(core.Bookmarks._onChanged);
 	browser.bookmarks.onMoved.addListener(core.Bookmarks._onMoved);
 	browser.bookmarks.onRemoved.addListener(core.Bookmarks._onRemoved);		
 }
@@ -122,29 +210,6 @@ core.Bookmarks.load = function(rootPath, callback){ // Load root bookmark and cr
 }
 
 core.SiteInfos = {} // Siteinfos helper object
-core.SiteInfos.fromTab = function(callback){ // Retrieve infos from current tab. callback( { url, title, icon, screenshot } || error: callback() )
-	browser.tabs.getCurrent().then(function(tab){
-		function whaitLoaded(){
-			browser.tabs.get(tab.id).then(function(tab){
-				if(tab.status == 'loading') setTimeout(whaitLoaded, 300);
-				else {
-					browser.tabs.update(tab.id, {active: true}).then(function(){
-						setTimeout(function(){
-							browser.tabs.captureVisibleTab().then(function(img){
-								browser.tabs.remove(tab.id);
-								if(callback) callback( { url: tab.url, title: tab.title, icon: tab.favIconUrl, screenshot: img } );
-							}, function(){
-								browser.tabs.remove(tab.id);
-								if(callback) callback();
-							});
-						}, 300);
-					}, function(){ if(callback) callback(); });
-				}
-			}, function(){ if(callback) callback(); });
-		}
-		setTimeout(whaitLoaded, 300);
-	}, function(){ if(callback) callback();	});
-}
 core.SiteInfos.fromNewTab = function(url, callback){  // Retrieve infos from a new tab. callback( { url, title, icon, screenshot } || error: callback() )
 	browser.tabs.create({url: url, active: false}).then(function(tab){
 		browser.tabs.update(tab.id, {muted: true}).then();
@@ -185,12 +250,12 @@ core.SiteInfos.fromNewTab = function(url, callback){  // Retrieve infos from a n
 									ctx.restore();
 									img = canvas.toDataURL();
 									if(callback) callback( { url: tab.url, title: tab.title, icon: tab.favIconUrl, screenshot: img } );
-								}, 1);
+								}, 100);
 							}, function(){
 								browser.tabs.remove(tab.id);
 								if(callback) callback();
 							});
-						}, 300);
+						}, 500);
 					}, function(){ if(callback) callback(); });
 				}
 			}, function(){ if(callback) callback(); });
@@ -248,25 +313,12 @@ core.SiteInfos.fromFrame = function(url, callback){ // Retrieve infos from an if
 	xmlHttp.onerror = function(){ if(callback) callback(); }
 	xmlHttp.ontimeout = function(){ if(callback) callback(); }
 	xmlHttp.send();
-}
-core.SiteInfos.fromWS = function(url, callback){ // Retrieve infos from a Web Service. callback( { url, title, (/!\ Not handled now)icon, screenshot } || error: callback() )
+	}
+	core.SiteInfos.fromWS = function(url, callback){ // Retrieve infos from a Web Service. callback( { url, title, (/!\ Not handled now)icon, screenshot } || error: callback() )
 	console.log('Not implemented');
 	return core.SiteInfos.fromFrame(url, callback);
 }
 
-/*
-core.GridNodes.GridNode = function(){
-	this.id = null; // 0
-	//this.lastUpdate = new Date(0);
-	this.type = core.GridNodes.GridNodeType.empty;
-	//this.path = '';
-	this.title = null; // ''
-	this.icon = null; // ''
-	this.image = null; // ''
-	this.url = null; // ''
-	this.children = null; // []
-}
-*/
 core.GridNodes = {}; // GridNodes helper object
 core.GridNodes.GridNodeType = { // GridNodeType
 	back: -1,
@@ -333,9 +385,8 @@ core.GridNodes.sync = function(gridNode, rootPath, callback){ // Sync GridNodes 
 		if(callback) callback();
 	});
 }
-core.GridNodes.save = function(){ // Save GridNode
-	browser.storage.local.set(app.settings);
-	browser.runtime.sendMessage({ command: 'GridNodesSaved'});
+core.GridNodes.save = function(callback){ // Save GridNodes
+	core.Settings.save(callback);
 }
 core.GridNodes.getNode = function(gridNode, path){ // Return GridNode from RootGridNode path
 	if(path.length == 0 || path == '/') return gridNode;
@@ -348,9 +399,8 @@ core.GridNodes.getChildNode = function(gridNode, id){ // Return child node by ID
 	for(var child of gridNode.children) if(child.id == id) return child;
 	return null;
 }
-core.GridNodes.saveNode = function(gridNode){ // Save GridNode
-	browser.storage.local.set(app.settings);
-	browser.runtime.sendMessage({ command: 'GridNodeSaved', gridNode: gridNode });
+core.GridNodes.saveNode = function(gridNode, callback){ // Save GridNode
+	core.Settings.save(callback);
 }
 core.GridNodes.setNodeIndex = function(gridNode, index, newIndex, callback){ // Set Child GridNodeIndex. callback(gridNode, node1, node2)
 	while(newIndex>=gridNode.children.length)
@@ -366,15 +416,16 @@ core.GridNodes.setNodeIndex = function(gridNode, index, newIndex, callback){ // 
 	core.GridNodes.saveNode(gridNode);
 	if(callback) callback(gridNode, node1, node2);
 }
-core.GridNodes.createFolder = function(gridNode, name, callback){ // Create a new folder in a GridNode. callback(gridNode, newGridNode)
+core.GridNodes.createBookmark = function(gridNode, url, title, callback){ // Create a new Bookmark in a GridNode.  callback(gridNode, newGridNode)
 	browser.bookmarks.onCreated.removeListener(core.Bookmarks._onCreated);
 	browser.bookmarks.create({
 		parentId: gridNode.id,
-		title: name
+		title: title || url,
+		url: url
 	}).then(function(bookmarkItem){
 		if(!gridNode) return; // ??? Why this method are called a second time with gridNode = null ???
 		browser.bookmarks.onCreated.addListener(core.Bookmarks._onCreated);
-		var newGridNode = { id: bookmarkItem.id, type: core.GridNodes.GridNodeType.folder, title: name, children: [] };
+		var newGridNode = { id: bookmarkItem.id, type: core.GridNodes.GridNodeType.bookmark, url: url, title };
 		var EmptyCellFound = false;
 		for(var i=0; i<gridNode.children.length; i++){
 			if(gridNode.children[i].type == core.GridNodes.GridNodeType.empty){
@@ -390,16 +441,15 @@ core.GridNodes.createFolder = function(gridNode, name, callback){ // Create a ne
 		browser.bookmarks.onCreated.addListener(core.Bookmarks._onCreated);
 	});
 }
-core.GridNodes.createBookmark = function(gridNode, url, title, callback){ // Create a new Bookmark in a GridNode.  callback(gridNode, newGridNode)
+core.GridNodes.createFolder = function(gridNode, name, callback){ // Create a new folder in a GridNode. callback(gridNode, newGridNode)
 	browser.bookmarks.onCreated.removeListener(core.Bookmarks._onCreated);
 	browser.bookmarks.create({
 		parentId: gridNode.id,
-		title: title || url,
-		url: url
+		title: name
 	}).then(function(bookmarkItem){
 		if(!gridNode) return; // ??? Why this method are called a second time with gridNode = null ???
 		browser.bookmarks.onCreated.addListener(core.Bookmarks._onCreated);
-		var newGridNode = { id: bookmarkItem.id, type: core.GridNodes.GridNodeType.bookmark, url: url, title };
+		var newGridNode = { id: bookmarkItem.id, type: core.GridNodes.GridNodeType.folder, title: name, children: [] };
 		var EmptyCellFound = false;
 		for(var i=0; i<gridNode.children.length; i++){
 			if(gridNode.children[i].type == core.GridNodes.GridNodeType.empty){
@@ -443,9 +493,11 @@ core.GridNodes.refreshNode = function(gridNode, callback){ // Refresh content of
 		if(infos){
 			gridNode.title = infos.title;
 			gridNode.image = infos.screenshot;
-			delete gridNode.__isLoading;
-			core.GridNodes.saveNode(gridNode);
-		} else delete gridNode.__isLoading;
+		} else {
+			gridNode.image = '0';
+		}
+		delete gridNode.__isLoading;
+		core.GridNodes.saveNode(gridNode);
 		if(callback) callback(infos);
 	});
 }
@@ -456,20 +508,11 @@ core.GridNodes.capturePage = function(gridNode, callback){
 		if(infos){
 			gridNode.title = infos.title;
 			gridNode.image = infos.screenshot;
-			delete gridNode.__isLoading;
-			core.GridNodes.saveNode(gridNode);
-		} else delete gridNode.__isLoading;
+		} else {
+			gridNode.image = '0';
+		}
+		delete gridNode.__isLoading;
+		core.GridNodes.saveNode(gridNode);
 		if(callback) callback(infos);
 	});
 }
-
-// Public members
-app.GridNodeType = core.GridNodes.GridNodeType;
-app.refreshNode = core.GridNodes.refreshNode;
-app.getNode = core.GridNodes.getNode;
-app.createFolder = core.GridNodes.createFolder;
-app.createBookmark = core.GridNodes.createBookmark;
-app.deleteNode = core.GridNodes.deleteNode;
-app.setNodeIndex = core.GridNodes.setNodeIndex;
-app.capturePage = core.GridNodes.capturePage;
-app.saveSettings = core.Settings.save;

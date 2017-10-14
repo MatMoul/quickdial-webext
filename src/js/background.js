@@ -448,12 +448,14 @@ app.GridNodes.getNodeWithParents = function(id){
 app.GridNodes.updateNode = function(gridNode, value, callback){
 	if(value){
 		if(value.title) gridNode.title = value.title;
-		if(gridNode.type == app.GridNodes.GridNodeType.bookmark && value.url && gridNode.url != value.url){
-			gridNode.url = value.url;
-			delete gridNode.image;
-		}
 		if(value.image) gridNode.image = value.image;
 		else delete gridNode.image;
+		if(gridNode.type == app.GridNodes.GridNodeType.bookmark && value.url && gridNode.url != value.url){
+			gridNode.url = value.url;
+			app.GridNodes.refreshNode(gridNode, function(){
+				browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded });
+			});
+		}
 		app.GridNodes.saveNode(gridNode);
 	}
 	if(callback) callback(gridNode);

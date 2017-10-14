@@ -28,7 +28,6 @@ core.Messages.Commands = {
 };
 core.Messages.init = function(){ // Init Messages Listeners
 	browser.runtime.onMessage.addListener(function(request, sender, sendResponse){
-		console.log(request.cmd);
 		switch(request.cmd){
 			case core.Messages.Commands.getSettings:
 				sendResponse(core.settings);

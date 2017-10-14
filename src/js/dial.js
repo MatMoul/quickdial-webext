@@ -5,8 +5,8 @@ var dial = {
 	maxpage: 1
 };
 
-
 document.addEventListener("DOMContentLoaded", function(event) {
+	document.body.style.backgroundColor = utils.getBackgroundColor();
 	app.init();
 	dial.init();
 });
@@ -32,13 +32,14 @@ window.onwheel = function(ev){
 
 
 
+utils.getBackgroundColor = function(){
+	return new URL(window.location).searchParams.get('bg');
+};
 utils.getPath = function(){
 	var path = new URL(window.location).searchParams.get('path');
 	if(path) return path + '/';
 	else return '/';
 };
-
-
 
 app.init = function(){
 	app.Messages.getSettings(function(settings){
@@ -99,6 +100,7 @@ app.Messages.refreshNode = function(id, callback){
 app.Messages.capturePage = function(id, callback){
 	browser.runtime.sendMessage({ cmd: app.Messages.Commands.capturePage, path: dial.path, id: id }).then(callback);
 }
+
 
 app.Settings = {};
 app.Settings._changed = function(settings){
@@ -324,8 +326,8 @@ dial.populateGrid = function(){
 		link.className = 'Folder';
 		link.childNodes[0].style.backgroundImage = '';
 		link.childNodes[1].innerText = node.title;
-		if(dial.path) link.href = '?path=' + dial.path + node.title;
-		else link.href = '?path=' + node.title;
+		if(dial.path) link.href = '?' + 'bg=' + encodeURIComponent(app.settings.backgroundColor) + '&path=' + dial.path + node.title;
+		else link.href = '?' + 'bg=' + encodeURIComponent(app.settings.backgroundColor) + '&path=' + node.title;
 		link.onclick = null;
 		link.setAttribute('contextmenu', 'item');
 	}

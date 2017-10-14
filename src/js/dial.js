@@ -326,8 +326,8 @@ dial.populateGrid = function(){
 		link.className = 'Folder';
 		link.childNodes[0].style.backgroundImage = '';
 		link.childNodes[1].innerText = node.title;
-		if(dial.path) link.href = '?' + 'bg=' + encodeURIComponent(app.settings.backgroundColor) + '&path=' + dial.path + node.title;
-		else link.href = '?' + 'bg=' + encodeURIComponent(app.settings.backgroundColor) + '&path=' + node.title;
+		if(dial.path) link.href = '?' + 'bg=' + encodeURIComponent(app.settings.backgroundColor) + '&path=' + encodeURIComponent(dial.path + node.title);
+		else link.href = '?' + 'bg=' + encodeURIComponent(app.settings.backgroundColor) + '&path=' + encodeURIComponent(node.title);
 		link.onclick = null;
 		link.setAttribute('contextmenu', 'item');
 	}

@@ -3,60 +3,74 @@ var app = {};  // Shared app object with pages
 
 core.init = function(){ // Init module
 	core.Settings.init(function(){
+		core.Messages.init();
+		browser.runtime.sendMessage({ cmd: core.Messages.Commands.settingsChanged });
 		core.GridNodes.sync(core.node, core.settings.grid.root, function(){
-			core.Messages.init();
-			browser.runtime.sendMessage({ cmd: 'SettingsChanged' });
-			browser.runtime.sendMessage({ cmd: 'GridNodesLoaded' });
+			browser.runtime.sendMessage({ cmd: core.Messages.Commands.gridNodesLoaded });
 			core.Bookmarks.initListener();
 		});
 	});
 };
 
 core.Messages = {}; // Messages helper object
+core.Messages.Commands = {
+	getSettings: 0,
+	setSettings: 1,
+	getNode: 2,
+	setNodeIndex: 3,
+	createBookmark: 4,
+	createFolder: 5,
+	deleteNode: 6,
+	refreshNode: 7,
+	capturePage: 8,
+	settingsChanged: 100,
+	gridNodesLoaded: 101
+};
 core.Messages.init = function(){ // Init Messages Listeners
 	browser.runtime.onMessage.addListener(function(request, sender, sendResponse){
+		console.log(request.cmd);
 		switch(request.cmd){
-			case 'GetSettings':
+			case core.Messages.Commands.getSettings:
 				sendResponse(core.settings);
 				break;
-			case 'SetSettings':
+			case core.Messages.Commands.setSettings:
 				core.settings = request.settings;
 				core.Settings.save();
 				sendResponse(core.settings);
-				browser.runtime.sendMessage( { cmd: 'SettingsChanged' } );
-				browser.runtime.sendMessage( { cmd: 'GridNodesLoaded' } );
+				browser.runtime.sendMessage( { cmd: core.Messages.Commands.settingsChanged } );
+				browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
 				break;
-			case 'GetNode':
+			case core.Messages.Commands.getNode:
 				sendResponse(core.GridNodes.getNode(core.node, request.path.substr(1)));
 				break;
-			case 'SetNodeIndex':
+			case core.Messages.Commands.setNodeIndex:
 				core.GridNodes.setNodeIndex(core.GridNodes.getNode(core.node, request.path.substr(1)), request.index, request.newIndex, function(){
-					browser.runtime.sendMessage( { cmd: 'GridNodesLoaded' } );
+					browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
 				});
 				break;
-			case 'CreateBookmark':
+			case core.Messages.Commands.createBookmark:
 				core.GridNodes.createBookmark(core.GridNodes.getNode(core.node, request.path.substr(1)), request.url, request.title, function(){
-					browser.runtime.sendMessage( { cmd: 'GridNodesLoaded' } );
+					browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
 				});
 				break;
-			case 'CreateFolder':
+			case core.Messages.Commands.createFolder:
 				core.GridNodes.createFolder(core.GridNodes.getNode(core.node, request.path.substr(1)), request.name, function(){
-					browser.runtime.sendMessage( { cmd: 'GridNodesLoaded' } );
+					browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
 				});
 				break;
-			case 'DeleteNode':
+			case core.Messages.Commands.deleteNode:
 				core.GridNodes.deleteNode(core.GridNodes.getNode(core.node, request.path.substr(1)), request.id, function(){
-					browser.runtime.sendMessage( { cmd: 'GridNodesLoaded' } );
+					browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
 				});
 				break;
-			case 'RefreshNode':
+			case core.Messages.Commands.refreshNode:
 				core.GridNodes.refreshNode(core.GridNodes.getChildNode(core.GridNodes.getNode(core.node, request.path.substr(1)), request.id), function(){
-					browser.runtime.sendMessage( { cmd: 'GridNodesLoaded' } );
+					browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
 				});
 				break;
-			case 'CapturePage':
+			case core.Messages.Commands.capturePage:
 				core.GridNodes.capturePage(core.GridNodes.getChildNode(core.GridNodes.getNode(core.node, request.path.substr(1)), request.id), function(){
-					browser.runtime.sendMessage( { cmd: 'GridNodesLoaded' } );
+					browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
 				});
 				break;
 		}

@@ -6,11 +6,11 @@ var dial = {
 };
 
 
-
-window.onload = function(){
+document.addEventListener("DOMContentLoaded", function(event) {
 	app.init();
 	dial.init();
-};
+});
+
 window.onresize = function(){
 	if(app && app.settings) dial.updateGridLayout();
 }
@@ -41,48 +41,63 @@ utils.getPath = function(){
 
 
 app.init = function(){
-	dial.path = utils.getPath();
-	app.Messages.getSettings(app.Settings._changed);
-	app.Messages.getNode(dial.path, app.GridNodes._changed);
-	app.Messages.init();
+	app.Messages.getSettings(function(settings){
+		if(settings && settings.grid) app.Settings._changed(settings);
+		dial.path = utils.getPath();
+		app.Messages.getNode(dial.path, app.GridNodes._changed);
+		app.Messages.init();
+	});
 };
 
 app.Messages = {};
+app.Messages.Commands = {
+	getSettings: 0,
+	setSettings: 1,
+	getNode: 2,
+	setNodeIndex: 3,
+	createBookmark: 4,
+	createFolder: 5,
+	deleteNode: 6,
+	refreshNode: 7,
+	capturePage: 8,
+	settingsChanged: 100,
+	gridNodesLoaded: 101
+};
 app.Messages.init = function(){
 	browser.runtime.onMessage.addListener(function(request, sender, sendResponse){
 		switch(request.cmd){
-			case 'SettingsChanged':
+			case app.Messages.Commands.settingsChanged:
 				app.Messages.getSettings(app.Settings._changed);
 				break;
-			case 'GridNodesLoaded':
+			case app.Messages.Commands.gridNodesLoaded:
 				app.Messages.getNode(dial.path, app.GridNodes._changed);
 				break;
 		}
 	});
 };
 app.Messages.getSettings = function(callback){
-	browser.runtime.sendMessage({ cmd: 'GetSettings' }).then(callback);
+	browser.runtime.sendMessage({ cmd: app.Messages.Commands.getSettings }).then(callback, callback);
 };
 app.Messages.getNode = function(path, callback){
-	browser.runtime.sendMessage({ cmd: 'GetNode', path: path }).then(callback);
+	browser.runtime.sendMessage({ cmd: app.Messages.Commands.getNode, path: path }).then(callback);
 };
 app.Messages.setNodeIndex = function(index, newIndex, callback){
-	browser.runtime.sendMessage({ cmd: 'SetNodeIndex', path: dial.path, index: index, newIndex: newIndex }).then(callback);
+	browser.runtime.sendMessage({ cmd: app.Messages.Commands.setNodeIndex, path: dial.path, index: index, newIndex: newIndex }).then(callback);
 };
 app.Messages.createBookmark = function(url, callback){
-	browser.runtime.sendMessage({ cmd: 'CreateBookmark', path: dial.path, url: url, title: url }).then(callback);
+	browser.runtime.sendMessage({ cmd: app.Messages.Commands.createBookmark, path: dial.path, url: url, title: url }).then(callback);
 };
 app.Messages.createFolder = function(name, callback){
-	browser.runtime.sendMessage({ cmd: 'CreateFolder', path: dial.path, name: name }).then(callback);
+	browser.runtime.sendMessage({ cmd: app.Messages.Commands.createFolder, path: dial.path, name: name }).then(callback);
 };
 app.Messages.deleteNode = function(id, callback){
-	browser.runtime.sendMessage({ cmd: 'DeleteNode', path: dial.path, id: id }).then(callback);
+	browser.runtime.sendMessage({ cmd: app.Messages.Commands.deleteNode, path: dial.path, id: id }).then(callback);
 };
 app.Messages.refreshNode = function(id, callback){
-	browser.runtime.sendMessage({ cmd: 'RefreshNode', path: dial.path, id: id }).then(callback);
+	browser.runtime.sendMessage({ cmd: app.Messages.Commands.refreshNode, path: dial.path, id: id }).then(callback);
 }
 app.Messages.capturePage = function(id, callback){
-	browser.runtime.sendMessage({ cmd: 'CapturePage', path: dial.path, id: id }).then(callback);
+	browser.runtime.sendMessage({ cmd: app.Messages.Commands.capturePage, path: dial.path, id: id }).then(callback);
 }
 
 app.Settings = {};
@@ -104,6 +119,7 @@ app.GridNodes._changed = function(node){
 	dial.Title.innerText = app.node.title;
 	dial.populateGrid();
 };
+
 
 
 

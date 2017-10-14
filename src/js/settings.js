@@ -79,7 +79,7 @@ app.init = function(){
 		else app.settings.grid.cells.titleBackgroundColor = GridCellsTitleBackgroundColor.value;
 		if(GridCellsTitleBackgroundTransparentHover.checked == true) app.settings.grid.cells.titleBackgroundColorHover = null;
 		else app.settings.grid.cells.titleBackgroundColorHover = GridCellsTitleBackgroundColorHover.value;
-		browser.runtime.sendMessage( { cmd: 'SetSettings', settings: app.settings } );
+		browser.runtime.sendMessage( { cmd: app.Messages.Commands.setSettings, settings: app.settings } );
 	}
 	BtnCancel.onclick = function(){
 		window.frameElement.popup.close();
@@ -157,8 +157,21 @@ app.init = function(){
 };
 
 app.Messages = {};
+app.Messages.Commands = {
+	getSettings: 0,
+	setSettings: 1,
+	getNode: 2,
+	setNodeIndex: 3,
+	createBookmark: 4,
+	createFolder: 5,
+	deleteNode: 6,
+	refreshNode: 7,
+	capturePage: 8,
+	settingsChanged: 100,
+	gridNodesLoaded: 101
+};
 app.Messages.getSettings = function(callback){
-	browser.runtime.sendMessage({ cmd: 'GetSettings' }).then(callback);
+	browser.runtime.sendMessage({ cmd: app.Messages.Commands.getSettings }).then(callback);
 };
 
 

@@ -28,6 +28,13 @@
     "scripts": ["js/background.js"]
   },
   
+  "browser_action": {
+    "default_icon": {
+      "24": "img/24.png",
+      "32": "img/32.png"
+    }
+  },
+
   "chrome_url_overrides" : {
     "newtab": "dial"
   },

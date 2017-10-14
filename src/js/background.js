@@ -5,6 +5,9 @@ core.init = function(){ // Init module
 	core.Settings.init(function(){
 		core.Messages.init();
 		browser.runtime.sendMessage({ cmd: core.Messages.Commands.settingsChanged });
+		browser.browserAction.onClicked.addListener(function(){
+			browser.tabs.create({});
+		});
 		core.GridNodes.sync(core.node, core.settings.grid.root, function(){
 			browser.runtime.sendMessage({ cmd: core.Messages.Commands.gridNodesLoaded });
 			core.Bookmarks.initListener();

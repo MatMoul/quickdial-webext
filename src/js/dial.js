@@ -55,12 +55,14 @@ app.Messages.Commands = {
 	getSettings: 0,
 	setSettings: 1,
 	getNode: 2,
-	setNodeIndex: 3,
-	createBookmark: 4,
-	createFolder: 5,
-	deleteNode: 6,
-	refreshNode: 7,
-	capturePage: 8,
+	getNodeByID: 3,
+	updateNode: 4,
+	setNodeIndex: 5,
+	createBookmark: 6,
+	createFolder: 7,
+	deleteNode: 8,
+	refreshNode: 9,
+	capturePage: 10,
 	settingsChanged: 100,
 	gridNodesLoaded: 101
 };
@@ -167,11 +169,13 @@ dial.initMenus = function(){
 	dial.ItemMenuCreateFolder = document.createElement('menuitem');
 	dial.ItemMenuCreateFolder.label = browser.i18n.getMessage("menuNewFolder");
 	dial.ItemMenuCreateFolder.onclick = dial.createFolder;
-	/*
-	dial.ItemMenuEdit = document.createElement('menuitem');
-	dial.ItemMenuEdit.label = 'Edit';
-	//dial.ItemMenuEdit.onclick = dial.test;
-	*/
+	
+	dial.ItemMenuProperties = document.createElement('menuitem');
+	dial.ItemMenuProperties.label = browser.i18n.getMessage("menuProperties");
+	dial.ItemMenuProperties.onclick = function(){
+		dial.editProperties(dial._selectedItem);
+	};
+	
 	dial.ItemMenuRefresh = document.createElement('menuitem');
 	dial.ItemMenuRefresh.label = browser.i18n.getMessage("menuRefreshItem");
 	dial.ItemMenuRefresh.onclick = function(){
@@ -196,7 +200,7 @@ dial.initMenus = function(){
 	dial.ItemMenuNew.appendChild(dial.ItemMenuCreateBookmark);
 	dial.ItemMenuNew.appendChild(dial.ItemMenuCreateFolder);
 	dial.ItemMenu.appendChild(document.createElement('hr'));
-	//dial.ItemMenu.appendChild(dial.ItemMenuEdit);
+	dial.ItemMenu.appendChild(dial.ItemMenuProperties);
 	dial.ItemMenu.appendChild(dial.ItemMenuRefresh);
 	dial.ItemMenu.appendChild(dial.ItemMenuCapture);
 	dial.ItemMenu.appendChild(dial.ItemMenuDelete);
@@ -463,6 +467,21 @@ dial.editSettings = function(){
 	iframe.style.overflow = 'hidden';
 	popup.frame.appendChild(iframe);
 	iframe.src = '/html/settings.html';
+	iframe.popup = popup;
+	popup.popup();
+}
+
+dial.editProperties = function(selectedItem){
+	var popup = new dial.PopupPanel(500, 420, true);
+	var iframe = document.createElement('iframe');
+	iframe.style.width = '100%';
+	iframe.style.height = '100%';
+	iframe.style.backgroundColor = 'transparent';
+	iframe.style.border = '0px none transparent';
+	iframe.style.padding = '0px';
+	iframe.style.overflow = 'hidden';
+	popup.frame.appendChild(iframe);
+	iframe.src = '/html/properties.html?id=' + selectedItem.Node.id;
 	iframe.popup = popup;
 	popup.popup();
 }

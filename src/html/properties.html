@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<link rel="shortcut icon" type="image/png" href="img/24.png" />
+		<title id="title">Quick Dial Node Propoerties</title>
+		<script type="text/javascript" src="/js/properties.js"></script>
+		<style>
+			body { margin: 0px; padding: 4px; font-family: Arial, Helvetica, sans-serif; font-size: 10pt; }
+			h1 { font-size: 11pt; text-decoration: underline; }
+			input[type=number] { width: 56px; }
+			input[type=color] { width: 60px; }
+			.hidden { display: none; }
+			.Tab>table { width: 100%; border-collapse: collapse; }
+			.Tab .TabSpace { width: 100%; border-bottom: solid 1px #505050; }
+			.Tab .TabButton { border: solid 1px #505050; padding: 2px 6px 2px 6px; cursor: default; }
+			.Tab .TabButtonActive { border: solid 1px #505050; border-bottom: none; padding: 2px 6px 2px 6px; cursor: default; }
+			.Tab>div { padding: 8px; height: 330px; border-left: solid 1px #505050; border-bottom: solid 1px #505050; border-right: solid 1px #505050; }
+		</style>
+	</head>
+	<body>
+		<div id="Tabs" class="Tab">
+			<table>
+				<tr>
+					<td class="TabButtonActive">Main</td>
+					<td class="TabButton" style="display:none">Temp</td>
+					<td class="TabSpace"></td>
+				</tr>
+			</table>
+			<div>
+				<div>
+					<table style="width:100%">
+						<tr>
+							<td><span>Title :</span></td>
+							<td><input id="Title" type="text" style="width:100%"></td>
+						</tr>
+						<tr>
+							<td><span>Url :</span></td>
+							<td><input id="Url" type="text" style="width:100%"></td>
+						</tr>
+					
+					
+						<tr>
+							<td><span>Image :</span></td>
+							<td>
+								<button class="hidden" id="ImageReset">Reset</button>
+								<button class="hidden" id="ImageRefresh">Refresh</button>
+								<button class="hidden" id="ImageCapture">Capture</button>
+								<input class="hidden" id="ImageFile" type="file" style="width:180px;">
+							</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td><div id="ImagePreview" style="width: 300px; height: 180px;"></div></td>
+						</tr>
+						
+					
+					</table>
+				</div>
+				<div class="hidden">
+				</div>
+			</div>
+		</div>
+
+		<div style="text-align: right; margin-top: 14px;">
+			<button id="BtnOk">OK</button>
+			<button id="BtnApply">Apply</button>
+			<button id="BtnCancel">Cancel</button>
+		</div>
+	</body>
+</html>

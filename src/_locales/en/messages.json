@@ -34,6 +34,11 @@
     "description": "Text of the add folder prompt."
   },
 
+  "menuProperties": {
+    "message": "Properties",
+    "description": "Text of properties menu item."
+  },
+
   "menuRefreshItem": {
     "message": "Refresh",
     "description": "Text of refresh menu item."

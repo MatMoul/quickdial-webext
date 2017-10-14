@@ -20,12 +20,14 @@ core.Messages.Commands = {
 	getSettings: 0,
 	setSettings: 1,
 	getNode: 2,
-	setNodeIndex: 3,
-	createBookmark: 4,
-	createFolder: 5,
-	deleteNode: 6,
-	refreshNode: 7,
-	capturePage: 8,
+	getNodeByID: 3,
+	updateNode: 4,
+	setNodeIndex: 5,
+	createBookmark: 6,
+	createFolder: 7,
+	deleteNode: 8,
+	refreshNode: 9,
+	capturePage: 10,
 	settingsChanged: 100,
 	gridNodesLoaded: 101
 };
@@ -41,6 +43,16 @@ core.Messages.init = function(){ // Init Messages Listeners
 				sendResponse(core.settings);
 				browser.runtime.sendMessage( { cmd: core.Messages.Commands.settingsChanged } );
 				browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
+				break;
+			case core.Messages.Commands.getNodeByID:
+				var nodes = core.GridNodes.getNodeWithParents(request.id);
+				if(nodes) sendResponse(nodes[nodes.length-1]);
+				else sendResponse(null);
+				break;
+			case core.Messages.Commands.updateNode:
+				core.GridNodes.updateNode(core.GridNodes.getNodeById(request.id), request.value, function(){
+					browser.runtime.sendMessage( { cmd: core.Messages.Commands.gridNodesLoaded } );
+				});
 				break;
 			case core.Messages.Commands.getNode:
 				sendResponse(core.GridNodes.getNode(core.node, request.path.substr(1)));
@@ -404,7 +416,12 @@ core.GridNodes.getNode = function(gridNode, path){ // Return GridNode from RootG
 			return core.GridNodes.getNode(child, path.substr(child.title.length + 1));
 	return null;
 }
-core.GridNodes.getNodeWithParent = function(id){
+core.GridNodes.getNodeById = function(id){
+	var nodes = core.GridNodes.getNodeWithParents(id);
+	if(nodes) return nodes[nodes.length-1];
+	return null;
+}
+core.GridNodes.getNodeWithParents = function(id){
 	
 	var parents = [];
 
@@ -428,6 +445,18 @@ core.GridNodes.getNodeWithParent = function(id){
 	findNode(core.node, id);
 	if(parents.length>0) return parents;
 	return null;
+}
+core.GridNodes.updateNode = function(gridNode, value, callback){
+	if(value){
+		if(value.title) gridNode.title = value.title;
+		if(gridNode.type == core.GridNodes.GridNodeType.bookmark && value.url && gridNode.url != value.url){
+			gridNode.url = value.url;
+			delete gridNode.image;
+		}
+		//gridNode.image = infos.screenshot;
+		core.GridNodes.saveNode(gridNode);
+	}
+	if(callback) callback(gridNode);
 }
 core.GridNodes.getChildNode = function(gridNode, id){ // Return child node by ID
 	for(var child of gridNode.children) if(child.id == id) return child;
@@ -550,7 +579,7 @@ core.GridNodes.capturePage = function(gridNode, callback){
 	gridNode.__isLoading = true;
 	switch(gridNode.type){
 		case core.GridNodes.GridNodeType.folder:
-			var nodes = core.GridNodes.getNodeWithParent(gridNode.id);
+			var nodes = core.GridNodes.getNodeWithParents(gridNode.id);
 			if(nodes){
 				var path = '';
 				for(var i=1; i<nodes.length; i++) path = path + '/' + nodes[i].title;

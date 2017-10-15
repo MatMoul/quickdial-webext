@@ -10,6 +10,7 @@ app.init = function(){ // Init module
 		app.GridNodes.sync(app.node, app.settings.grid.root, function(){
 			browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded });
 			app.Bookmarks.initListener();
+			app.ContextMenus.initMenu();
 		});
 	});
 };
@@ -188,11 +189,13 @@ app.ContextMenus.initMenu = function(){ // (Called from app.init) Init context m
 		id: 'AddToQuickDial',
 		title: browser.i18n.getMessage("menuAddToQuickDial"),
 		contexts: ["all"],
-		documentUrlPatterns: [ 'http://*/*', 'https://*/*', 'file://*/*' ]
+		documentUrlPatterns: [ 'http://*/*', 'https://*/*', 'file://*/*', 'ftp://*/*' ]
 	}, function(){});
 	browser.contextMenus.onClicked.addListener(function(info, tab) { // Context menu click event
-		//if (info.menuItemId == "AddToQuickDial")
-			//app.GridNodes.createBookmark(app.settings.grid.node, info.pageUrl, tab.title, function(){});
+		if (info.menuItemId == "AddToQuickDial")
+			app.GridNodes.createBookmark(app.node, info.pageUrl, tab.title, function(){
+				browser.runtime.sendMessage( { cmd: app.Messages.Commands.gridNodesLoaded } );
+			});
 	});
 }
 

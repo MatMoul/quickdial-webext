@@ -209,7 +209,7 @@ dial.initMenus = function(){
 	document.body.appendChild(dial.ItemMenu);
 }
 dial.initStyles = function(){
-	if(dial.Style) document.head.removeChild(dial.Style);
+	var oldStyle = dial.Style;
 	dial.Style = document.createElement('style'), StyleSheet;
 	document.head.appendChild(dial.Style);
 	dial.styles = {};
@@ -234,9 +234,10 @@ dial.initStyles = function(){
 	dial.styles.grid.linkFolder = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a.Folder :first-child { background-image: ' + app.settings.grid.folderIcon + '; background-repeat: no-repeat; background-size: 100% 100%; }')].style;
 	dial.styles.grid.linkBookmark = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a.Bookmark :first-child { background-repeat: no-repeat; background-size: 100% 100%; }')].style;
 	dial.styles.grid.linkBookmarkLoading = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a.BookmarkLoading :first-child { background-image: url("' + app.settings.grid.cells.loadingIcon + '"); background-repeat: no-repeat; background-position: center center; }')].style;
+	if(oldStyle) document.head.removeChild(oldStyle);
 };
 dial.initGrid = function(){
-	if(dial.Grid) document.body.removeChild(dial.Grid);
+	var oldGrid = dial.Grid;
 	dial.Grid = document.createElement('table');
 	var grid = document.createElement('table');
 	dial.Grid.className = 'Grid';
@@ -286,6 +287,7 @@ dial.initGrid = function(){
 	}
 	document.body.appendChild(dial.Grid);
 	dial.updateGridLayout();
+	if(oldGrid) document.body.removeChild(oldGrid);
 	return dial.Grid;
 };
 dial.updateGridLayout = function(){

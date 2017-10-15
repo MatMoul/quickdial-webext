@@ -360,6 +360,7 @@ app.GridNodes.sync = function(gridNode, rootPath, callback){ // Sync GridNodes w
 				if(! gridNode.children) gridNode.children = [];
 				else {
 					for(var i=gridNode.children.length-1; i>=0; i--){
+						if(!gridNode.children[i]) gridNode.children[i] = { type: app.GridNodes.GridNodeType.empty };
 						if(gridNode.children[i].type==app.GridNodes.GridNodeType.empty){
 							EmptyNodes.unshift(gridNode.children[i]);
 						} else {

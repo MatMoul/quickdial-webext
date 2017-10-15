@@ -487,14 +487,16 @@ app.GridNodes.setNodeIndex = function(gridNode, index, newIndex, callback){ // S
 }
 app.GridNodes.createBookmark = function(gridNode, url, title, callback){ // Create a new Bookmark in a GridNode.  callback(gridNode, newGridNode)
 	browser.bookmarks.onCreated.removeListener(app.Bookmarks._onCreated);
+	var prefix = '';
+	if(url.indexOf('://')<0) prefix = 'http://';
 	browser.bookmarks.create({
 		parentId: gridNode.id,
 		title: title || url,
-		url: url
+		url: prefix + url
 	}).then(function(bookmarkItem){
 		if(!gridNode) return; // ??? Why this method are called a second time with gridNode = null ???
 		browser.bookmarks.onCreated.addListener(app.Bookmarks._onCreated);
-		var newGridNode = { id: bookmarkItem.id, type: app.GridNodes.GridNodeType.bookmark, url: url, title };
+		var newGridNode = { id: bookmarkItem.id, type: app.GridNodes.GridNodeType.bookmark, url: prefix + url, title };
 		var EmptyCellFound = false;
 		for(var i=0; i<gridNode.children.length; i++){
 			if(gridNode.children[i].type == app.GridNodes.GridNodeType.empty){

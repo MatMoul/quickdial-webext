@@ -258,13 +258,25 @@ dial.initGrid = function(){
 			link.onmousedown = function(){ dial._selectedItem = this; };
 			
 			function dragstart_handler(ev) {
+				if(!ev.target.Node){
+					ev.preventDefault();
+					return;
+				}
 				var index = (dial.page - 1) * (app.settings.grid.rows * app.settings.grid.columns) + +(ev.target.parentElement.getAttribute('gridindex'));
 				if(app.settings.grid.backNode && dial.path != '/') index -= dial.page;
 				ev.dataTransfer.setData("text/plain", index);
-			 }
-			 function dragover_handler(ev) {
+			}
+			function dragover_handler(ev) {
 				ev.preventDefault();
-				ev.dataTransfer.dropEffect = "move"
+				if(app.settings.grid.backNode && dial.path != '/'){
+					var gridIndex = 0;
+					if(ev.target.tagName == 'DIV') gridIndex = +(ev.target.parentElement.parentElement.getAttribute('gridindex'));
+					else gridIndex = +(ev.target.getAttribute('gridindex'));
+					if(gridIndex==0) ev.dataTransfer.dropEffect = "none";
+					else ev.dataTransfer.dropEffect = "move";
+				} else {
+					ev.dataTransfer.dropEffect = "move";
+				}
 			}
 			function drop_handler(ev) {
 				ev.preventDefault();

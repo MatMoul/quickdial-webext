@@ -1,0 +1,67 @@
+{
+  "extensionDescription": {
+    "message": "Quick Dial, una dial page inspirata a fast dial.",
+    "description": "Description of the extension."
+  },
+
+  "menuAddToQuickDial": {
+    "message": "Aggiungi a Quick Dial",
+    "description": "Text of add bookmark menu item."
+  },
+
+  "menuNew": {
+    "message": "Nuovo",
+    "description": "Text of new menu item."
+  },
+
+  "menuNewBookmark": {
+    "message": "Segnalibro",
+    "description": "Text of add bookmark menu item."
+  },
+
+  "AddBookmarkPrompt": {
+    "message": "Scrivi l'url del nuovo segnalibro:",
+    "description": "Text of the add bookmark prompt."
+  },
+
+  "menuNewFolder": {
+    "message": "Cartella",
+    "description": "Text of add folder menu item."
+  },
+
+  "AddFolderPrompt": {
+    "message": "Scrivi il nome della nuova cartella:",
+    "description": "Text of the add folder prompt."
+  },
+
+  "menuProperties": {
+    "message": "Proprietà",
+    "description": "Text of properties menu item."
+  },
+
+  "menuRefreshItem": {
+    "message": "Aggiorna",
+    "description": "Text of refresh menu item."
+  },
+
+  "menuCapturePage": {
+    "message": "Cattura in una nuova scheda",
+    "description": "Text of capture menu item."
+  },
+
+  "menuDeleteItem": {
+    "message": "Elimina",
+    "description": "Text of delete menu item."
+  },
+
+  "deleteItemConfimation": {
+    "message": "Eliminare $1?",
+    "description": "Text of delete confirmation."
+  },
+
+  "menuSettings": {
+    "message": "Impostazioni Quick Dial",
+    "description": "Text of settings menu item."
+  }
+
+}

@@ -79,10 +79,22 @@ app.Messages.init = function(){
 	});
 };
 app.Messages.getSettings = function(callback){
-	browser.runtime.sendMessage({ cmd: app.Messages.Commands.getSettings }).then(callback, callback);
+	browser.runtime.getBackgroundPage().then(function(page){
+		if(page){
+			if(callback) callback(page.app.settings);
+		} else {
+			browser.runtime.sendMessage({ cmd: app.Messages.Commands.getSettings }).then(callback, callback);
+		}
+	});
 };
 app.Messages.getNode = function(path, callback){
-	browser.runtime.sendMessage({ cmd: app.Messages.Commands.getNode, path: path }).then(callback);
+	browser.runtime.getBackgroundPage().then(function(page){
+		if(page){
+			if(callback) callback(page.app.GridNodes.getNode(page.app.node, dial.path.substr(1)));
+		} else {
+			browser.runtime.sendMessage({ cmd: app.Messages.Commands.getNode, path: path }).then(callback);
+		}
+	});
 };
 app.Messages.setNodeIndex = function(index, newIndex, callback){
 	browser.runtime.sendMessage({ cmd: app.Messages.Commands.setNodeIndex, path: dial.path, index: index, newIndex: newIndex }).then(callback);

@@ -461,6 +461,7 @@ app.GridNodes.getNodeWithParents = function(id){
 app.GridNodes.updateNode = function(gridNode, value, callback){
 	if(value){
 		if(value.title) gridNode.title = value.title;
+		if(value.titleLocked) gridNode.titleLocked = value.titleLocked;
 		if(value.image) gridNode.image = value.image;
 		else delete gridNode.image;
 		if(gridNode.type == app.GridNodes.GridNodeType.bookmark && value.url && gridNode.url != value.url){
@@ -579,7 +580,7 @@ app.GridNodes.refreshNode = function(gridNode, callback){ // Refresh content of 
 		case app.GridNodes.GridNodeType.bookmark:
 			app.SiteInfos.fromFrame(gridNode.url, function(infos){
 				if(infos){
-					gridNode.title = infos.title;
+					if(gridNode.titleLocked!=true) gridNode.title = infos.title;
 					gridNode.image = infos.screenshot;
 				} else {
 					gridNode.image = '0';
@@ -615,7 +616,7 @@ app.GridNodes.capturePage = function(gridNode, callback){
 		case app.GridNodes.GridNodeType.bookmark:
 			app.SiteInfos.fromNewTab(gridNode.url, function(infos){
 				if(infos){
-					gridNode.title = infos.title;
+					if(gridNode.titleLocked!=true) gridNode.title = infos.title;
 					gridNode.image = infos.screenshot;
 				} else {
 					gridNode.image = '0';

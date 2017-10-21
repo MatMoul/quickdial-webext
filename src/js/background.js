@@ -38,11 +38,17 @@ app.Messages.init = function(){ // Init Messages Listeners
 				sendResponse(app.settings);
 				break;
 			case app.Messages.Commands.setSettings:
+				let rootChanged = (app.settings.grid.root!=request.settings.grid.root);
 				app.settings = request.settings;
 				app.Settings.save();
 				sendResponse(app.settings);
 				browser.runtime.sendMessage( { cmd: app.Messages.Commands.settingsChanged } );
-				browser.runtime.sendMessage( { cmd: app.Messages.Commands.gridNodesLoaded } );
+				if(rootChanged){
+					app.node = { children: [] };
+					app.GridNodes.sync(app.node, app.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded }); });
+				} else {
+					browser.runtime.sendMessage( { cmd: app.Messages.Commands.gridNodesLoaded } );
+				}
 				break;
 			case app.Messages.Commands.getNodeByID:
 				var nodes = app.GridNodes.getNodeWithParents(request.id);
@@ -212,7 +218,9 @@ app.Bookmarks.initListener = function(){ // (Called from app.init) (/!\ Need fil
 }
 app.Bookmarks.load = function(rootPath, callback){ // Load root bookmark and create it if not exist
 	if(!callback) return;
-	browser.bookmarks.getSubTree('menu________').then(function(bookmarkItems){
+	var root = 'menu________';
+	if(rootPath.substr(0,1)=='/') root = 'root________';
+	browser.bookmarks.getSubTree(root).then(function(bookmarkItems){
 		function getChildItem(bookmarkItem, path, callback){
 			if(path.length == 0){
 				callback(bookmarkItem);
@@ -228,7 +236,8 @@ app.Bookmarks.load = function(rootPath, callback){ // Load root bookmark and cre
 				return getChildItem(bookmarkItem, path.substr(bookmarkItem.title.length + 1), callback);
 			}, function(){ callback(); });
 		}
-		getChildItem(bookmarkItems[0], rootPath, callback);
+		if(rootPath.substr(0,1)=='/') getChildItem(bookmarkItems[0], rootPath.substr(1), callback);
+		else getChildItem(bookmarkItems[0], rootPath, callback);
 	}, function(){ callback(); });
 }
 

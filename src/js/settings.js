@@ -18,6 +18,7 @@ app.init = function(){
 		BackgroundPreview.style.backgroundImage = app.settings.backgroundImage;
 		BackgroundPreview.style.backgroundRepeat = 'no-repeat';
 		BackgroundPreview.style.backgroundSize = '100% 100%';
+		GridRoot.value = app.settings.grid.root;
 		GridRows.value = app.settings.grid.rows;
 		GridMargins.value = app.settings.grid.margin;
 		GridColumns.value = app.settings.grid.columns;
@@ -84,6 +85,7 @@ app.init = function(){
 		else app.settings.grid.cells.titleBackgroundColor = GridCellsTitleBackgroundColor.value;
 		if(GridCellsTitleBackgroundTransparentHover.checked == true) app.settings.grid.cells.titleBackgroundColorHover = null;
 		else app.settings.grid.cells.titleBackgroundColorHover = GridCellsTitleBackgroundColorHover.value;
+		app.settings.grid.root = GridRoot.value;
 		browser.runtime.sendMessage( { cmd: app.Messages.Commands.setSettings, settings: app.settings } );
 	}
 	BtnCancel.onclick = function(){

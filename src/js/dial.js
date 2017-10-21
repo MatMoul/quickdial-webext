@@ -483,7 +483,7 @@ dial.PopupPanel = function(width, height, modal){ // PopupPanel Object
 }
 
 dial.editSettings = function(){
-	var popup = new dial.PopupPanel(500, 420, true);
+	var popup = new dial.PopupPanel(500, 440, true);
 	var iframe = document.createElement('iframe');
 	iframe.style.width = '100%';
 	iframe.style.height = '100%';

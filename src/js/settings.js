@@ -10,6 +10,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 
 app.init = function(){
+	document.addEventListener('keyup', function(e){
+		switch(e.key){
+			case 'Escape':
+				window.frameElement.popup.close();
+				break;
+		}
+	});
 	app.Messages.getSettings(function(settings){
 		app.settings = settings;
 		BackgroundColor.value = app.settings.backgroundColor;

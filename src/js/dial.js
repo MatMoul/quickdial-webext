@@ -495,6 +495,7 @@ dial.editSettings = function(){
 	iframe.src = '/html/settings.html';
 	iframe.popup = popup;
 	popup.popup();
+	iframe.focus();
 }
 
 dial.editProperties = function(selectedItem){
@@ -510,4 +511,5 @@ dial.editProperties = function(selectedItem){
 	iframe.src = '/html/properties.html?id=' + selectedItem.Node.id;
 	iframe.popup = popup;
 	popup.popup();
+	iframe.focus();
 }

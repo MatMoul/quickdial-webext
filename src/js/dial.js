@@ -301,7 +301,7 @@ dial.initGrid = function(){
 					EndIndex = (dial.page - 1) * (app.settings.grid.rows * app.settings.grid.columns) + +(ev.target.getAttribute('gridindex'));
 				}
 				if(app.settings.grid.backNode && dial.path != '/') EndIndex -= dial.page;
-				app.Messages.setNodeIndex(StartIndex, EndIndex);
+				if(StartIndex != EndIndex) app.Messages.setNodeIndex(StartIndex, EndIndex);
 			}
 			link.draggable = true;
 			link.ondragstart = dragstart_handler;

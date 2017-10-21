@@ -354,8 +354,10 @@ dial.populateGrid = function(){
 	populateFolder = function(link, node){
 		link.Node = node;
 		link.className = 'Folder';
-		if(node.image) link.childNodes[0].style.backgroundImage = 'url(' + node.image + ')';
-		else link.childNodes[0].style.backgroundImage = '';
+		if(node.image){
+			if(node.image.indexOf('url(')>=0) link.childNodes[0].style.backgroundImage = node.image;
+			else link.childNodes[0].style.backgroundImage = 'url(' + node.image + ')';
+		} else link.childNodes[0].style.backgroundImage = '';
 		link.childNodes[1].innerText = node.title;
 		if(dial.path) link.href = '?' + 'bg=' + encodeURIComponent(app.settings.backgroundColor) + '&path=' + encodeURIComponent(dial.path + node.title);
 		else link.href = '?' + 'bg=' + encodeURIComponent(app.settings.backgroundColor) + '&path=' + encodeURIComponent(node.title);
@@ -366,7 +368,8 @@ dial.populateGrid = function(){
 		link.Node = node;
 		if(node.image){
 			link.className = 'Bookmark';
-			link.childNodes[0].style.backgroundImage = 'url(' + node.image + ')';
+			if(node.image.indexOf('url(')>=0) link.childNodes[0].style.backgroundImage = node.image;
+			else link.childNodes[0].style.backgroundImage = 'url(' + node.image + ')';
 		} else {
 			link.className = 'BookmarkLoading';
 			link.childNodes[0].style.backgroundImage = '';

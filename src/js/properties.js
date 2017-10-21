@@ -26,17 +26,18 @@ app.init = function(){
 					TitleLocked.parentNode.style.display = 'none';
 					Url.parentNode.parentNode.style.display = 'none';
 					if(node.image){
-						if(node.image.indexOf('url(')>0) Image = node.image;
+						if(node.image.indexOf('url(')>=0) Image = node.image;
 						else Image = 'url(' + node.image + ')';
 					} else Image = null;
 					if(Image==null) ImagePreview.style.backgroundImage = app.settings.grid.folderIcon;
 					else ImagePreview.style.backgroundImage = Image;
 					break;
 				case app.GridNodes.GridNodeType.bookmark:
-					TitleLocked.checked = node.titleLocked;
+					TitleLocked.checked = (node.titleLocked==true);
 					ImageDefault.style.display = 'none';
 					Url.value = node.url;
-					Image = 'url(' + node.image + ')';
+					if(node.image.indexOf('url(')>=0) Image = node.image;
+					else Image = 'url(' + node.image + ')';
 					ImagePreview.style.backgroundImage = Image;
 					break;
 			}

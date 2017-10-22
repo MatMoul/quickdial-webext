@@ -44,6 +44,11 @@
     "description": "Text of refresh menu item."
   },
 
+  "menuCaptureHere": {
+    "message": "Capturer ici",
+    "description": "Text of capture here menu item."
+  },
+
   "menuCapturePage": {
     "message": "Capturer dans un nouvel onglet",
     "description": "Text of capture menu item."

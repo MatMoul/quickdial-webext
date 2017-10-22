@@ -2,7 +2,8 @@ var utils = {};
 var app = {};
 var dial = {
 	page: 1,
-	maxpage: 1
+	maxpage: 1,
+	capture: 0
 };
 
 document.addEventListener("DOMContentLoaded", function(event) {
@@ -73,7 +74,7 @@ app.Messages.init = function(){
 				app.Messages.getSettings(app.Settings._changed);
 				break;
 			case app.Messages.Commands.gridNodesLoaded:
-				app.Messages.getNode(dial.path, app.GridNodes._changed);
+				if(dial.skipUpdate!=true) app.Messages.getNode(dial.path, app.GridNodes._changed);
 				break;
 		}
 	});
@@ -95,6 +96,9 @@ app.Messages.getNode = function(path, callback){
 			browser.runtime.sendMessage({ cmd: app.Messages.Commands.getNode, path: path }).then(callback);
 		}
 	});
+};
+app.Messages.updateNode = function(id, value, callback){
+	browser.runtime.sendMessage({ cmd: app.Messages.Commands.updateNode, id: id, value: value }).then(callback);
 };
 app.Messages.setNodeIndex = function(index, newIndex, callback){
 	browser.runtime.sendMessage({ cmd: app.Messages.Commands.setNodeIndex, path: dial.path, index: index, newIndex: newIndex }).then(callback);
@@ -194,6 +198,12 @@ dial.initMenus = function(){
 		dial.refreshNode(dial._selectedItem);
 	};
 
+	dial.ItemMenuCaptureHere = document.createElement('menuitem');
+	dial.ItemMenuCaptureHere.label = browser.i18n.getMessage("menuCaptureHere");
+	dial.ItemMenuCaptureHere.onclick = function(){
+		dial.captureHere(dial._selectedItem);
+	};
+	
 	dial.ItemMenuCapture = document.createElement('menuitem');
 	dial.ItemMenuCapture.label = browser.i18n.getMessage("menuCapturePage");
 	dial.ItemMenuCapture.onclick = function(){
@@ -214,6 +224,7 @@ dial.initMenus = function(){
 	dial.ItemMenu.appendChild(document.createElement('hr'));
 	dial.ItemMenu.appendChild(dial.ItemMenuProperties);
 	dial.ItemMenu.appendChild(dial.ItemMenuRefresh);
+	dial.ItemMenu.appendChild(dial.ItemMenuCaptureHere);
 	dial.ItemMenu.appendChild(dial.ItemMenuCapture);
 	dial.ItemMenu.appendChild(dial.ItemMenuDelete);
 	dial.ItemMenu.appendChild(document.createElement('hr'));
@@ -267,7 +278,19 @@ dial.initGrid = function(){
 			link.className = 'Empty';
 			link.appendChild(document.createElement('div'));
 			link.appendChild(document.createElement('div'));
-			link.onmousedown = function(){ dial._selectedItem = this; };
+			link.onmousedown = function(){
+				dial._selectedItem = this;
+				if(dial._selectedItem.Node){
+					switch(dial._selectedItem.Node.type){
+						case app.GridNodes.GridNodeType.folder:
+							dial.ItemMenuCaptureHere.hidden = true;
+							break;
+						case app.GridNodes.GridNodeType.bookmark:
+							dial.ItemMenuCaptureHere.hidden = false;
+							break;
+					}
+				}
+			};
 			
 			function dragstart_handler(ev) {
 				if(!ev.target.Node){
@@ -429,6 +452,88 @@ dial.refreshNode = function(selectedItem){
 	selectedItem.className = 'BookmarkLoading';
 	selectedItem.childNodes[0].style.backgroundImage = app.settings.grid.loadingIcon;
 	app.Messages.refreshNode(selectedItem.Node.id);
+}
+dial.captureHere = function(selectedItem){
+	function headersReceived(e){
+		for (let i = e.responseHeaders.length - 1; i >= 0; i--) {
+			switch(e.responseHeaders[i].name.toLowerCase()){
+				case 'x-frame-options':
+				case 'frame-options':
+				case 'content-security-policy':
+					e.responseHeaders.splice(i, 1);
+					break;
+			}
+		}
+		return { responseHeaders: e.responseHeaders };
+	};
+	function pageLoaded(){
+		if(!iframe) return;
+		function clean(){
+			if(!iframe) return;
+			selectedItem.children[0].removeChild(iframe);
+			dial.capture -= 1;
+			if(dial.capture == 0){
+				browser.webRequest.onHeadersReceived.removeListener(headersReceived);
+				browser.tabs.update(tab.id, {muted: false}).then();
+			}
+			iframe = null;
+		}
+		setTimeout(function(){
+			browser.tabs.captureVisibleTab().then(function(img){
+				var imgObj = new Image;
+				imgObj.src = img;
+				var canvas = document.createElement('canvas');
+				canvas.style.width = rect.width.toString() + 'px';
+				canvas.style.height = rect.height.toString() + 'px';
+				canvas.width = rect.width;
+				canvas.height = rect.height;
+				var ctx = canvas.getContext('2d');
+				ctx.clearRect(0, 0, rect.width, rect.height);
+				ctx.save();
+				setTimeout(function(){
+					ctx.drawImage(imgObj, rect.left, rect.top, rect.width, rect.height, 0, 0, rect.width, rect.height);
+					ctx.restore();
+					img = canvas.toDataURL();
+					selectedItem.children[0].style.backgroundImage = 'url(' + img + ')';
+					clean();
+					app.Messages.updateNode(selectedItem.Node.id, { image: img }, function(){
+						setTimeout(function(){
+							if(dial.capture == 0) dial.skipUpdate = false;
+						}, 500);
+					});
+				}, 500);
+			}, clean);
+		}, 3000);
+
+
+	};
+
+	var tab = null;
+	var previewWidth = 1200; // Need to be linked to settings
+	var previewHeight = 710; // Need to be linked to settings
+	var iframe = document.createElement('iframe');
+	var rect = selectedItem.children[0].getBoundingClientRect();
+	browser.tabs.getCurrent().then(function(currentTab){
+		tab = currentTab;
+		var ratioX = previewWidth / selectedItem.children[0].offsetWidth;
+		var ratioY = previewHeight / selectedItem.children[0].offsetHeight;
+		iframe.style.width = ratioX * selectedItem.children[0].offsetWidth + 'px';
+		iframe.style.height = ratioY * selectedItem.children[0].offsetHeight + 'px';
+		iframe.style.position = 'absolute';
+		iframe.style.MozTransform = 'scale(' + (1/ratioX) + ', ' + (1/ratioY) + ')';
+		iframe.style.MozTransformOrigin = 'top left';
+		iframe.sandbox = 'allow-scripts allow-same-origin';
+		iframe.onload = function(){ pageLoaded(); }
+		dial.capture += 1;
+		if(dial.capture == 1){
+			dial.skipUpdate = true;
+			browser.webRequest.onHeadersReceived.addListener(headersReceived, { urls:['*://*/*'], types:['sub_frame'] }, ['blocking', 'responseHeaders']);
+			browser.tabs.update(tab.id, {muted: true}).then();
+		}
+		iframe.src = selectedItem.Node.url;
+		selectedItem.children[0].appendChild(iframe);
+		//setTimeout(function(){ pageLoaded(); }, 6000);
+	});
 }
 dial.capturePage = function(selectedItem){
 	selectedItem.className = 'BookmarkLoading';

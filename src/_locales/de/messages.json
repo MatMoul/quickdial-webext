@@ -1,6 +1,6 @@
 {
   "extensionDescription": {
-    "message": "Quick Dial, eine Startseite inspiriert von Fast Dial.",
+    "message": "Quick Dial, eine Schnellwahl-Seite inspiriert von Fast Dial.",
     "description": "Description of the extension."
   },
 
@@ -20,7 +20,7 @@
   },
 
   "AddBookmarkPrompt": {
-    "message": "Neue Lesezeichen URL eingeben :",
+    "message": "Neue Lesezeichen URL eingeben:",
     "description": "Text of the add bookmark prompt."
   },
 
@@ -30,7 +30,7 @@
   },
 
   "AddFolderPrompt": {
-    "message": "Neuen Ordner Namen eingeben :",
+    "message": "Neuen Ordner Namen eingeben:",
     "description": "Text of the add folder prompt."
   },
 
@@ -60,7 +60,7 @@
   },
 
   "deleteItemConfimation": {
-    "message": "Löschen $1 ?",
+    "message": "Löschen $1?",
     "description": "Text of delete confirmation."
   },
 

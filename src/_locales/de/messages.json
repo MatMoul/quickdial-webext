@@ -1,0 +1,72 @@
+{
+  "extensionDescription": {
+    "message": "Quick Dial, eine Startseite inspiriert von Fast Dial.",
+    "description": "Description of the extension."
+  },
+
+  "menuAddToQuickDial": {
+    "message": "Zu Quick Dial hinzufügen",
+    "description": "Text of add bookmark menu item."
+  },
+
+  "menuNew": {
+    "message": "Neu",
+    "description": "Text of new menu item."
+  },
+
+  "menuNewBookmark": {
+    "message": "Lesezeichen",
+    "description": "Text of add bookmark menu item."
+  },
+
+  "AddBookmarkPrompt": {
+    "message": "Neue Lesezeichen URL eingeben :",
+    "description": "Text of the add bookmark prompt."
+  },
+
+  "menuNewFolder": {
+    "message": "Ordner",
+    "description": "Text of add folder menu item."
+  },
+
+  "AddFolderPrompt": {
+    "message": "Neuen Ordner Namen eingeben :",
+    "description": "Text of the add folder prompt."
+  },
+
+  "menuProperties": {
+    "message": "Bearbeiten",
+    "description": "Text of properties menu item."
+  },
+
+  "menuRefreshItem": {
+    "message": "Neu laden",
+    "description": "Text of refresh menu item."
+  },
+
+  "menuCaptureHere": {
+    "message": "Hier aufnehmen",
+    "description": "Text of capture here menu item."
+  },
+
+  "menuCapturePage": {
+    "message": "In einem neuen Tab aufnehmen",
+    "description": "Text of capture menu item."
+  },
+
+  "menuDeleteItem": {
+    "message": "Löschen",
+    "description": "Text of delete menu item."
+  },
+
+  "deleteItemConfimation": {
+    "message": "Löschen $1 ?",
+    "description": "Text of delete confirmation."
+  },
+
+  "menuSettings": {
+    "message": "Quick Dial Einstellungen",
+    "description": "Text of settings menu item."
+  }
+
+}

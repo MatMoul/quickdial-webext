@@ -1,0 +1,72 @@
+{
+  "extensionDescription": {
+    "message": "Quick Dial, вдохновление умершим расширением Fast Dial.",
+    "description": "Description of the extension."
+  },
+
+  "menuAddToQuickDial": {
+    "message": "Добавить в Quick Dial",
+    "description": "Text of add bookmark menu item."
+  },
+
+  "menuNew": {
+    "message": "Добавить",
+    "description": "Text of new menu item."
+  },
+
+  "menuNewBookmark": {
+    "message": "Закладку",
+    "description": "Text of add bookmark menu item."
+  },
+
+  "AddBookmarkPrompt": {
+    "message": "Введите URL-адрес новой закладки:",
+    "description": "Text of the add bookmark prompt."
+  },
+
+  "menuNewFolder": {
+    "message": "Папку",
+    "description": "Text of add folder menu item."
+  },
+
+  "AddFolderPrompt": {
+    "message": "Введите имя новой папки:",
+    "description": "Text of the add folder prompt."
+  },
+
+  "menuProperties": {
+    "message": "Свойства",
+    "description": "Text of properties menu item."
+  },
+
+  "menuRefreshItem": {
+    "message": "Обновить",
+    "description": "Text of refresh menu item."
+  },
+
+  "menuCaptureHere": {
+    "message": "Захватить здесь",
+    "description": "Text of capture here menu item."
+  },
+
+  "menuCapturePage": {
+    "message": "Захватить на новой вкладке",
+    "description": "Text of capture menu item."
+  },
+
+  "menuDeleteItem": {
+    "message": "Удалить",
+    "description": "Text of delete menu item."
+  },
+
+  "deleteItemConfimation": {
+    "message": "Удалить $1?",
+    "description": "Text of delete confirmation."
+  },
+
+  "menuSettings": {
+    "message": "Настройки Quick Dial",
+    "description": "Text of settings menu item."
+  }
+
+}

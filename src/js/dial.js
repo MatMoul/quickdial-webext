@@ -30,6 +30,22 @@ window.onwheel = function(ev){
 		}
 	}
 }
+window.addEventListener('keyup', function(e){
+	switch(e.key){
+		case 'PageDown':
+			if(dial.page < dial.maxpage){
+				dial.page += 1;
+				dial.populateGrid();
+			}
+			break;
+		case 'PageUp':
+			if(dial.page > 1){
+				dial.page -= 1;
+				dial.populateGrid();
+			}
+			break;
+	}
+});
 
 
 

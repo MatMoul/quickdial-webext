@@ -212,7 +212,7 @@ app.Bookmarks._onMoved = function(){ app.GridNodes.sync(app.node, app.settings.g
 app.Bookmarks._onRemoved = function(){ app.GridNodes.sync(app.node, app.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded }); }); }
 app.Bookmarks.initListener = function(){ // (Called from app.init) (/!\ Need filter to root tree only) Init listener of bookmarks
 	browser.bookmarks.onCreated.addListener(app.Bookmarks._onCreated);
-	//browser.bookmarks.onChanged.addListener(app.Bookmarks._onChanged);
+	browser.bookmarks.onChanged.addListener(app.Bookmarks._onChanged);
 	browser.bookmarks.onMoved.addListener(app.Bookmarks._onMoved);
 	browser.bookmarks.onRemoved.addListener(app.Bookmarks._onRemoved);		
 }
@@ -359,6 +359,11 @@ app.GridNodes.GridNodeType = { // GridNodeType
 	bookmark: 2
 }
 app.GridNodes.sync = function(gridNode, rootPath, callback){ // Sync GridNodes with Bookmarks
+	if(app.GridNodes._syncing) {
+		app.GridNodes._needSync = true;
+		return;
+	}
+	app.GridNodes._syncing = true;
 	app.Bookmarks.load(rootPath, function(bookmarkItem){
 		function syncNode(gridNode, bookmarkItem){
 			gridNode.id = bookmarkItem.id;
@@ -414,8 +419,14 @@ app.GridNodes.sync = function(gridNode, rootPath, callback){ // Sync GridNodes w
 		}
 
 		syncNode(gridNode, bookmarkItem);
-		app.GridNodes.save();
-		if(callback) callback();
+		delete app.GridNodes._syncing;
+		if(app.GridNodes._needSync == true) {
+			delete app.GridNodes._needSync;
+			app.GridNodes.sync(gridNode, rootPath, callback);
+		} else {
+			app.GridNodes.save();			
+			if(callback) callback();
+		}
 	});
 }
 app.GridNodes.save = function(callback){ // Save GridNodes

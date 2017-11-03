@@ -12,24 +12,24 @@ document.addEventListener("DOMContentLoaded", function(event) {
 	dial.init();
 });
 
-window.onresize = function(){
+window.addEventListener('resize', function(){
 	if(app && app.settings) dial.updateGridLayout();
-}
-window.onwheel = function(ev){
+});
+window.addEventListener('wheel', function(e){
 	if(app && app.settings){
-		if(ev.deltaY > 0){
+		if(e.deltaY > 0){
 			if(dial.page < dial.maxpage){
 				dial.page += 1;
 				dial.populateGrid();
 			}
-		} else if(ev.deltaY < 0){
+		} else if(e.deltaY < 0){
 			if(dial.page > 1){
 				dial.page -= 1;
 				dial.populateGrid();
 			}
 		}
 	}
-}
+});
 window.addEventListener('keyup', function(e){
 	switch(e.key){
 		case 'PageDown':

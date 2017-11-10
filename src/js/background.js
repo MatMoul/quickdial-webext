@@ -123,6 +123,8 @@ app.Settings.init = function(callback){ // Load settings and nodes
 							borderColorHover: '#a9a9a9',
 							borderRadius: 4,
 							borderRadiusHover: 4,
+							borderSize: 1,
+							borderSizeHover: 1,
 							title: true,
 							titleHeight: 16,
 							titleFontSize: 10,
@@ -131,6 +133,8 @@ app.Settings.init = function(callback){ // Load settings and nodes
 							titleColorHover: '#33ccff',
 							titleBackgroundColor: null,
 							titleBackgroundColorHover: null,
+							titleBorderSize: 1,
+							titleBorderSizeHover: 1,
 							previewWidth: 1200,
 							previewHeight: 710
 						},
@@ -169,6 +173,10 @@ app.Settings.init = function(callback){ // Load settings and nodes
 				app.Settings.save();
 			});
 		}
+		if(!data.settings.grid.cells.borderSize) data.settings.grid.cells.borderSize = 1;
+		if(!data.settings.grid.cells.borderSizeHover) data.settings.grid.cells.borderSizeHover = 1;
+		if(!data.settings.grid.cells.titleBorderSize) data.settings.grid.cells.titleBorderSize = 1;
+		if(!data.settings.grid.cells.titleBorderSizeHover) data.settings.grid.cells.titleBorderSizeHover = 1;
 		app.settings = data.settings;
 		app.node = data.node;
 		if(callback) callback();

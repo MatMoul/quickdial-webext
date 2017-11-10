@@ -40,6 +40,8 @@ app.init = function(){
 		GridFolderPreview.style.backgroundSize = '100% 100%';
 		GridCellsMargins.value = app.settings.grid.cells.margin;
 		GridCellsMarginsHover.value = app.settings.grid.cells.marginHover;
+		GridCellsBorderSize.value = app.settings.grid.cells.borderSize;
+		GridCellsBorderSizeHover.value = app.settings.grid.cells.borderSizeHover;
 		GridCellsBackgroundTransparent.checked = (app.settings.grid.cells.backgroundColor == null);
 		GridCellsBackgroundColor.value = app.settings.grid.cells.backgroundColor;
 		GridCellsBackgroundTransparentHover.checked = (app.settings.grid.cells.backgroundColorHover == null);
@@ -51,6 +53,7 @@ app.init = function(){
 		GridCellsTitle.checked = app.settings.grid.cells.title;
 		GridCellsTitleHeight.value = app.settings.grid.cells.titleHeight;
 		GridCellsTitleFontSize.value = app.settings.grid.cells.titleFontSize;
+		GridCellsTitleBorderSize.value = app.settings.grid.cells.titleBorderSize;
 		GridCellsTitleColor.value = app.settings.grid.cells.titleColor;
 		GridCellsTitleColorHover.value = app.settings.grid.cells.titleColorHover;
 		GridCellsTitleBackgroundTransparent.checked = (app.settings.grid.cells.titleBackgroundColor == null);
@@ -75,6 +78,8 @@ app.init = function(){
 		app.settings.grid.cells.margin = +(GridCellsMargins.value);
 		//app.settings.grid.cells.marginHover = +(GridCellsMarginsHover.value);
 		app.settings.grid.cells.marginHover = +(GridCellsMargins.value);
+		app.settings.grid.cells.borderSize = +(GridCellsBorderSize.value);
+		//app.settings.grid.cells.borderSizeHover = +(GridCellsBorderSizeHover.value);
 		if(GridCellsBackgroundTransparent.checked == true) app.settings.grid.cells.backgroundColor = null;
 		else app.settings.grid.cells.backgroundColor = GridCellsBackgroundColor.value;
 		if(GridCellsBackgroundTransparentHover.checked == true) app.settings.grid.cells.backgroundColorHover = null;
@@ -86,6 +91,7 @@ app.init = function(){
 		app.settings.grid.cells.title = GridCellsTitle.checked;
 		app.settings.grid.cells.titleHeight = GridCellsTitleHeight.value;
 		app.settings.grid.cells.titleFontSize = GridCellsTitleFontSize.value;
+		app.settings.grid.cells.titleBorderSize = GridCellsTitleBorderSize.value;
 		app.settings.grid.cells.titleColor = GridCellsTitleColor.value;
 		app.settings.grid.cells.titleColorHover = GridCellsTitleColorHover.value;
 		if(GridCellsTitleBackgroundTransparent.checked == true) app.settings.grid.cells.titleBackgroundColor = null;

@@ -500,6 +500,12 @@ app.GridNodes.updateNode = function(gridNode, value, callback){
 			gridNode.url = value.url;
 			app.GridNodes.refreshNode(gridNode, function(){
 				browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded });
+				var data = { title: gridNode.title };
+				if(gridNode.url) data.url = gridNode.url;
+				browser.bookmarks.onChanged.removeListener(app.Bookmarks._onChanged);
+				browser.bookmarks.update(gridNode.id, data).then(function(){
+					browser.bookmarks.onChanged.addListener(app.Bookmarks._onChanged);
+				});
 			});
 		}
 		app.GridNodes.saveNode(gridNode);

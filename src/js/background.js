@@ -612,6 +612,12 @@ app.GridNodes.refreshNode = function(gridNode, callback){ // Refresh content of 
 			delete gridNode.__isLoading;
 			app.GridNodes.saveNode(gridNode);
 			if(callback) callback({ title: gridNode.title, screenshot: gridNode.image });
+			/*
+			browser.bookmarks.onChanged.removeListener(app.Bookmarks._onChanged);
+			browser.bookmarks.update(gridNode.id, { title: gridNode.title }).then(function(){
+				browser.bookmarks.onChanged.addListener(app.Bookmarks._onChanged);
+			});
+			*/
 			break;
 		case app.GridNodes.GridNodeType.bookmark:
 			app.SiteInfos.fromFrame(gridNode.url, function(infos){
@@ -624,6 +630,10 @@ app.GridNodes.refreshNode = function(gridNode, callback){ // Refresh content of 
 				delete gridNode.__isLoading;
 				app.GridNodes.saveNode(gridNode);
 				if(callback) callback(infos);
+				browser.bookmarks.onChanged.removeListener(app.Bookmarks._onChanged);
+				browser.bookmarks.update(gridNode.id, { title: gridNode.title, url: gridNode.url }).then(function(){
+					browser.bookmarks.onChanged.addListener(app.Bookmarks._onChanged);
+				});
 			});
 			break;
 	}
@@ -660,6 +670,10 @@ app.GridNodes.capturePage = function(gridNode, callback){
 				delete gridNode.__isLoading;
 				app.GridNodes.saveNode(gridNode);
 				if(callback) callback(infos);
+				browser.bookmarks.onChanged.removeListener(app.Bookmarks._onChanged);
+				browser.bookmarks.update(gridNode.id, { title: gridNode.title, url: gridNode.url }).then(function(){
+					browser.bookmarks.onChanged.addListener(app.Bookmarks._onChanged);
+				});
 			});
 			break;
 	}

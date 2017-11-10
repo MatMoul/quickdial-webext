@@ -302,7 +302,8 @@ dial.initGrid = function(){
 							dial.ItemMenuCaptureHere.hidden = true;
 							break;
 						case app.GridNodes.GridNodeType.bookmark:
-							dial.ItemMenuCaptureHere.hidden = false;
+							//dial.ItemMenuCaptureHere.hidden = false;
+							dial.ItemMenuCaptureHere.hidden = true;
 							break;
 					}
 				}

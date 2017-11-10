@@ -40,6 +40,8 @@ app.init = function(){
 		GridFolderPreview.style.backgroundSize = '100% 100%';
 		GridCellsMargins.value = app.settings.grid.cells.margin;
 		GridCellsMarginsHover.value = app.settings.grid.cells.marginHover;
+		GridCellsOpacity.value = app.settings.grid.cells.opacity * 100;
+		GridCellsOpacityHover.value = app.settings.grid.cells.opacityHover * 100;
 		GridCellsBorderSize.value = app.settings.grid.cells.borderSize;
 		GridCellsBorderSizeHover.value = app.settings.grid.cells.borderSizeHover;
 		GridCellsBackgroundTransparent.checked = (app.settings.grid.cells.backgroundColor == null);
@@ -78,6 +80,8 @@ app.init = function(){
 		app.settings.grid.cells.margin = +(GridCellsMargins.value);
 		//app.settings.grid.cells.marginHover = +(GridCellsMarginsHover.value);
 		app.settings.grid.cells.marginHover = +(GridCellsMargins.value);
+		app.settings.grid.cells.opacity = +(GridCellsOpacity.value) / 100;
+		app.settings.grid.cells.opacityHover = +(GridCellsOpacityHover.value) / 100;
 		app.settings.grid.cells.borderSize = +(GridCellsBorderSize.value);
 		//app.settings.grid.cells.borderSizeHover = +(GridCellsBorderSizeHover.value);
 		if(GridCellsBackgroundTransparent.checked == true) app.settings.grid.cells.backgroundColor = null;

@@ -117,6 +117,8 @@ app.Settings.init = function(callback){ // Load settings and nodes
 						cells: {
 							margin: 4,
 							marginHover: 4,
+							opacity: 1,
+							opacityHover: 1,
 							backgroundColor: null,
 							backgroundColorHover: null,
 							borderColor: '#333333',
@@ -173,6 +175,8 @@ app.Settings.init = function(callback){ // Load settings and nodes
 				app.Settings.save();
 			});
 		}
+		if(!data.settings.grid.cells.opacity) data.settings.grid.cells.opacity = 1;
+		if(!data.settings.grid.cells.opacityHover) data.settings.grid.cells.opacityHover = 1;
 		if(!data.settings.grid.cells.borderSize) data.settings.grid.cells.borderSize = 1;
 		if(!data.settings.grid.cells.borderSizeHover) data.settings.grid.cells.borderSizeHover = 1;
 		if(!data.settings.grid.cells.titleBorderSize) data.settings.grid.cells.titleBorderSize = 1;

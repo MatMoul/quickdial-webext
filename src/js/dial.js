@@ -257,16 +257,16 @@ dial.initStyles = function(){
 	dial.styles.grid = {};
 	dial.styles.grid.grid = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid { border-collapse: collapse; margin: auto; }')].style;
 	dial.styles.grid.cell = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td { margin: 0px; padding: 0px; }')].style;
+	dial.styles.grid.cellHover = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td:hover {}')].style;
 	dial.styles.grid.link = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a { display: block; outline: none; overflow: hidden; text-decoration: none; margin: ' + app.settings.grid.cells.margin + 'px; opacity: ' + app.settings.grid.cells.opacity + '; border: ' + app.settings.grid.cells.borderSize + 'px solid ' + app.settings.grid.cells.borderColor + '; border-radius: ' + app.settings.grid.cells.borderRadius + 'px; }')].style;
-	//dial.styles.grid.linkHover = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a:hover { border-color: ' + app.settings.grid.cells.borderColorHover + '; border-radius: ' + app.settings.grid.cells.borderRadiusHover + 'px; }')].style;
-	dial.styles.grid.linkHover = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a:hover { border-color: ' + app.settings.grid.cells.borderColorHover + '; margin: ' + app.settings.grid.cells.marginHover + 'px; opacity: ' + app.settings.grid.cells.opacityHover + '; border-radius: ' + app.settings.grid.cells.borderRadiusHover + 'px; }')].style;
+	dial.styles.grid.linkHover = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a:hover { border-color: ' + app.settings.grid.cells.borderColorHover + '; border-width: ' + app.settings.grid.cells.borderSizeHover + 'px; margin: ' + app.settings.grid.cells.marginHover + 'px; opacity: ' + app.settings.grid.cells.opacityHover + '; border-radius: ' + app.settings.grid.cells.borderRadiusHover + 'px; }')].style;
 	dial.styles.grid.linkPanel = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a>div:first-child { background-repeat: no-repeat; }')].style;
 	if(app.settings.grid.cells.backgroundColor) dial.styles.grid.linkPanel.backgroundColor = app.settings.grid.cells.backgroundColor;
 	dial.styles.grid.linkPanelHover = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a:hover>div:first-child { }')].style;
 	if(app.settings.grid.cells.backgroundColorHover) dial.styles.grid.linkPanelHover.backgroundColor = app.settings.grid.cells.backgroundColorHover;
 	dial.styles.grid.linkTitle = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a>div:last-child { height: ' + app.settings.grid.cells.titleHeight + 'px; font-size: ' + app.settings.grid.cells.titleFontSize + 'pt; font-family: ' + app.settings.grid.cells.titleFont + 'pt; text-align: center; overflow: hidden; color: ' + app.settings.grid.cells.titleColor + '; border-top: ' + app.settings.grid.cells.titleBorderSize + 'px solid ' + app.settings.grid.cells.borderColor + '; }')].style;
 	if(app.settings.grid.cells.titleBackgroundColor) dial.styles.grid.linkTitle.backgroundColor = app.settings.grid.cells.titleBackgroundColor;
-	dial.styles.grid.linkTitleHover = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a:hover>div:last-child { color: ' + app.settings.grid.cells.titleColorHover + '; border-top-color: ' + app.settings.grid.cells.borderColorHover + ' }')].style;
+	dial.styles.grid.linkTitleHover = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a:hover>div:last-child { font-size: ' + app.settings.grid.cells.titleFontSizeHover + 'pt; color: ' + app.settings.grid.cells.titleColorHover + '; border-top-width: ' + app.settings.grid.cells.titleBorderSizeHover + 'px; border-top-color: ' + app.settings.grid.cells.borderColorHover + ' }')].style;
 	if(app.settings.grid.cells.titleBackgroundColorHover) dial.styles.grid.linkTitleHover.backgroundColor = app.settings.grid.cells.titleBackgroundColorHover;
 	dial.styles.grid.linkEmpty = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a.Empty { display: none; }')].style;
 	dial.styles.grid.linkBack = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a.Back :first-child { background-image: ' + app.settings.grid.backIcon + '; background-repeat: no-repeat; background-position: center center; }')].style;
@@ -354,23 +354,40 @@ dial.initGrid = function(){
 	return dial.Grid;
 };
 dial.updateGridLayout = function(){
-	var fullWidth = dial.Grid.parentElement.offsetWidth - 2 * app.settings.grid.margin;
-	var fullHeight = dial.Grid.parentElement.offsetHeight - 2 * app.settings.grid.margin;
-	var linkWidth = fullWidth / app.settings.grid.columns;
-	var linkHeight = fullHeight / app.settings.grid.rows;
-	if(linkWidth <= linkHeight * 4 / 3) linkHeight = linkWidth / 4 * 3;
-	else linkWidth = linkHeight / 3 * 4;
-	
-	dial.styles.grid.cell.width = linkWidth.toString() + 'px';
-	dial.styles.grid.cell.height = linkHeight.toString() + 'px';
+	function calc(gridMargin, cellsMargin, borderSize, titleBorderSize){
+		var fullWidth = dial.Grid.parentElement.offsetWidth - 2 * gridMargin;
+		var fullHeight = dial.Grid.parentElement.offsetHeight - 2 * gridMargin;
+		var cellWidth = fullWidth / app.settings.grid.columns;
+		var cellHeight = fullHeight / app.settings.grid.rows;
+		var linkWidth = 0;
+		var linkHeight = 0;
+		if(cellWidth <= cellHeight * 4 / 3) cellHeight = cellWidth / 4 * 3;
+		else cellWidth = cellHeight / 3 * 4;
+		linkWidth = cellWidth - 2 * (cellsMargin + 1) - 2 * borderSize;
+		linkHeight = cellHeight - 2 * (cellsMargin + 1) - 2 * borderSize - titleBorderSize;
+		return {
+			cellWidth: cellWidth,
+			cellHeight: cellHeight,
+			linkWidth: linkWidth,
+			linkHeight: linkHeight
+		};
+	}
 
-	linkWidth = linkWidth - 2 * (app.settings.grid.cells.margin + 1) - 2 * app.settings.grid.cells.borderSize;
-	linkHeight = linkHeight - 2 * (app.settings.grid.cells.margin + 1) - 2 * app.settings.grid.cells.borderSize - app.settings.grid.cells.titleBorderSize;
-	
-	dial.styles.grid.link.width = linkWidth.toString() + 'px';
-	dial.styles.grid.link.height = linkHeight.toString() + 'px';
-	if(app.settings.grid.cells.title) dial.styles.grid.linkPanel.height = (linkHeight - app.settings.grid.cells.titleHeight - 1).toString() + 'px';
-	else dial.styles.grid.linkPanel.height = linkHeight.toString() + 'px';
+	var values = calc(app.settings.grid.margin, app.settings.grid.cells.margin, app.settings.grid.cells.borderSize, app.settings.grid.cells.titleBorderSize);
+	dial.styles.grid.cell.width = values.cellWidth.toString() + 'px';
+	dial.styles.grid.cell.height = values.cellHeight.toString() + 'px';
+	dial.styles.grid.link.width = values.linkWidth.toString() + 'px';
+	dial.styles.grid.link.height = values.linkHeight.toString() + 'px';
+	if(app.settings.grid.cells.title) dial.styles.grid.linkPanel.height = (values.linkHeight - app.settings.grid.cells.titleHeight - 1 - app.settings.grid.cells.titleBorderSize).toString() + 'px';
+	else dial.styles.grid.linkPanel.height = values.linkHeight.toString() + 'px';
+
+	values = calc(app.settings.grid.margin, app.settings.grid.cells.marginHover, app.settings.grid.cells.borderSizeHover, app.settings.grid.cells.titleBorderSizeHover);
+	dial.styles.grid.cellHover.width = values.cellWidth.toString() + 'px';
+	dial.styles.grid.cellHover.height = values.cellHeight.toString() + 'px';
+	dial.styles.grid.linkHover.width = values.linkWidth.toString() + 'px';
+	dial.styles.grid.linkHover.height = values.linkHeight.toString() + 'px';
+	if(app.settings.grid.cells.titleHover) dial.styles.grid.linkPanelHover.height = (values.linkHeight - app.settings.grid.cells.titleHeightHover - 1 - app.settings.grid.cells.titleBorderSizeHover).toString() + 'px';
+	else dial.styles.grid.linkPanelHover.height = values.linkHeight.toString() + 'px';
 };
 dial.populateGrid = function(){
 	populateEmpty = function(link){

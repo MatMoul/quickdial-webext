@@ -128,8 +128,11 @@ app.Settings.init = function(callback){ // Load settings and nodes
 							borderSize: 1,
 							borderSizeHover: 1,
 							title: true,
-							titleHeight: 16,
+							titleHover: true,
+							titleHeight: 15,
+							titleHeightHover: 15,
 							titleFontSize: 10,
+							titleFontSizeHover: 10,
 							titleFont: 'Arial, Verdana, Sans-serif',
 							titleColor: '#ffffff',
 							titleColorHover: '#33ccff',
@@ -178,9 +181,15 @@ app.Settings.init = function(callback){ // Load settings and nodes
 		if(!data.settings.grid.cells.opacity) data.settings.grid.cells.opacity = 1;
 		if(!data.settings.grid.cells.opacityHover) data.settings.grid.cells.opacityHover = 1;
 		if(!data.settings.grid.cells.borderSize) data.settings.grid.cells.borderSize = 1;
-		if(!data.settings.grid.cells.borderSizeHover) data.settings.grid.cells.borderSizeHover = 1;
+		if(!data.settings.grid.cells.borderSizeHover) data.settings.grid.cells.borderSizeHover = data.settings.grid.cells.borderSize;
+		if(!data.settings.grid.cells.titleHover) data.settings.grid.cells.titleHover = data.settings.grid.cells.title;
+		if(!data.settings.grid.cells.titleHeightHover){
+			data.settings.grid.cells.titleHeight -= 1;
+			data.settings.grid.cells.titleHeightHover = data.settings.grid.cells.titleHeight;
+		}
+		if(!data.settings.grid.cells.titleFontSizeHover) data.settings.grid.cells.titleFontSizeHover = data.settings.grid.cells.titleFontSize;
 		if(!data.settings.grid.cells.titleBorderSize) data.settings.grid.cells.titleBorderSize = 1;
-		if(!data.settings.grid.cells.titleBorderSizeHover) data.settings.grid.cells.titleBorderSizeHover = 1;
+		if(!data.settings.grid.cells.titleBorderSizeHover) data.settings.grid.cells.titleBorderSizeHover = data.settings.grid.cells.titleBorderSize;
 		app.settings = data.settings;
 		app.node = data.node;
 		if(callback) callback();

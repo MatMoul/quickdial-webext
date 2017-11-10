@@ -54,13 +54,13 @@
 						<tr>
 							<td><span>Rows x Columns :</span></td>
 							<td>
-								<input id="GridRows" type="number">
-								<input id="GridColumns" type="number">
+								<input id="GridRows" type="number" min="1">
+								<input id="GridColumns" type="number" min="1">
 							</td>
 						</tr>
 						<tr>
 							<td><span>Margins :</span></td>
-							<td><input id="GridMargins" type="number"></td>
+							<td><input id="GridMargins" type="number" min="0"></td>
 						</tr>
 						<tr>
 							<td><span>Back Button :</span></td>
@@ -99,23 +99,23 @@
 						</tr>
 						<tr>
 							<td><span>Margins :</span></td>
-							<td><input id="GridCellsMargins" type="number"></td>
-							<td><input id="GridCellsMarginsHover" type="number" style="display: none;"></td>
+							<td><input id="GridCellsMargins" type="number" min="0"></td>
+							<td><input id="GridCellsMarginsHover" type="number" min="0" style="display: none;"></td>
 						</tr>
 						<tr>
 							<td><span>Opacity :</span></td>
-							<td><input id="GridCellsOpacity" type="number"></td>
-							<td><input id="GridCellsOpacityHover" type="number"></td>
+							<td><input id="GridCellsOpacity" type="number" min="0" max="100"></td>
+							<td><input id="GridCellsOpacityHover" type="number" min="0" max="100"></td>
 						</tr>
 						<tr>
 							<td><span>Border Size :</span></td>
-							<td><input id="GridCellsBorderSize" type="number"></td>
-							<td><input id="GridCellsBorderSizeHover" type="number" style="display: none;"></td>
+							<td><input id="GridCellsBorderSize" type="number" min="0"></td>
+							<td><input id="GridCellsBorderSizeHover" type="number" min="0" style="display: none;"></td>
 						</tr>
 						<tr>
 							<td><span>Border Radius :</span></td>
-							<td><input id="GridCellsBorderRadius" type="number"></td>
-							<td><input id="GridCellsBorderRadiusHover" type="number"></td>
+							<td><input id="GridCellsBorderRadius" type="number" min="0"></td>
+							<td><input id="GridCellsBorderRadiusHover" type="number" min="0"></td>
 						</tr>
 						<tr>
 							<td><span>Background Transparent :</span></td>
@@ -139,17 +139,17 @@
 						</tr>
 						<tr>
 							<td><span>Title Height :</span></td>
-							<td><input id="GridCellsTitleHeight" type="number"></td>
+							<td><input id="GridCellsTitleHeight" type="number" min="0"></td>
 							<td></td>
 						</tr>
 						<tr>
 							<td><span>Title Font Size :</span></td>
-							<td><input id="GridCellsTitleFontSize" type="number"></td>
+							<td><input id="GridCellsTitleFontSize" type="number" min="0"></td>
 							<td></td>
 						</tr>
 						<tr>
 							<td><span>Title Border Size :</span></td>
-							<td><input id="GridCellsTitleBorderSize" type="number"></td>
+							<td><input id="GridCellsTitleBorderSize" type="number" min="0"></td>
 							<td></td>
 						</tr>
 						<tr>

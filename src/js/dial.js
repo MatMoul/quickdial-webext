@@ -253,7 +253,27 @@ dial.initStyles = function(){
 	document.head.appendChild(dial.Style);
 	dial.styles = {};
 	dial.styles.html = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('html { height: 100%; }')].style;
-	dial.styles.body = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('body { user-select: none; -moz-user-select: none; display: flex;	width: 100%; height: 100%; margin: 0px; padding: 0px; background-color: ' + app.settings.backgroundColor + '; background-image: ' + app.settings.backgroundImage + '; background-repeat: no-repeat; background-size: 100% 100%; }')].style;
+	dial.styles.body = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('body { user-select: none; -moz-user-select: none; display: flex;	width: 100%; height: 100%; margin: 0px; padding: 0px; background-color: ' + app.settings.backgroundColor + '; background-image: ' + app.settings.backgroundImage + '; }')].style;
+	switch(app.settings.backgroundMode){
+		case 0:
+			dial.styles.body.backgroundRepeat = 'no-repeat';
+			dial.styles.body.backgroundSize = '100% 100%';
+			break;
+		case 1:
+			dial.styles.body.backgroundRepeat = 'no-repeat';
+			dial.styles.body.backgroundSize = 'cover';
+			dial.styles.body.backgroundPosition = 'center';
+			break;
+		case 2:
+			dial.styles.body.backgroundRepeat = 'no-repeat';
+			dial.styles.body.backgroundSize = 'contain';
+			dial.styles.body.backgroundPosition = 'center';
+			break;
+		case 3:
+			dial.styles.body.backgroundRepeat = 'no-repeat';
+			dial.styles.body.backgroundPosition = 'center';
+			break;
+	}
 	dial.styles.grid = {};
 	dial.styles.grid.grid = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid { border-collapse: collapse; margin: auto; }')].style;
 	dial.styles.grid.cell = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td { margin: 0px; padding: 0px; }')].style;

@@ -106,6 +106,7 @@ app.Settings.init = function(callback){ // Load settings and nodes
 				settings: {
 					backgroundColor: '#3c4048',
 					backgroundImage: null,
+					backgroundMode: 0,
 					grid: {
 						margin: 10,
 						rows: 4,
@@ -178,6 +179,7 @@ app.Settings.init = function(callback){ // Load settings and nodes
 				app.Settings.save();
 			});
 		}
+		if(!data.settings.backgroundMode) data.settings.backgroundMode = 0;
 		if(!data.settings.grid.cells.opacity) data.settings.grid.cells.opacity = 1;
 		if(!data.settings.grid.cells.opacityHover) data.settings.grid.cells.opacityHover = 1;
 		if(!data.settings.grid.cells.borderSize) data.settings.grid.cells.borderSize = 1;

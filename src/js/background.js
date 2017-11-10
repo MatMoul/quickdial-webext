@@ -388,7 +388,7 @@ app.GridNodes.sync = function(gridNode, rootPath, callback){ // Sync GridNodes w
 	app.Bookmarks.load(rootPath, function(bookmarkItem){
 		function syncNode(gridNode, bookmarkItem){
 			gridNode.id = bookmarkItem.id;
-			if(!gridNode.title) gridNode.title = bookmarkItem.title;
+			gridNode.title = bookmarkItem.title;
 			if(bookmarkItem.url){
 				gridNode.type = app.GridNodes.GridNodeType.bookmark;
 				if(!gridNode.url) gridNode.url = bookmarkItem.url;
@@ -496,18 +496,16 @@ app.GridNodes.updateNode = function(gridNode, value, callback){
 		if(value.titleLocked!=null) gridNode.titleLocked = value.titleLocked;
 		if(value.image) gridNode.image = value.image;
 		else delete gridNode.image;
-		if(gridNode.type == app.GridNodes.GridNodeType.bookmark && value.url && gridNode.url != value.url){
-			gridNode.url = value.url;
-			app.GridNodes.refreshNode(gridNode, function(){
-				browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded });
-				var data = { title: gridNode.title };
-				if(gridNode.url) data.url = gridNode.url;
-				browser.bookmarks.onChanged.removeListener(app.Bookmarks._onChanged);
-				browser.bookmarks.update(gridNode.id, data).then(function(){
-					browser.bookmarks.onChanged.addListener(app.Bookmarks._onChanged);
-				});
+		if(gridNode.type == app.GridNodes.GridNodeType.bookmark) gridNode.url = value.url;
+		app.GridNodes.refreshNode(gridNode, function(){
+			browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded });
+			var data = { title: gridNode.title };
+			if(gridNode.type == app.GridNodes.GridNodeType.bookmark) data.url = gridNode.url;
+			browser.bookmarks.onChanged.removeListener(app.Bookmarks._onChanged);
+			browser.bookmarks.update(gridNode.id, data).then(function(){
+				browser.bookmarks.onChanged.addListener(app.Bookmarks._onChanged);
 			});
-		}
+		});
 		app.GridNodes.saveNode(gridNode);
 	}
 	if(callback) callback(gridNode);

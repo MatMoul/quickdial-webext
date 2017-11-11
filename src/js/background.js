@@ -181,21 +181,23 @@ app.Settings.init = function(callback){ // Load settings and nodes
 				app.Settings.save();
 			});
 		}
-		if(!data.settings.backgroundMode) data.settings.backgroundMode = 0;
-		if(!data.settings.grid.backIconMode) data.settings.grid.backIconMode = 3;
-		if(!data.settings.grid.folderIconMode) data.settings.grid.folderIconMode = 0;
-		if(!data.settings.grid.cells.opacity) data.settings.grid.cells.opacity = 1;
-		if(!data.settings.grid.cells.opacityHover) data.settings.grid.cells.opacityHover = 1;
-		if(!data.settings.grid.cells.borderSize) data.settings.grid.cells.borderSize = 1;
-		if(!data.settings.grid.cells.borderSizeHover) data.settings.grid.cells.borderSizeHover = data.settings.grid.cells.borderSize;
-		if(!data.settings.grid.cells.titleHover) data.settings.grid.cells.titleHover = data.settings.grid.cells.title;
-		if(!data.settings.grid.cells.titleHeightHover){
+		if(data.version == 3){ // Upgrade Data Version
+			data.version = 4;
+			data.settings.backgroundMode = 0;
+			data.settings.grid.backIconMode = 3;
+			data.settings.grid.folderIconMode = 0;
+			data.settings.grid.cells.opacity = 1;
+			data.settings.grid.cells.opacityHover = 1;
+			data.settings.grid.cells.borderSize = 1;
+			data.settings.grid.cells.borderSizeHover = data.settings.grid.cells.borderSize;
+			data.settings.grid.cells.titleHover = data.settings.grid.cells.title;
 			data.settings.grid.cells.titleHeight -= 1;
 			data.settings.grid.cells.titleHeightHover = data.settings.grid.cells.titleHeight;
+			data.settings.grid.cells.titleFontSizeHover = data.settings.grid.cells.titleFontSize;
+			data.settings.grid.cells.titleBorderSize = 1;
+			data.settings.grid.cells.titleBorderSizeHover = data.settings.grid.cells.titleBorderSize;
+			app.Settings.save();
 		}
-		if(!data.settings.grid.cells.titleFontSizeHover) data.settings.grid.cells.titleFontSizeHover = data.settings.grid.cells.titleFontSize;
-		if(!data.settings.grid.cells.titleBorderSize) data.settings.grid.cells.titleBorderSize = 1;
-		if(!data.settings.grid.cells.titleBorderSizeHover) data.settings.grid.cells.titleBorderSizeHover = data.settings.grid.cells.titleBorderSize;
 		app.settings = data.settings;
 		app.node = data.node;
 		if(callback) callback();
@@ -382,8 +384,8 @@ app.SiteInfos.fromFrame = function(url, callback){ // Retrieve infos from an ifr
 	xmlHttp.onerror = function(){ if(callback) callback(); }
 	xmlHttp.ontimeout = function(){ if(callback) callback(); }
 	xmlHttp.send();
-	}
-	app.SiteInfos.fromWS = function(url, callback){ // Retrieve infos from a Web Service. callback( { url, title, (/!\ Not handled now)icon, screenshot } || error: callback() )
+}
+app.SiteInfos.fromWS = function(url, callback){ // Retrieve infos from a Web Service. callback( { url, title, (/!\ Not handled now)icon, screenshot } || error: callback() )
 	console.log('Not implemented');
 	return app.SiteInfos.fromFrame(url, callback);
 }

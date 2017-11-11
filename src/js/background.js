@@ -237,6 +237,16 @@ app.Bookmarks._onCreated = function(){ app.GridNodes.sync(app.node, app.settings
 app.Bookmarks._onChanged = function(){ app.GridNodes.sync(app.node, app.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded }); }); }
 app.Bookmarks._onMoved = function(){ app.GridNodes.sync(app.node, app.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded }); }); }
 app.Bookmarks._onRemoved = function(){ app.GridNodes.sync(app.node, app.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded }); }); }
+app.Bookmarks._onImportBegan = function(){
+	browser.bookmarks.onCreated.removeListener(app.Bookmarks._onCreated);
+	browser.bookmarks.onChanged.removeListener(app.Bookmarks._onChanged);
+	browser.bookmarks.onMoved.removeListener(app.Bookmarks._onMoved);
+	browser.bookmarks.onRemoved.removeListener(app.Bookmarks._onRemoved);		
+}
+app.Bookmarks._onImportEnded = function(){
+	app.GridNodes.sync(app.node, app.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded }); });
+	app.Bookmarks.initListener();
+}
 app.Bookmarks.initListener = function(){ // (Called from app.init) (/!\ Need filter to root tree only) Init listener of bookmarks
 	browser.bookmarks.onCreated.addListener(app.Bookmarks._onCreated);
 	browser.bookmarks.onChanged.addListener(app.Bookmarks._onChanged);

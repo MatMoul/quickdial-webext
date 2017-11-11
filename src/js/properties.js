@@ -19,6 +19,8 @@ app.init = function(){
 		app.Messages.getNodeByID(new URL(window.location).searchParams.get('id'), function(node){
 			app.node = node;
 			Title.value = node.title;
+			if(node.imageMode == 0) ImageMode.value = 0;
+			else if(node.imageMode) ImageMode.value = node.imageMode;
 			ImagePreview.style.backgroundRepeat = 'no-repeat';
 			ImagePreview.style.backgroundSize = '100% 100%';
 			switch(node.type){
@@ -97,10 +99,10 @@ app.init = function(){
 	BtnApply.onclick = function(){
 		switch(app.node.type){
 			case app.GridNodes.GridNodeType.folder:
-				app.Messages.updateNode(app.node.id, { title: Title.value, image: Image })
+				app.Messages.updateNode(app.node.id, { title: Title.value, image: Image, imageMode: +(ImageMode.value) })
 				break;
 			case app.GridNodes.GridNodeType.bookmark:
-				app.Messages.updateNode(app.node.id, { title: Title.value, titleLocked: TitleLocked.checked, url: Url.value, image: Image })
+				app.Messages.updateNode(app.node.id, { title: Title.value, titleLocked: TitleLocked.checked, url: Url.value, image: Image, imageMode: +(ImageMode.value) })
 				break;
 		}
 	}

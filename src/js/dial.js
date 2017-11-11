@@ -417,6 +417,35 @@ dial.updateGridLayout = function(){
 	else dial.styles.grid.linkPanelHover.height = values.linkHeight.toString() + 'px';
 };
 dial.populateGrid = function(){
+	function applyImageMode(imageMode, target){
+		switch(imageMode){
+			case -1:
+				target.backgroundRepeat = '';
+				target.backgroundSize = '';
+				target.backgroundPosition = '';
+				break;
+			case 0:
+				target.backgroundRepeat = 'no-repeat';
+				target.backgroundSize = '100% 100%';
+				target.backgroundPosition = '';
+				break;
+			case 1:
+				target.backgroundRepeat = 'no-repeat';
+				target.backgroundSize = 'cover';
+				target.backgroundPosition = 'center';
+				break;
+			case 2:
+				target.backgroundRepeat = 'no-repeat';
+				target.backgroundSize = 'contain';
+				target.backgroundPosition = 'center';
+				break;
+			case 3:
+				target.backgroundRepeat = 'no-repeat';
+				target.backgroundSize = 'auto auto';
+				target.backgroundPosition = 'center';
+				break;
+		}
+	}
 	populateEmpty = function(link){
 		link.Node = null;
 		link.className = 'Empty';
@@ -437,6 +466,8 @@ dial.populateGrid = function(){
 	populateFolder = function(link, node){
 		link.Node = node;
 		link.className = 'Folder';
+		if(node.imageMode || node.imageMode == 0) applyImageMode(node.imageMode, link.childNodes[0].style);
+		else applyImageMode(-1, link.childNodes[0].style);
 		if(node.image){
 			if(node.image.indexOf('url(')>=0) link.childNodes[0].style.backgroundImage = node.image;
 			else link.childNodes[0].style.backgroundImage = 'url(' + node.image + ')';
@@ -449,6 +480,8 @@ dial.populateGrid = function(){
 	}
 	populateBookmark = function(link, node){
 		link.Node = node;
+		if(node.imageMode || node.imageMode == 0) applyImageMode(node.imageMode, link.childNodes[0].style);
+		else applyImageMode(-1, link.childNodes[0].style);
 		if(node.image){
 			link.className = 'Bookmark';
 			if(node.image.indexOf('url(')>=0) link.childNodes[0].style.backgroundImage = node.image;

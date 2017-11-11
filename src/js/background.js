@@ -502,17 +502,33 @@ app.GridNodes.updateNode = function(gridNode, value, callback){
 		if(value.titleLocked!=null) gridNode.titleLocked = value.titleLocked;
 		if(value.image) gridNode.image = value.image;
 		else delete gridNode.image;
-		if(gridNode.type == app.GridNodes.GridNodeType.bookmark) gridNode.url = value.url;
-		app.GridNodes.refreshNode(gridNode, function(){
+		if(value.imageMode || value.imageMode == 0) {
+			if(value.imageMode == -1) delete gridNode.imageMode;
+			else gridNode.imageMode = value.imageMode;
+		}
+		if(gridNode.type == app.GridNodes.GridNodeType.bookmark && value.url && gridNode.url != value.url){
+			gridNode.url = value.url;
+			app.GridNodes.refreshNode(gridNode, function(){
+				browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded });
+				var data = { title: gridNode.title };
+				if(gridNode.imageMode) data.imageMode = gridNode.imageMode;
+				if(gridNode.type == app.GridNodes.GridNodeType.bookmark) data.url = gridNode.url;
+				browser.bookmarks.onChanged.removeListener(app.Bookmarks._onChanged);
+				browser.bookmarks.update(gridNode.id, data).then(function(){
+					browser.bookmarks.onChanged.addListener(app.Bookmarks._onChanged);
+				});
+				app.GridNodes.saveNode(gridNode);
+			});
+		} else {
 			browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded });
 			var data = { title: gridNode.title };
-			if(gridNode.type == app.GridNodes.GridNodeType.bookmark) data.url = gridNode.url;
+			if(gridNode.imageMode) data.imageMode = gridNode.imageMode;
 			browser.bookmarks.onChanged.removeListener(app.Bookmarks._onChanged);
 			browser.bookmarks.update(gridNode.id, data).then(function(){
 				browser.bookmarks.onChanged.addListener(app.Bookmarks._onChanged);
 			});
-		});
-		app.GridNodes.saveNode(gridNode);
+			app.GridNodes.saveNode(gridNode);
+		}
 	}
 	if(callback) callback(gridNode);
 }

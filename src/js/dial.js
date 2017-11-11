@@ -381,9 +381,12 @@ dial.initGrid = function(){
 	return dial.Grid;
 };
 dial.updateGridLayout = function(){
+	var parentWidth = dial.Grid.parentElement.offsetWidth;
+	var parentHeight = dial.Grid.parentElement.offsetHeight;
+	
 	function calc(gridMargin, cellsMargin, borderSize, titleBorderSize){
-		var fullWidth = dial.Grid.parentElement.offsetWidth - 2 * gridMargin;
-		var fullHeight = dial.Grid.parentElement.offsetHeight - 2 * gridMargin;
+		var fullWidth = parentWidth - 2 * gridMargin;
+		var fullHeight = parentHeight - 2 * gridMargin;
 		var cellWidth = fullWidth / app.settings.grid.columns;
 		var cellHeight = fullHeight / app.settings.grid.rows;
 		var linkWidth = 0;

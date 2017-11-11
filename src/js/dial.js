@@ -248,32 +248,36 @@ dial.initMenus = function(){
 	document.body.appendChild(dial.ItemMenu);
 }
 dial.initStyles = function(){
+	function applyImageMode(imageMode, target){
+		switch(imageMode){
+			case 0:
+				target.backgroundRepeat = 'no-repeat';
+				target.backgroundSize = '100% 100%';
+				break;
+			case 1:
+				target.backgroundRepeat = 'no-repeat';
+				target.backgroundSize = 'cover';
+				target.backgroundPosition = 'center';
+				break;
+			case 2:
+				target.backgroundRepeat = 'no-repeat';
+				target.backgroundSize = 'contain';
+				target.backgroundPosition = 'center';
+				break;
+			case 3:
+				target.backgroundRepeat = 'no-repeat';
+				target.backgroundPosition = 'center';
+				break;
+		}
+	}
+
 	var oldStyle = dial.Style;
 	dial.Style = document.createElement('style'), StyleSheet;
 	document.head.appendChild(dial.Style);
 	dial.styles = {};
 	dial.styles.html = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('html { height: 100%; }')].style;
 	dial.styles.body = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('body { user-select: none; -moz-user-select: none; display: flex;	width: 100%; height: 100%; margin: 0px; padding: 0px; background-color: ' + app.settings.backgroundColor + '; background-image: ' + app.settings.backgroundImage + '; }')].style;
-	switch(app.settings.backgroundMode){
-		case 0:
-			dial.styles.body.backgroundRepeat = 'no-repeat';
-			dial.styles.body.backgroundSize = '100% 100%';
-			break;
-		case 1:
-			dial.styles.body.backgroundRepeat = 'no-repeat';
-			dial.styles.body.backgroundSize = 'cover';
-			dial.styles.body.backgroundPosition = 'center';
-			break;
-		case 2:
-			dial.styles.body.backgroundRepeat = 'no-repeat';
-			dial.styles.body.backgroundSize = 'contain';
-			dial.styles.body.backgroundPosition = 'center';
-			break;
-		case 3:
-			dial.styles.body.backgroundRepeat = 'no-repeat';
-			dial.styles.body.backgroundPosition = 'center';
-			break;
-	}
+	applyImageMode(app.settings.backgroundMode, dial.styles.body);
 	dial.styles.grid = {};
 	dial.styles.grid.grid = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid { border-collapse: collapse; margin: auto; }')].style;
 	dial.styles.grid.cell = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td { margin: 0px; padding: 0px; }')].style;
@@ -289,8 +293,10 @@ dial.initStyles = function(){
 	dial.styles.grid.linkTitleHover = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a:hover>div:last-child { font-size: ' + app.settings.grid.cells.titleFontSizeHover + 'pt; color: ' + app.settings.grid.cells.titleColorHover + '; border-top-width: ' + app.settings.grid.cells.titleBorderSizeHover + 'px; border-top-color: ' + app.settings.grid.cells.borderColorHover + ' }')].style;
 	if(app.settings.grid.cells.titleBackgroundColorHover) dial.styles.grid.linkTitleHover.backgroundColor = app.settings.grid.cells.titleBackgroundColorHover;
 	dial.styles.grid.linkEmpty = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a.Empty { display: none; }')].style;
-	dial.styles.grid.linkBack = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a.Back :first-child { background-image: ' + app.settings.grid.backIcon + '; background-repeat: no-repeat; background-position: center center; }')].style;
+	dial.styles.grid.linkBack = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a.Back :first-child { background-image: ' + app.settings.grid.backIcon + '; }')].style;
+	applyImageMode(app.settings.grid.backIconMode, dial.styles.grid.linkBack);
 	dial.styles.grid.linkFolder = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a.Folder :first-child { background-image: ' + app.settings.grid.folderIcon + '; background-repeat: no-repeat; background-size: 100% 100%; }')].style;
+	applyImageMode(app.settings.grid.folderIconMode, dial.styles.grid.linkFolder);
 	dial.styles.grid.linkBookmark = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a.Bookmark :first-child { background-repeat: no-repeat; background-size: 100% 100%; }')].style;
 	dial.styles.grid.linkBookmarkLoading = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a.BookmarkLoading :first-child { background-image: url("' + app.settings.grid.cells.loadingIcon + '"); background-repeat: no-repeat; background-position: center center; }')].style;
 	if(oldStyle) document.head.removeChild(oldStyle);

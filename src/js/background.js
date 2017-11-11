@@ -113,7 +113,9 @@ app.Settings.init = function(callback){ // Load settings and nodes
 						columns: 5,
 						backNode: true,
 						backIcon: 'url(/img/back.png)',
+						backIconMode: 3,
 						folderIcon: 'url(/img/folder.png)',
+						folderIconMode: 2,
 						loadingIcon: 'url(/img/throbber.gif)',
 						cells: {
 							margin: 4,
@@ -180,6 +182,8 @@ app.Settings.init = function(callback){ // Load settings and nodes
 			});
 		}
 		if(!data.settings.backgroundMode) data.settings.backgroundMode = 0;
+		if(!data.settings.grid.backIconMode) data.settings.grid.backIconMode = 3;
+		if(!data.settings.grid.folderIconMode) data.settings.grid.folderIconMode = 2;
 		if(!data.settings.grid.cells.opacity) data.settings.grid.cells.opacity = 1;
 		if(!data.settings.grid.cells.opacityHover) data.settings.grid.cells.opacityHover = 1;
 		if(!data.settings.grid.cells.borderSize) data.settings.grid.cells.borderSize = 1;

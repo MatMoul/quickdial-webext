@@ -208,7 +208,7 @@ app.Settings.update = function(settings, callback){ // Save new settings
 	app.Settings.save(callback);
 };
 app.Settings.save = function(callback){ // Save settings
-	var data = { version: 3 };
+	var data = { version: 4 };
 	data.settings = app.settings;
 	data.node = app.node;
 	browser.storage.local.set(data).then(function(){

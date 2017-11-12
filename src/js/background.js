@@ -132,8 +132,8 @@ app.Settings.init = function(callback){ // Load settings and nodes
 							borderSizeHover: 1,
 							title: true,
 							titleHover: true,
-							titleHeight: 15,
-							titleHeightHover: 15,
+							titleHeight: 16,
+							titleHeightHover: 16,
 							titleFontSize: 10,
 							titleFontSizeHover: 10,
 							titleFont: 'Arial, Verdana, Sans-serif',
@@ -191,7 +191,6 @@ app.Settings.init = function(callback){ // Load settings and nodes
 			data.settings.grid.cells.borderSize = 1;
 			data.settings.grid.cells.borderSizeHover = data.settings.grid.cells.borderSize;
 			data.settings.grid.cells.titleHover = data.settings.grid.cells.title;
-			data.settings.grid.cells.titleHeight -= 1;
 			data.settings.grid.cells.titleHeightHover = data.settings.grid.cells.titleHeight;
 			data.settings.grid.cells.titleFontSizeHover = data.settings.grid.cells.titleFontSize;
 			data.settings.grid.cells.titleBorderSize = 1;

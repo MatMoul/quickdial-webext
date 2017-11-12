@@ -409,7 +409,10 @@ app.GridNodes.sync = function(gridNode, rootPath, callback){ // Sync GridNodes w
 			gridNode.title = bookmarkItem.title;
 			if(bookmarkItem.url){
 				gridNode.type = app.GridNodes.GridNodeType.bookmark;
-				gridNode.url = bookmarkItem.url;
+				if(gridNode.url != bookmarkItem.url){
+					gridNode.url = bookmarkItem.url;
+					delete gridNode.image;
+				}
 			} else if(bookmarkItem.children){
 				gridNode.type = app.GridNodes.GridNodeType.folder;
 				var EmptyNodes = [];

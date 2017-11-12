@@ -48,5 +48,5 @@ git push --tags
 git checkout $branch
 
 cd src
-zip -r ../quickdial-$version.zip .
+zip -r ../quickdial-$version.zip . -x src.zip
 cd ..

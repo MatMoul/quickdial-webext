@@ -35,8 +35,9 @@ sed -i "/\"version\":/c\ \ \"version\": \"$version\"," src/manifest.json
 git commit -a -m "Beta Version $version"
 
 cd src
-zip -r ../quickdial-beta-$version.zip .
+zip -r ../quickdial-beta-$version.zip . -x src.zip
 cd ..
 
 git checkout $branch
 git branch -D beta
+

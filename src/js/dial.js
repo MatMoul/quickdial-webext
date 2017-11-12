@@ -342,10 +342,23 @@ dial.initGrid = function(){
 				}
 				var index = (dial.page - 1) * (app.settings.grid.rows * app.settings.grid.columns) + +(ev.target.parentElement.getAttribute('gridindex'));
 				if(app.settings.grid.backNode && dial.path != '/') index -= dial.page;
-				ev.dataTransfer.setData("text/plain", index);
+				ev.dataTransfer.setData("text/plain", JSON.stringify({parentId: app.node.id, index: index}));
 			}
 			function dragover_handler(ev) {
 				ev.preventDefault();
+				var data = ev.dataTransfer.getData("text");
+				try {
+					data = JSON.parse(data);
+				} catch(e) {
+					data = null;
+				}
+				if(!data){
+					ev.dataTransfer.dropEffect = "none";
+					return;
+				} else if(data.parentId != app.node.id){
+					ev.dataTransfer.dropEffect = "none";
+					return;
+				}
 				if(app.settings.grid.backNode && dial.path != '/'){
 					var gridIndex = 0;
 					if(ev.target.tagName == 'DIV') gridIndex = +(ev.target.parentElement.parentElement.getAttribute('gridindex'));
@@ -359,7 +372,15 @@ dial.initGrid = function(){
 			function drop_handler(ev) {
 				ev.preventDefault();
 				if(ev.buttons == 1) return;
-				var StartIndex = ev.dataTransfer.getData("text");
+				var data = ev.dataTransfer.getData("text");
+				try {
+					data = JSON.parse(data);
+				} catch(e) {
+					data = null;
+				}
+				if(!data) return;
+				else if(data.parentId != app.node.id) return;
+				var StartIndex = data.index;
 				var EndIndex = 0;
 				if(ev.target.tagName == 'DIV'){
 					EndIndex = (dial.page - 1) * (app.settings.grid.rows * app.settings.grid.columns) + +(ev.target.parentElement.parentElement.getAttribute('gridindex'));

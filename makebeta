@@ -2,14 +2,8 @@
 
 if [ "$1" == "" ]; then
 	echo "Error: No version provided"
-	echo "./makerelease 0.0.1"
+	echo "./makebeta 0.0.1b1"
 	exit 1
-fi
-
-ssh -T git@github.com
-if [ ! "$?" = "1" ]; then
-  echo "No Github ssh key loaded exiting..."
-  exit 1
 fi
 
 clear
@@ -20,7 +14,7 @@ case "$choice" in
     echo "Cancel !"
     exit 1
   ;;
-  y|Y ) echo "Make release...";;
+  y|Y ) echo "Make beta...";;
   * )
     echo "Cancel !"
     exit 1
@@ -31,22 +25,18 @@ esac
 
 # Ready to update :
 
+git branch beta
+git checkout beta
+
 version=$1
 
 sed -i "/\"version\":/c\ \ \"version\": \"$version\"," src/manifest.json
 
-git commit -a -m "Version $version"
-git push
-
-git checkout master
-git merge develop
-git push
-
-git tag -a "v$version" -m "Version $version"
-git push --tags
-
-git checkout $branch
+git commit -a -m "Beta Version $version"
 
 cd src
-zip -r ../quickdial-$version.zip .
+zip -r ../quickdial-beta-$version.zip .
 cd ..
+
+git checkout $branch
+git branch -D beta

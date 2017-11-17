@@ -144,7 +144,8 @@ app.Settings.init = function(callback){ // Load settings and nodes
 							titleBorderSize: 1,
 							titleBorderSizeHover: 1,
 							previewWidth: 1200,
-							previewHeight: 710
+							previewHeight: 710,
+							snapshotDelay: 2000
 						},
 						root: 'Quick Dial',
 					}
@@ -196,6 +197,10 @@ app.Settings.init = function(callback){ // Load settings and nodes
 			data.settings.grid.cells.titleBorderSize = 1;
 			data.settings.grid.cells.titleBorderSizeHover = data.settings.grid.cells.titleBorderSize;
 			app.Settings.save();
+		}
+		if(data.version == 4){ // Upgrade Data Version
+			if(!data.settings.grid.cells.snapshotDelay) data.settings.grid.cells.snapshotDelay = 2000;
+			//app.Settings.save();			
 		}
 		app.settings = data.settings;
 		app.node = data.node;
@@ -326,7 +331,7 @@ app.SiteInfos.fromNewTab = function(url, callback){  // Retrieve infos from a ne
 								browser.tabs.remove(tab.id);
 								if(callback) callback();
 							});
-						}, 500);
+						}, app.settings.grid.cells.snapshotDelay);
 					}, function(){ if(callback) callback(); });
 				}
 			}, function(){ if(callback) callback(); });

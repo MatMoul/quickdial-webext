@@ -69,6 +69,7 @@ app.init = function(){
 		GridCellsTitleBackgroundColor.value = app.settings.grid.cells.titleBackgroundColor;
 		GridCellsTitleBackgroundColorHover.value = app.settings.grid.cells.titleBackgroundColorHover;
 		GridCellsTitleBackgroundTransparentHover.checked = (app.settings.grid.cells.titleBackgroundColorHover == null);
+		GridCellsSnapshotDelay.value = app.settings.grid.cells.snapshotDelay;
 	});
 
 	BtnOk.onclick = function(){
@@ -115,6 +116,7 @@ app.init = function(){
 		else app.settings.grid.cells.titleBackgroundColor = GridCellsTitleBackgroundColor.value;
 		if(GridCellsTitleBackgroundTransparentHover.checked == true) app.settings.grid.cells.titleBackgroundColorHover = null;
 		else app.settings.grid.cells.titleBackgroundColorHover = GridCellsTitleBackgroundColorHover.value;
+		app.settings.grid.cells.snapshotDelay = GridCellsSnapshotDelay.value;
 		app.settings.grid.root = GridRoot.value;
 		browser.runtime.sendMessage( { cmd: app.Messages.Commands.setSettings, settings: app.settings } );
 	}

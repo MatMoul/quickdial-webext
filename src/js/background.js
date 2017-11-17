@@ -296,7 +296,8 @@ app.SiteInfos.fromNewTab = function(url, callback){  // Retrieve infos from a ne
 								imgObj.src = img;
 
 								var previewWidth = 1200; // Need to be linked to settings
-								var previewHeight = 710; // Need to be linked to settings
+								var previewHeight = previewWidth / app.settings.grid.columns * app.settings.grid.rows;
+								if(app.settings.grid.title == true) previewHeight -= app.settings.grid.titleHeight;
 
 								var canvas = document.createElement('canvas');
 								canvas.style.width = previewWidth.toString() + 'px';
@@ -362,7 +363,8 @@ app.SiteInfos.fromFrame = function(url, callback){ // Retrieve infos from an ifr
 	}
 
 	var previewWidth = 1200; // Need to be linked to settings
-	var previewHeight = 710; // Need to be linked to settings
+	var previewHeight = previewWidth / app.settings.grid.columns * app.settings.grid.rows;
+	if(app.settings.grid.title == true) previewHeight -= app.settings.grid.titleHeight;
 	var iframe;
 	var xmlHttp = new XMLHttpRequest();
 	xmlHttp.timeout = 10000
@@ -372,7 +374,7 @@ app.SiteInfos.fromFrame = function(url, callback){ // Retrieve infos from an ifr
 		iframe.width = previewWidth
 		iframe.height = previewHeight
 		iframe.style.position = 'absolute';
-		//iframe.style.visibility = 'hidden';
+		iframe.scrolling = 'no';
 		var content = xmlHttp.responseText.replace('<head>', '<head><base href="' + url + '">');
 		iframe.onload = function(){ pageLoaded(); }
 		document.body.appendChild(iframe);

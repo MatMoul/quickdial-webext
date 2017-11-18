@@ -415,8 +415,8 @@ dial.updateGridLayout = function(){
 		var cellHeight = fullHeight / app.settings.grid.rows;
 		var linkWidth = 0;
 		var linkHeight = 0;
-		if(cellWidth <= cellHeight * app.settings.grid.columns / app.settings.grid.rows) cellHeight = cellWidth / app.settings.grid.columns * app.settings.grid.rows;
-		else cellWidth = cellHeight / app.settings.grid.rows * app.settings.grid.columns;
+		if(cellWidth <= cellHeight * app.settings.grid.ratioX / app.settings.grid.ratioY) cellHeight = cellWidth / app.settings.grid.ratioX * app.settings.grid.ratioY;
+		else cellWidth = cellHeight / app.settings.grid.ratioY * app.settings.grid.ratioX;
 		linkWidth = cellWidth - 2 * (cellsMargin + 1) - 2 * borderSize;
 		linkHeight = cellHeight - 2 * (cellsMargin + 1) - 2 * borderSize - titleBorderSize;
 		return {

@@ -111,6 +111,9 @@ app.Settings.init = function(callback){ // Load settings and nodes
 						margin: 10,
 						rows: 4,
 						columns: 5,
+						ratioAuto: true,
+						ratioX: 5,
+						ratioY: 4,
 						backNode: true,
 						backIcon: 'url(/img/back.png)',
 						backIconMode: 3,
@@ -200,6 +203,11 @@ app.Settings.init = function(callback){ // Load settings and nodes
 		}
 		if(data.version == 4){ // Upgrade Data Version
 			if(!data.settings.grid.cells.snapshotDelay) data.settings.grid.cells.snapshotDelay = 2000;
+			if(!data.settings.grid.ratioX){
+				data.settings.grid.ratioAuto = true;
+				data.settings.grid.ratioX = data.settings.grid.columns;
+				data.settings.grid.ratioY = data.settings.grid.rows;
+			}
 			//app.Settings.save();			
 		}
 		app.settings = data.settings;
@@ -301,7 +309,7 @@ app.SiteInfos.fromNewTab = function(url, callback){  // Retrieve infos from a ne
 								imgObj.src = img;
 
 								var previewWidth = 1200; // Need to be linked to settings
-								var previewHeight = previewWidth / app.settings.grid.columns * app.settings.grid.rows;
+								var previewHeight = previewWidth / app.settings.grid.ratioX * app.settings.grid.ratioY;
 								if(app.settings.grid.title == true) previewHeight -= app.settings.grid.titleHeight;
 
 								var canvas = document.createElement('canvas');
@@ -368,7 +376,7 @@ app.SiteInfos.fromFrame = function(url, callback){ // Retrieve infos from an ifr
 	}
 
 	var previewWidth = 1200; // Need to be linked to settings
-	var previewHeight = previewWidth / app.settings.grid.columns * app.settings.grid.rows;
+	var previewHeight = previewWidth / app.settings.grid.ratioX * app.settings.grid.ratioY;
 	if(app.settings.grid.title == true) previewHeight -= app.settings.grid.titleHeight;
 	var iframe;
 	var xmlHttp = new XMLHttpRequest();

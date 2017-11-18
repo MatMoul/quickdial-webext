@@ -111,9 +111,8 @@ app.Settings.init = function(callback){ // Load settings and nodes
 						margin: 10,
 						rows: 4,
 						columns: 5,
-						ratioAuto: true,
-						ratioX: 5,
-						ratioY: 4,
+						ratioX: 4,
+						ratioY: 3,
 						backNode: true,
 						backIcon: 'url(/img/back.png)',
 						backIconMode: 3,
@@ -203,12 +202,16 @@ app.Settings.init = function(callback){ // Load settings and nodes
 		}
 		if(data.version == 4){ // Upgrade Data Version
 			if(!data.settings.grid.cells.snapshotDelay) data.settings.grid.cells.snapshotDelay = 2000;
-			if(!data.settings.grid.ratioX){
-				data.settings.grid.ratioAuto = true;
-				data.settings.grid.ratioX = data.settings.grid.columns;
-				data.settings.grid.ratioY = data.settings.grid.rows;
+			if(data.settings.grid.ratioAuto == true || data.settings.grid.ratioAuto == false){
+				delete data.settings.grid.ratioAuto;
+				data.settings.grid.ratioX = 4;
+				data.settings.grid.ratioY = 3;
 			}
-			//app.Settings.save();			
+			if(!data.settings.grid.ratioX){
+				data.settings.grid.ratioX = 4;
+				data.settings.grid.ratioY = 3;
+			}
+			//app.Settings.save();
 		}
 		app.settings = data.settings;
 		app.node = data.node;

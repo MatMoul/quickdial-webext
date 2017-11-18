@@ -28,7 +28,6 @@ app.init = function(){
 		BackgroundPreview.style.backgroundSize = '100% 100%';
 		GridRoot.value = app.settings.grid.root;
 		GridRows.value = app.settings.grid.rows;
-		GridRatioAuto.checked = app.settings.grid.ratioAuto;
 		GridRatioX.value = app.settings.grid.ratioX;
 		GridRatioY.value = app.settings.grid.ratioY;
 		GridMargins.value = app.settings.grid.margin;
@@ -73,7 +72,6 @@ app.init = function(){
 		GridCellsTitleBackgroundColorHover.value = app.settings.grid.cells.titleBackgroundColorHover;
 		GridCellsTitleBackgroundTransparentHover.checked = (app.settings.grid.cells.titleBackgroundColorHover == null);
 		GridCellsSnapshotDelay.value = app.settings.grid.cells.snapshotDelay;
-		GridRatioAuto.onchange();		
 	});
 
 	BtnOk.onclick = function(){
@@ -87,7 +85,6 @@ app.init = function(){
 		app.settings.grid.rows = +(GridRows.value);
 		app.settings.grid.margin = +(GridMargins.value);
 		app.settings.grid.columns = +(GridColumns.value);
-		app.settings.grid.ratioAuto = GridRatioAuto.checked;
 		app.settings.grid.ratioX = GridRatioX.value;
 		app.settings.grid.ratioY = GridRatioY.value;
 		app.settings.grid.backNode = GridBackNode.checked;
@@ -178,15 +175,6 @@ app.init = function(){
 			GridRatioX.value = GridColumns.value;
 			GridRatioY.value = GridRows.value;
 		}
-	}
-
-	GridRatioAuto.onchange = function(){
-		if(GridRatioAuto.checked){
-			GridRatioX.value = GridColumns.value;
-			GridRatioY.value = GridRows.value;
-		}
-		GridRatioX.disabled = GridRatioAuto.checked;
-		GridRatioY.disabled = GridRatioAuto.checked;
 	}
 
 	GridBackImageReset.onclick = function(){

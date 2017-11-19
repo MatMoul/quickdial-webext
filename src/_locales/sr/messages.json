@@ -1,0 +1,72 @@
+{
+  "extensionDescription": {
+    "message": "Quick Dial, страница брзог бирања коју инспириса fast dial.",
+    "description": "Description of the extension."
+  },
+
+  "menuAddToQuickDial": {
+    "message": "Додај у брзо бирање",
+    "description": "Text of add bookmark menu item."
+  },
+
+  "menuNew": {
+    "message": "Нова",
+    "description": "Text of new menu item."
+  },
+
+  "menuNewBookmark": {
+    "message": "Забелешка",
+    "description": "Text of add bookmark menu item."
+  },
+
+  "AddBookmarkPrompt": {
+    "message": "Унесите УРЛ нове забелешке :",
+    "description": "Text of the add bookmark prompt."
+  },
+
+  "menuNewFolder": {
+    "message": "Фасцикла",
+    "description": "Text of add folder menu item."
+  },
+
+  "AddFolderPrompt": {
+    "message": "Унесите име нове фасцикле :",
+    "description": "Text of the add folder prompt."
+  },
+
+  "menuProperties": {
+    "message": "Својства",
+    "description": "Text of properties menu item."
+  },
+
+  "menuRefreshItem": {
+    "message": "Обнови",
+    "description": "Text of refresh menu item."
+  },
+
+  "menuCaptureHere": {
+    "message": "Ухвати овде",
+    "description": "Text of capture here menu item."
+  },
+
+  "menuCapturePage": {
+    "message": "Ухвати у новом језичку",
+    "description": "Text of capture menu item."
+  },
+
+  "menuDeleteItem": {
+    "message": "Обриши",
+    "description": "Text of delete menu item."
+  },
+
+  "deleteItemConfimation": {
+    "message": "Обрисати $1 ?",
+    "description": "Text of delete confirmation."
+  },
+
+  "menuSettings": {
+    "message": "Подешавање брзог бирања",
+    "description": "Text of settings menu item."
+  }
+
+}

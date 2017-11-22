@@ -1,0 +1,72 @@
+{
+  "extensionDescription": {
+    "message": "Quick Dial, uma página de discagem inspirada no Fast Dial.",
+    "description": "Descrição da extensão."
+  },
+
+  "menuAddToQuickDial": {
+    "message": "Adicionar ao Quick Dial",
+    "description": "Texto do iten de menu adicionar ao Quick Dial."
+  },
+
+  "menuNew": {
+    "message": "Novo",
+    "description": "Texto do item de menu novo."
+  },
+
+  "menuNewBookmark": {
+    "message": "Favorito",
+    "description": "Texto do iten de menu adicionar favorito."
+  },
+
+  "AddBookmarkPrompt": {
+    "message": "Entre com a url do novo favorito :",
+    "description": "Texto do rótulo adicionar favorito."
+  },
+
+  "menuNewFolder": {
+    "message": "Pasta",
+    "description": "Texto do item de menu adicionar pasta."
+  },
+
+  "AddFolderPrompt": {
+    "message": "Entre com o nome da nova pasta :",
+    "description": "Texto do rótulo adicionar pasta."
+  },
+
+  "menuProperties": {
+    "message": "Propriedades",
+    "description": "Texto do item de menu propriedades."
+  },
+
+  "menuRefreshItem": {
+    "message": "Atualizar",
+    "description": "Texto do item de menu atualizar."
+  },
+
+  "menuCaptureHere": {
+    "message": "Capturar aqui",
+    "description": "Texto do item de menu capturar aqui."
+  },
+
+  "menuCapturePage": {
+    "message": "Capturar em uma nova guia",
+    "description": "Texto do item de menu capturar em uma nova guia."
+  },
+
+  "menuDeleteItem": {
+    "message": "Excluir",
+    "description": "Texto do item de menu excluir."
+  },
+
+  "deleteItemConfimation": {
+    "message": "Excluir $1 ?",
+    "description": "Texto de confirmação da exclusão."
+  },
+
+  "menuSettings": {
+    "message": " Configurações do Quick Dial",
+    "description": "Texto do item de menu configurações."
+  }
+
+}

@@ -19,6 +19,7 @@ app.init = function(){
 	});
 	app.Messages.getSettings(function(settings){
 		app.settings = settings;
+		MenuShowAdd.checked = app.settings.menuShowAdd;
 		BackgroundColor.value = app.settings.backgroundColor;
 		BackgroundImage = app.settings.backgroundImage;
 		BackgroundMode.value = app.settings.backgroundMode;
@@ -79,6 +80,7 @@ app.init = function(){
 		window.frameElement.popup.close();
 	}
 	BtnApply.onclick = function(){
+		app.settings.menuShowAdd = MenuShowAdd.checked;
 		app.settings.backgroundColor = BackgroundColor.value;
 		app.settings.backgroundImage = BackgroundImage;
 		app.settings.backgroundMode = +(BackgroundMode.value);

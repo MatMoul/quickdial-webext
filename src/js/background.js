@@ -49,6 +49,7 @@ app.Messages.init = function(){ // Init Messages Listeners
 				} else {
 					browser.runtime.sendMessage( { cmd: app.Messages.Commands.gridNodesLoaded } );
 				}
+				app.ContextMenus.updateMenu();
 				break;
 			case app.Messages.Commands.getNodeByID:
 				var nodes = app.GridNodes.getNodeWithParents(request.id);
@@ -107,6 +108,7 @@ app.Settings.init = function(callback){ // Load settings and nodes
 					backgroundColor: '#3c4048',
 					backgroundImage: null,
 					backgroundMode: 0,
+					menuShowAdd: true,
 					grid: {
 						margin: 10,
 						rows: 4,
@@ -211,6 +213,9 @@ app.Settings.init = function(callback){ // Load settings and nodes
 				data.settings.grid.ratioX = 4;
 				data.settings.grid.ratioY = 3;
 			}
+			if(!(data.settings.menuShowAdd == true) && !(data.settings.menuShowAdd == false)){
+				data.settings.menuShowAdd = true;
+			}
 			//app.Settings.save();
 		}
 		app.settings = data.settings;
@@ -229,25 +234,32 @@ app.Settings.save = function(callback){ // Save settings
 	browser.storage.local.set(data).then(function(){
 		if(callback) callback();
 	}, function(){ console.log('Error saving settings'); });
-}
+};
 
 app.init();
 
 app.ContextMenus = {} // ContextMenu helper Object
-app.ContextMenus.initMenu = function(){ // (Called from app.init) Init context menu in all pages
-	browser.contextMenus.create({ // Create Context menu
-		id: 'AddToQuickDial',
-		title: browser.i18n.getMessage("menuAddToQuickDial"),
-		contexts: ["all"],
-		documentUrlPatterns: [ 'http://*/*', 'https://*/*', 'file://*/*', 'ftp://*/*' ]
-	}, function(){});
-	browser.contextMenus.onClicked.addListener(function(info, tab) { // Context menu click event
-		if (info.menuItemId == "AddToQuickDial")
-			app.GridNodes.createBookmark(app.node, info.pageUrl, tab.title, function(){
-				browser.runtime.sendMessage( { cmd: app.Messages.Commands.gridNodesLoaded } );
-			});
+app.ContextMenus.menuItemClicked = function(info, tab){
+	if (info.menuItemId == "AddToQuickDial") app.GridNodes.createBookmark(app.node, info.pageUrl, tab.title, function(){
+		browser.runtime.sendMessage( { cmd: app.Messages.Commands.gridNodesLoaded } );
 	});
-}
+};
+app.ContextMenus.initMenu = function(){ // (Called from app.init) Init context menu in all pages
+	if(app.settings.menuShowAdd){
+		browser.contextMenus.create({ // Create Context menu
+			id: 'AddToQuickDial',
+			title: browser.i18n.getMessage("menuAddToQuickDial"),
+			contexts: ["all"],
+			documentUrlPatterns: [ 'http://*/*', 'https://*/*', 'file://*/*', 'ftp://*/*' ]
+		}, function(){});
+		browser.contextMenus.onClicked.addListener(app.ContextMenus.menuItemClicked);
+	}
+};
+app.ContextMenus.updateMenu = function(){
+	browser.contextMenus.onClicked.removeListener(app.ContextMenus.menuItemClicked);
+	browser.contextMenus.removeAll();
+	app.ContextMenus.initMenu();
+};
 
 app.Bookmarks = {} // Bookmarks helper object
 app.Bookmarks._onCreated = function(){ app.GridNodes.sync(app.node, app.settings.grid.root, function(){ browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded }); }); }

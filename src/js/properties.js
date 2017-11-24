@@ -26,6 +26,7 @@ app.init = function(){
 			switch(node.type){
 				case app.GridNodes.GridNodeType.folder:
 					TitleLocked.parentNode.style.display = 'none';
+					ImageLocked.parentNode.style.display = 'none';
 					Url.parentNode.parentNode.style.display = 'none';
 					if(node.image){
 						if(node.image.indexOf('url(')>=0) Image = node.image;
@@ -36,6 +37,7 @@ app.init = function(){
 					break;
 				case app.GridNodes.GridNodeType.bookmark:
 					TitleLocked.checked = (node.titleLocked==true);
+					ImageLocked.checked = (node.imageLocked==true);
 					ImageDefault.style.display = 'none';
 					Url.value = node.url;
 					if(node.image.indexOf('url(')>=0) Image = node.image;
@@ -102,7 +104,7 @@ app.init = function(){
 				app.Messages.updateNode(app.node.id, { title: Title.value, image: Image, imageMode: +(ImageMode.value) })
 				break;
 			case app.GridNodes.GridNodeType.bookmark:
-				app.Messages.updateNode(app.node.id, { title: Title.value, titleLocked: TitleLocked.checked, url: Url.value, image: Image, imageMode: +(ImageMode.value) })
+				app.Messages.updateNode(app.node.id, { title: Title.value, titleLocked: TitleLocked.checked, imageLocked: ImageLocked.checked, url: Url.value, image: Image, imageMode: +(ImageMode.value) })
 				break;
 		}
 	}

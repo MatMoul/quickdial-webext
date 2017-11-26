@@ -436,59 +436,63 @@ app.GridNodes.sync = function(gridNode, rootPath, callback){ // Sync GridNodes w
 		function syncNode(gridNode, bookmarkItem){
 			gridNode.id = bookmarkItem.id;
 			gridNode.title = bookmarkItem.title;
-			if(bookmarkItem.url){
-				gridNode.type = app.GridNodes.GridNodeType.bookmark;
-				if(gridNode.url != bookmarkItem.url){
-					gridNode.url = bookmarkItem.url;
-					delete gridNode.image;
-				}
-			} else if(bookmarkItem.children){
-				gridNode.type = app.GridNodes.GridNodeType.folder;
-				var EmptyNodes = [];
-				if(! gridNode.children) gridNode.children = [];
-				else {
-					for(var i=gridNode.children.length-1; i>=0; i--){
-						if(!gridNode.children[i]) gridNode.children[i] = { type: app.GridNodes.GridNodeType.empty };
-						if(gridNode.children[i].type==app.GridNodes.GridNodeType.empty){
-							EmptyNodes.unshift(gridNode.children[i]);
-						} else {
-							var found = false;
-							for(var child of bookmarkItem.children){
-								if(child.id==gridNode.children[i].id){
-									found = true;
-									break;
+			switch(bookmarkItem.type){
+				case 'bookmark':
+					gridNode.type = app.GridNodes.GridNodeType.bookmark;
+					if(gridNode.url != bookmarkItem.url){
+						gridNode.url = bookmarkItem.url;
+						delete gridNode.image;
+					}
+					break;
+				case 'folder':
+					gridNode.type = app.GridNodes.GridNodeType.folder;
+					var EmptyNodes = [];
+					if(! gridNode.children) gridNode.children = [];
+					else {
+						for(var i=gridNode.children.length-1; i>=0; i--){
+							if(!gridNode.children[i]) gridNode.children[i] = { type: app.GridNodes.GridNodeType.empty };
+							if(gridNode.children[i].type==app.GridNodes.GridNodeType.empty){
+								EmptyNodes.unshift(gridNode.children[i]);
+							} else {
+								var found = false;
+								for(var child of bookmarkItem.children){
+									if(child.id==gridNode.children[i].id){
+										found = true;
+										break;
+									}
 								}
-							}
-							if(! found){
-								if(i<gridNode.children.length - 1){
-									gridNode.children[i] = { type: app.GridNodes.GridNodeType.empty };
-									EmptyNodes.unshift(gridNode.children[i]);
-								} else {
-									gridNode.children.pop();
+								if(! found){
+									if(i<gridNode.children.length - 1){
+										gridNode.children[i] = { type: app.GridNodes.GridNodeType.empty };
+										EmptyNodes.unshift(gridNode.children[i]);
+									} else {
+										gridNode.children.pop();
+									}
 								}
 							}
 						}
 					}
-				}
-				for(var child of bookmarkItem.children){
-					var childGridNode = app.GridNodes.getChildNode(gridNode, child.id);
-					if(!childGridNode){
-						if(EmptyNodes.length>0){
-							childGridNode = EmptyNodes[0];
-							EmptyNodes.shift();
-						}else {
-							childGridNode = {};
-							gridNode.children.push(childGridNode)
+					for(var child of bookmarkItem.children){
+						var childGridNode = app.GridNodes.getChildNode(gridNode, child.id);
+						if(!childGridNode){
+							if(EmptyNodes.length>0){
+								childGridNode = EmptyNodes[0];
+								EmptyNodes.shift();
+							}else {
+								childGridNode = {};
+								gridNode.children.push(childGridNode)
+							}
 						}
+						syncNode(childGridNode, child);
 					}
-					syncNode(childGridNode, child);
-				}
-				EmptyNodes.length = 0;
-			} else {
-				gridNode.type = app.GridNodes.GridNodeType.empty;
+					EmptyNodes.length = 0;
+					break;
+				default:
+					gridNode.type = app.GridNodes.GridNodeType.empty;
+					break;
 			}
 		}
-
+		
 		syncNode(gridNode, bookmarkItem);
 		delete app.GridNodes._syncing;
 		if(app.GridNodes._needSync == true) {

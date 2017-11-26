@@ -4,8 +4,9 @@ app.init = function(){ // Init module
 	app.Settings.init(function(){
 		app.Messages.init();
 		browser.runtime.sendMessage({ cmd: app.Messages.Commands.settingsChanged });
-		browser.browserAction.onClicked.addListener(function(){
-			browser.tabs.create({});
+		browser.browserAction.onClicked.addListener(function(e){
+			if(app.settings.openQuickDialInNewPage) browser.tabs.create({});
+			else browser.tabs.update(e.id, {url: '/dial'}).then();				
 		});
 		app.GridNodes.sync(app.node, app.settings.grid.root, function(){
 			browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded });
@@ -109,6 +110,7 @@ app.Settings.init = function(callback){ // Load settings and nodes
 					backgroundImage: null,
 					backgroundMode: 0,
 					menuShowAdd: true,
+					openQuickDialInNewPage: true,
 					grid: {
 						margin: 10,
 						rows: 4,
@@ -221,6 +223,9 @@ app.Settings.init = function(callback){ // Load settings and nodes
 			if(!data.settings.grid.openBookmarkMethod && data.settings.grid.openBookmarkMethod != 0){
 				data.settings.grid.openBookmarkMethod = 0;
 				data.settings.grid.openFolderMethod = 0;
+			}
+			if(!data.settings.openQuickDialInNewPage && data.settings.openQuickDialInNewPage != false){
+				data.settings.openQuickDialInNewPage = true;
 			}
 			//app.Settings.save();
 		}

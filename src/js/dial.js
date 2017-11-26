@@ -477,6 +477,7 @@ dial.populateGrid = function(){
 		link.Node = null;
 		link.className = 'Empty';
 		link.childNodes[0].style.backgroundImage = '';
+		if(link.target) delete link.target;
 		link.href = null;
 		link.onclick = null;
 		link.removeAttribute('contextmenu');
@@ -486,6 +487,7 @@ dial.populateGrid = function(){
 		link.className = 'Back';
 		link.childNodes[0].style.backgroundImage = '';
 		link.childNodes[1].innerText = 'Back';
+		if(link.target) delete link.target;
 		link.href = '#';
 		link.onclick = function(){ window.history.back(); }
 		link.removeAttribute('contextmenu');
@@ -500,6 +502,14 @@ dial.populateGrid = function(){
 			else link.childNodes[0].style.backgroundImage = 'url(' + node.image + ')';
 		} else link.childNodes[0].style.backgroundImage = '';
 		link.childNodes[1].innerText = node.title;
+		switch(app.settings.grid.openFolderMethod){
+			case 0:
+				if(link.target) delete link.target;
+				break;
+			case 1:
+				link.target = '_blank';
+				break;
+		}
 		if(dial.path) link.href = '?' + 'bg=' + encodeURIComponent(app.settings.backgroundColor) + '&path=' + encodeURIComponent(dial.path + node.title);
 		else link.href = '?' + 'bg=' + encodeURIComponent(app.settings.backgroundColor) + '&path=' + encodeURIComponent(node.title);
 		link.onclick = null;
@@ -519,6 +529,14 @@ dial.populateGrid = function(){
 			dial.refreshNode(link);
 		}
 		link.childNodes[1].innerText = node.title;
+		switch(app.settings.grid.openBookmarkMethod){
+			case 0:
+				if(link.target) delete link.target;
+				break;
+			case 1:
+				link.target = '_blank';
+				break;
+		}
 		link.href = node.url;
 		link.onclick = null;
 		link.setAttribute('contextmenu', 'item');

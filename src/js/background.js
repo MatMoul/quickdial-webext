@@ -121,6 +121,8 @@ app.Settings.init = function(callback){ // Load settings and nodes
 						folderIcon: 'url(/img/folder.png)',
 						folderIconMode: 0,
 						loadingIcon: 'url(/img/throbber.gif)',
+						openBookmarkMethod: 0,
+						openFolderMethod: 0,
 						cells: {
 							margin: 4,
 							marginHover: 4,
@@ -215,6 +217,10 @@ app.Settings.init = function(callback){ // Load settings and nodes
 			}
 			if(!(data.settings.menuShowAdd == true) && !(data.settings.menuShowAdd == false)){
 				data.settings.menuShowAdd = true;
+			}
+			if(!data.settings.grid.openBookmarkMethod && data.settings.grid.openBookmarkMethod != 0){
+				data.settings.grid.openBookmarkMethod = 0;
+				data.settings.grid.openFolderMethod = 0;
 			}
 			//app.Settings.save();
 		}

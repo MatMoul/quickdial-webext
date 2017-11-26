@@ -544,8 +544,11 @@ app.GridNodes.updateNode = function(gridNode, value, callback){
 	if(value){
 		if(value.title) gridNode.title = value.title;
 		if(value.titleLocked!=null) gridNode.titleLocked = value.titleLocked;
-		if(value.imageLocked!=null) gridNode.imageLocked = value.imageLocked;
-		if(gridNode.imageLocked == false){
+		if(value.imageLocked!=null){
+			gridNode.imageLocked = value.imageLocked;
+			if(value.image) gridNode.image = value.image;
+			else delete gridNode.image;
+		} else if(gridNode.imageLocked != true){
 			if(value.image) gridNode.image = value.image;
 			else delete gridNode.image;
 		}

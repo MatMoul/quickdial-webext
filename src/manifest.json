@@ -9,7 +9,6 @@
     "name": "MatMoul",
     "url": "https://github.com/MatMoul/quickdial-webext"
   },
-  "description": "__MSG_extensionDescription__",
 
   "icons": {
 		"24": "img/24.png",

@@ -1,9 +1,4 @@
 {
-  "extensionDescription": {
-    "message": "Quick Dial, uma página de discagem inspirada no Fast Dial.",
-    "description": "Descrição da extensão."
-  },
-
   "menuAddToQuickDial": {
     "message": "Adicionar ao Quick Dial",
     "description": "Texto do iten de menu adicionar ao Quick Dial."

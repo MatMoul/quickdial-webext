@@ -1,9 +1,4 @@
 {
-  "extensionDescription": {
-    "message": "Quick Dial, страница брзог бирања коју инспириса fast dial.",
-    "description": "Description of the extension."
-  },
-
   "menuAddToQuickDial": {
     "message": "Додај у брзо бирање",
     "description": "Text of add bookmark menu item."

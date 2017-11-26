@@ -1,9 +1,4 @@
 {
-  "extensionDescription": {
-    "message": "Quick Dial, вдохновление умершим расширением Fast Dial.",
-    "description": "Description of the extension."
-  },
-
   "menuAddToQuickDial": {
     "message": "Добавить в Quick Dial",
     "description": "Text of add bookmark menu item."

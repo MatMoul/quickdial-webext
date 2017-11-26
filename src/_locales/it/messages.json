@@ -1,9 +1,4 @@
 {
-  "extensionDescription": {
-    "message": "Quick Dial, una dial page inspirata a fast dial.",
-    "description": "Description of the extension."
-  },
-
   "menuAddToQuickDial": {
     "message": "Aggiungi a Quick Dial",
     "description": "Text of add bookmark menu item."

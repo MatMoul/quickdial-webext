@@ -1,0 +1,67 @@
+{
+  "menuAddToQuickDial": {
+    "message": "Agregar a Quick Dial",
+    "description": "Text of add bookmark menu item."
+  },
+
+  "menuNew": {
+    "message": "Nuevo",
+    "description": "Text of new menu item."
+  },
+
+  "menuNewBookmark": {
+    "message": "Marcador",
+    "description": "Text of add bookmark menu item."
+  },
+
+  "AddBookmarkPrompt": {
+    "message": "Dirección del nuevo marcador:",
+    "description": "Text of the add bookmark prompt."
+  },
+
+  "menuNewFolder": {
+    "message": "Carpeta",
+    "description": "Text of add folder menu item."
+  },
+
+  "AddFolderPrompt": {
+    "message": "Nombre de la nueva carpeta:",
+    "description": "Text of the add folder prompt."
+  },
+
+  "menuProperties": {
+    "message": "Propiedades",
+    "description": "Text of properties menu item."
+  },
+
+  "menuRefreshItem": {
+    "message": "Actualizar",
+    "description": "Text of refresh menu item."
+  },
+
+  "menuCaptureHere": {
+    "message": "Capturar aquí",
+    "description": "Text of capture here menu item."
+  },
+
+  "menuCapturePage": {
+    "message": "Capturar en una nueva pestaña",
+    "description": "Text of capture menu item."
+  },
+
+  "menuDeleteItem": {
+    "message": "Eliminar",
+    "description": "Text of delete menu item."
+  },
+
+  "deleteItemConfimation": {
+    "message": "¿Eliminar $1 ?",
+    "description": "Text of delete confirmation."
+  },
+
+  "menuSettings": {
+    "message": "Propiedades de Quick Dial",
+    "description": "Text of settings menu item."
+  }
+
+}

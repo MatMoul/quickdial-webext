@@ -346,6 +346,7 @@ dial.initGrid = function(){
 					ev.preventDefault();
 					return;
 				}
+				if(dial.page == 0) dial.page = 1;
 				var index = (dial.page - 1) * (app.settings.grid.rows * app.settings.grid.columns) + +(ev.target.parentElement.getAttribute('gridindex'));
 				if(app.settings.grid.backNode && dial.path != '/') index -= dial.page;
 				ev.dataTransfer.setData("text/plain", JSON.stringify({parentId: app.node.id, index: index}));

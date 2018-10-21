@@ -102,7 +102,7 @@ app.Messages.init = function(){ // Init Messages Listeners
 app.Settings = {}; // Settings helper object
 app.Settings.init = function(callback){ // Load settings and nodes
 	browser.storage.local.get().then(function(data){
-		if(Object.keys(data).length == 0) {
+		if(Object.keys(data).length == 0 || ! data.settings) {
 			data = {
 				version: 3,
 				settings: {
@@ -239,6 +239,7 @@ app.Settings.update = function(settings, callback){ // Save new settings
 	app.Settings.save(callback);
 };
 app.Settings.save = function(callback){ // Save settings
+  if(! app.settings) return;
 	var data = { version: 4 };
 	data.settings = app.settings;
 	data.node = app.node;

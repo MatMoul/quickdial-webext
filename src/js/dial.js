@@ -7,9 +7,12 @@ var dial = {
 };
 
 document.addEventListener("DOMContentLoaded", function(event) {
-	document.body.style.backgroundColor = utils.getBackgroundColor();
+  document.body.style.backgroundColor = utils.getBackgroundColor();
 	app.init();
 	dial.init();
+  window.setTimeout(function(){
+    if(! app.settings) app.init();
+  }, 500);
 });
 
 window.addEventListener('resize', function(){
@@ -102,7 +105,7 @@ app.Messages.getSettings = function(callback){
 		} else {
 			browser.runtime.sendMessage({ cmd: app.Messages.Commands.getSettings }).then(callback, callback);
 		}
-	});
+	}, callback);
 };
 app.Messages.getNode = function(path, callback){
 	browser.runtime.getBackgroundPage().then(function(page){

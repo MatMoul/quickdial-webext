@@ -13,6 +13,18 @@ app.init = function(){ // Init module
 			app.Bookmarks.initListener();
 			app.ContextMenus.initMenu();
 		});
+		
+		// Start page workaround :
+		setTimeout(function(){
+			browser.tabs.query({}).then( function(tabs) {
+				tabs.forEach(function(itm){
+					if(itm.url=='about:blank'){
+						browser.tabs.update(itm.id, {url: browser.extension.getURL('dial')});
+					}
+				});
+			});
+		}, 500);
+		
 	});
 };
 

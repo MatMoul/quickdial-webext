@@ -31,6 +31,7 @@ git checkout beta
 version=$1
 
 sed -i "/\"version\":/c\ \ \"version\": \"$version\"," src/manifest.json
+sed -i 's/quickdial@matmoul.com/quickdialtest@matmoul.com/' src/manifest.json
 
 git commit -a -m "Beta Version $version"
 

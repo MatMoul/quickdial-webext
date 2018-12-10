@@ -279,7 +279,7 @@ dial.initStyles = function(){
 	document.head.appendChild(dial.Style);
 	dial.styles = {};
 	dial.styles.html = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('html { height: 100%; }')].style;
-	dial.styles.body = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('body { user-select: none; -moz-user-select: none; display: flex;	width: 100%; height: 100%; margin: 0px; padding: 0px; background-color: ' + app.settings.backgroundColor + '; background-image: ' + app.settings.backgroundImage + '; }')].style;
+	dial.styles.body = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('body { user-select: none; -moz-user-select: none; display: flex; width: 100%; height: 100%; margin: 0px; padding: 0px; background-color: ' + app.settings.backgroundColor + '; background-image: ' + app.settings.backgroundImage + '; }')].style;
 	applyImageMode(app.settings.backgroundMode, dial.styles.body);
 	dial.styles.grid = {};
 	dial.styles.grid.grid = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid { border-collapse: collapse; margin: auto; }')].style;
@@ -292,7 +292,7 @@ dial.initStyles = function(){
 	dial.styles.grid.linkPanelHover = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a:hover>div:first-child { }')].style;
 	if(app.settings.grid.cells.backgroundColorHover) dial.styles.grid.linkPanelHover.backgroundColor = app.settings.grid.cells.backgroundColorHover;
 	else dial.styles.grid.linkPanelHover.backgroundColor = 'transparent';
-	dial.styles.grid.linkTitle = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a>div:last-child { height: ' + app.settings.grid.cells.titleHeight + 'px; font-size: ' + app.settings.grid.cells.titleFontSize + 'pt; font-family: ' + app.settings.grid.cells.titleFont + 'pt; text-align: center; overflow: hidden; color: ' + app.settings.grid.cells.titleColor + '; border-top: ' + app.settings.grid.cells.titleBorderSize + 'px solid ' + app.settings.grid.cells.borderColor + '; }')].style;
+	dial.styles.grid.linkTitle = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a>div:last-child { height: ' + app.settings.grid.cells.titleHeight + 'px; font-size: ' + app.settings.grid.cells.titleFontSize + 'pt; font-family: ' + app.settings.grid.cells.titleFont + '; text-align: center; overflow: hidden; color: ' + app.settings.grid.cells.titleColor + '; border-top: ' + app.settings.grid.cells.titleBorderSize + 'px solid ' + app.settings.grid.cells.borderColor + '; }')].style;
 	if(app.settings.grid.cells.titleBackgroundColor) dial.styles.grid.linkTitle.backgroundColor = app.settings.grid.cells.titleBackgroundColor;
 	else dial.styles.grid.linkTitle.backgroundColor = 'transparent';
 	dial.styles.grid.linkTitleHover = dial.Style.sheet.cssRules[dial.Style.sheet.insertRule('.Grid td>a:hover>div:last-child { font-size: ' + app.settings.grid.cells.titleFontSizeHover + 'pt; color: ' + app.settings.grid.cells.titleColorHover + '; border-top-width: ' + app.settings.grid.cells.titleBorderSizeHover + 'px; border-top-color: ' + app.settings.grid.cells.borderColorHover + ' }')].style;

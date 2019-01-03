@@ -8,22 +8,26 @@ app.init = function(){ // Init module
 			if(app.settings.openQuickDialInNewPage) browser.tabs.create({});
 			else browser.tabs.update(e.id, {url: '/dial'}).then();				
 		});
-		app.GridNodes.sync(app.node, app.settings.grid.root, function(){
-			browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded });
-			app.Bookmarks.initListener();
-			app.ContextMenus.initMenu();
-		});
+    browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded });
+    app.ContextMenus.initMenu();
+    window.setTimeout(function(){
+      app.GridNodes.sync(app.node, app.settings.grid.root, function(){
+        app.Bookmarks.initListener();
+      });
+    }, 500);
 		
 		// Start page workaround :
-		setTimeout(function(){
-			browser.tabs.query({}).then( function(tabs) {
-				tabs.forEach(function(itm){
-					if(itm.url=='about:blank'){
-						browser.tabs.update(itm.id, {url: browser.extension.getURL('dial')});
-					}
-				});
-			});
-		}, 500);
+    if(app.settings.startpageTimeout>0){
+      setTimeout(function(){
+        browser.tabs.query({}).then( function(tabs) {
+          tabs.forEach(function(itm){
+            if(itm.url=='about:blank'){
+              browser.tabs.update(itm.id, {url: browser.extension.getURL('dial')});
+            }
+          });
+        });
+      }, app.settings.startpageTimeout);
+    }
 		
 	});
 };
@@ -239,6 +243,9 @@ app.Settings.init = function(callback){ // Load settings and nodes
 			if(!data.settings.openQuickDialInNewPage && data.settings.openQuickDialInNewPage != false){
 				data.settings.openQuickDialInNewPage = true;
 			}
+			if(!data.settings.startpageTimeout){
+        data.settings.startpageTimeout = 500;
+      }
 			//app.Settings.save();
 		}
 		app.settings = data.settings;
@@ -521,7 +528,7 @@ app.GridNodes.sync = function(gridNode, rootPath, callback){ // Sync GridNodes w
 		delete app.GridNodes._syncing;
 		if(app.GridNodes._needSync == true) {
 			delete app.GridNodes._needSync;
-			app.GridNodes.sync(gridNode, rootPath, callback);
+      app.GridNodes.sync(gridNode, rootPath, callback);
 		} else {
 			app.GridNodes.save();			
 			if(callback) callback();

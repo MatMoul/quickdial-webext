@@ -1,0 +1,67 @@
+{
+  "menuAddToQuickDial": {
+    "message": "הוסף לחיוג מהיר",
+    "description": "Text of add bookmark menu item."
+  },
+
+  "menuNew": {
+    "message": "חדש",
+    "description": "Text of new menu item."
+  },
+
+  "menuNewBookmark": {
+    "message": "מועדף",
+    "description": "Text of add bookmark menu item."
+  },
+
+  "AddBookmarkPrompt": {
+    "message": "הכנס קישור חדש למועדף :",
+    "description": "Text of the add bookmark prompt."
+  },
+
+  "menuNewFolder": {
+    "message": "תיקייה",
+    "description": "Text of add folder menu item."
+  },
+
+  "AddFolderPrompt": {
+    "message": "הכנס שם חדש לתיקייה :",
+    "description": "Text of the add folder prompt."
+  },
+
+  "menuProperties": {
+    "message": "מאפיינים",
+    "description": "Text of properties menu item."
+  },
+
+  "menuRefreshItem": {
+    "message": "רענן",
+    "description": "Text of refresh menu item."
+  },
+
+  "menuCaptureHere": {
+    "message": "צלם מסך כאן",
+    "description": "Text of capture here menu item."
+  },
+
+  "menuCapturePage": {
+    "message": "צלם מסך בלשונית חדשה",
+    "description": "Text of capture menu item."
+  },
+
+  "menuDeleteItem": {
+    "message": "מחק",
+    "description": "Text of delete menu item."
+  },
+
+  "deleteItemConfimation": {
+    "message": "האם למחוק $1 ?",
+    "description": "Text of delete confirmation."
+  },
+
+  "menuSettings": {
+    "message": "הגדרות חיוג מהיר",
+    "description": "Text of settings menu item."
+  }
+
+}

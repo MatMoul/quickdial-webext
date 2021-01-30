@@ -163,10 +163,11 @@ app.GridNodes._changed = function(node){
 
 
 dial.init = function(){
-	dial.initMenus();
+	//dial.initMenus();
 	dial.Title = document.createElement('title');
 	document.head.appendChild(dial.Title);
 };
+/*
 dial.initMenus = function(){
 	document.body.setAttribute('contextmenu', 'page');
 	dial.PageMenu = document.createElement('menu');
@@ -250,6 +251,7 @@ dial.initMenus = function(){
 	dial.ItemMenu.appendChild(dial.ItemMenuSettings);
 	document.body.appendChild(dial.ItemMenu);
 }
+*/
 dial.initStyles = function(){
 	function applyImageMode(imageMode, target){
 		switch(imageMode){
@@ -328,6 +330,7 @@ dial.initGrid = function(){
 			link.appendChild(document.createElement('div'));
 			link.onmousedown = function(){
 				dial._selectedItem = this;
+				/*
 				if(dial._selectedItem.Node){
 					switch(dial._selectedItem.Node.type){
 						case app.GridNodes.GridNodeType.folder:
@@ -339,6 +342,7 @@ dial.initGrid = function(){
 							break;
 					}
 				}
+				*/
 			};
 			
 			function dragstart_handler(ev) {

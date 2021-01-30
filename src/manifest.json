@@ -2,7 +2,7 @@
 
   "manifest_version": 2,
   "name": "Quick Dial",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "author": "MatMoul",
   "homepage_url": "https://github.com/MatMoul/quickdial-webext",
   "developer": {
@@ -43,7 +43,7 @@
   "applications": {
     "gecko": {
       "id": "quickdial@matmoul.com",
-      "strict_min_version": "52.0"
+      "strict_min_version": "70.0"
     }
   },
 

@@ -276,15 +276,143 @@ app.ContextMenus.menuItemClicked = function(info, tab){
 	});
 };
 app.ContextMenus.initMenu = function(){ // (Called from app.init) Init context menu in all pages
+	// Create Add Context menu for all pages
 	if(app.settings.menuShowAdd){
-		browser.contextMenus.create({ // Create Context menu
+		browser.contextMenus.create({
 			id: 'AddToQuickDial',
 			title: browser.i18n.getMessage("menuAddToQuickDial"),
 			contexts: ["all"],
-			documentUrlPatterns: [ 'http://*/*', 'https://*/*', 'file://*/*', 'ftp://*/*' ]
-		}, function(){});
-		browser.contextMenus.onClicked.addListener(app.ContextMenus.menuItemClicked);
+			documentUrlPatterns: [ 'http://*/*', 'https://*/*', 'file://*/*', 'ftp://*/*' ],
+			onclick(info, tab) { app.ContextMenus.menuItemClicked(info, tab)	}
+		});
 	}
+	// Create WebExt Page Context menu
+	browser.contextMenus.create({
+		id: "pagemenu",
+		title: "Quick Dial",
+		documentUrlPatterns: [ 'moz-extension://*/dial', 'moz-extension://*/dial?*' ],
+		contexts: ["page"]
+	});
+	browser.contextMenus.create({
+		id: "pagemenunew",
+		parentId: "pagemenu",
+		title: browser.i18n.getMessage("menuNew")
+	});
+	browser.contextMenus.create({
+		parentId: "pagemenunew",
+		title: browser.i18n.getMessage("menuNewBookmark"),
+		onclick(info, tab) { 
+			browser.tabs.executeScript(tab.id, {
+				code: "window.dial.createBookmark();"
+			});	
+		}
+	});
+	browser.contextMenus.create({
+		parentId: "pagemenunew",
+		title: browser.i18n.getMessage("menuNewFolder"),
+		onclick(info, tab) {
+			browser.tabs.executeScript(tab.id, {
+				code: "window.dial.createFolder();"
+			});	
+		}
+	});
+	browser.contextMenus.create({	parentId: "pagemenu", type: "separator" });
+	browser.contextMenus.create({
+		parentId: "pagemenu",
+		title: browser.i18n.getMessage("menuSettings"),
+		onclick(info, tab) {
+			browser.tabs.executeScript(tab.id, {
+				code: "window.dial.editSettings();"
+			});	
+		}
+	});
+	// Create WebExt Link Context menu
+	browser.contextMenus.create({
+		id: "itemmenu",
+		title: "Quick Dial",
+		documentUrlPatterns: [ 'moz-extension://*/dial', 'moz-extension://*/dial?*' ],
+		contexts: ["link"]
+	});
+	browser.contextMenus.create({
+		id: "itemmenunew",
+		parentId: "itemmenu",
+		title: browser.i18n.getMessage("menuNew")
+	});
+	browser.contextMenus.create({
+		parentId: "itemmenunew",
+		title: browser.i18n.getMessage("menuNewBookmark"),
+		onclick(info, tab) {
+			browser.tabs.executeScript(tab.id, {
+				code: "window.dial.createBookmark();"
+			});	
+		}
+	});
+	browser.contextMenus.create({
+		parentId: "itemmenunew",
+		title: browser.i18n.getMessage("menuNewFolder"),
+		onclick(info, tab) {
+			browser.tabs.executeScript(tab.id, {
+				code: "window.dial.createFolder();"
+			});	
+		}
+	});
+	browser.contextMenus.create({	parentId: "itemmenu", type: "separator" });
+	browser.contextMenus.create({
+		parentId: "itemmenu",
+		title: browser.i18n.getMessage("menuProperties"),
+		onclick(info, tab) {
+			browser.tabs.executeScript(tab.id, {
+				code: "window.dial.editProperties(window.dial._selectedItem);"
+			});	
+		}
+	});
+	browser.contextMenus.create({
+		parentId: "itemmenu",
+		title: browser.i18n.getMessage("menuRefreshItem"),
+		onclick(info, tab) {
+			browser.tabs.executeScript(tab.id, {
+				code: "window.dial.refreshNode(window.dial._selectedItem);"
+			});	
+		}
+	});
+	browser.contextMenus.create({
+		parentId: "itemmenu",
+		title: browser.i18n.getMessage("menuCaptureHere"),
+		visible: false,
+		onclick(info, tab) {
+			browser.tabs.executeScript(tab.id, {
+				code: "window.dial.captureHere(window.dial._selectedItem);"
+			});	
+		}
+	});
+	browser.contextMenus.create({
+		parentId: "itemmenu",
+		title: browser.i18n.getMessage("menuCapturePage"),
+		onclick(info, tab) {
+			browser.tabs.executeScript(tab.id, {
+				code: "window.dial.capturePage(window.dial._selectedItem);"
+			});	
+		}
+	});
+	browser.contextMenus.create({
+		parentId: "itemmenu",
+		title: browser.i18n.getMessage("menuDeleteItem"),
+		onclick(info, tab) {
+			browser.tabs.executeScript(tab.id, {
+				code: "window.dial.deleteNode();"
+			});	
+		}
+	});
+	browser.contextMenus.create({	parentId: "itemmenu", type: "separator" });
+	browser.contextMenus.create({
+		parentId: "itemmenu",
+		title: browser.i18n.getMessage("menuSettings"),
+		onclick(info, tab) {
+			browser.tabs.executeScript(tab.id, {
+				code: "window.dial.editSettings();"
+			});	
+		}
+	});
 };
 app.ContextMenus.updateMenu = function(){
 	browser.contextMenus.onClicked.removeListener(app.ContextMenus.menuItemClicked);

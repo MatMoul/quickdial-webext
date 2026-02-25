@@ -6,7 +6,7 @@ app.init = function(){ // Init module
 		browser.runtime.sendMessage({ cmd: app.Messages.Commands.settingsChanged });
 		browser.browserAction.onClicked.addListener(function(e){
 			if(app.settings.openQuickDialInNewPage) browser.tabs.create({});
-			else browser.tabs.update(e.id, {url: '/dial'}).then();				
+			else browser.tabs.update(e.id, {url: '/dial.html'}).then();				
 		});
     browser.runtime.sendMessage({ cmd: app.Messages.Commands.gridNodesLoaded });
     app.ContextMenus.initMenu();
@@ -290,7 +290,7 @@ app.ContextMenus.initMenu = function(){ // (Called from app.init) Init context m
 	browser.contextMenus.create({
 		id: "pagemenu",
 		title: "Quick Dial",
-		documentUrlPatterns: [ 'moz-extension://*/dial', 'moz-extension://*/dial?*' ],
+		documentUrlPatterns: [ 'moz-extension://*/dial.html', 'moz-extension://*/dial.html?*' ],
 		contexts: ["page"]
 	});
 	browser.contextMenus.create({
@@ -330,7 +330,7 @@ app.ContextMenus.initMenu = function(){ // (Called from app.init) Init context m
 	browser.contextMenus.create({
 		id: "itemmenu",
 		title: "Quick Dial",
-		documentUrlPatterns: [ 'moz-extension://*/dial', 'moz-extension://*/dial?*' ],
+		documentUrlPatterns: [ 'moz-extension://*/dial.html', 'moz-extension://*/dial.html?*' ],
 		contexts: ["link"]
 	});
 	browser.contextMenus.create({
@@ -886,7 +886,7 @@ app.GridNodes.capturePage = function(gridNode, callback){
 			if(nodes){
 				var path = '';
 				for(var i=1; i<nodes.length; i++) path = path + '/' + nodes[i].title;
-				app.SiteInfos.fromNewTab('/dial?path=' + path, function(infos){
+				app.SiteInfos.fromNewTab('/dial.html?path=' + path, function(infos){
 					if(infos){
 						gridNode.image = infos.screenshot;
 					} else {

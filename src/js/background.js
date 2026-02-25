@@ -22,7 +22,7 @@ app.init = function(){ // Init module
         browser.tabs.query({}).then( function(tabs) {
           tabs.forEach(function(itm){
             if(itm.url=='about:blank'){
-              browser.tabs.update(itm.id, {url: browser.extension.getURL('dial')});
+              browser.tabs.update(itm.id, {url: browser.runtime.getURL('dial.html')});
             }
           });
         });

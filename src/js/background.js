@@ -563,8 +563,8 @@ app.SiteInfos.fromFrame = function(url, callback){ // Retrieve infos from an ifr
 		iframe.style.position = 'absolute';
 		iframe.scrolling = 'no';
 		var content = xmlHttp.responseText.replace('<head>', '<head><base href="' + url + '">');
-		iframe.onload = function(){ pageLoaded(); }
 		document.body.appendChild(iframe);
+		iframe.onload = function(){ pageLoaded(); }
 		iframe.srcdoc = content;
 		setTimeout(function(){ pageLoaded(); }, 6000);
 	}

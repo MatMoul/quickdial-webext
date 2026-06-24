@@ -84,7 +84,15 @@ app.Messages.Commands = {
 	refreshNode: 9,
 	capturePage: 10,
 	settingsChanged: 100,
-	gridNodesLoaded: 101
+	gridNodesLoaded: 101,
+	menuCreateBookmark: 200,
+	menuCreateFolder: 201,
+	menuEditSettings: 202,
+	menuEditProperties: 203,
+	menuRefreshNode: 204,
+	menuCaptureHere: 205,
+	menuCapturePage: 206,
+	menuDeleteNode: 207
 };
 app.Messages.init = function(){
 	browser.runtime.onMessage.addListener(function(request, sender, sendResponse){
@@ -94,6 +102,30 @@ app.Messages.init = function(){
 				break;
 			case app.Messages.Commands.gridNodesLoaded:
 				if(dial.skipUpdate!=true) app.Messages.getNode(dial.path, app.GridNodes._changed);
+				break;
+			case app.Messages.Commands.menuCreateBookmark:
+				dial.createBookmark();
+				break;
+			case app.Messages.Commands.menuCreateFolder:
+				dial.createFolder();
+				break;
+			case app.Messages.Commands.menuEditSettings:
+				dial.editSettings();
+				break;
+			case app.Messages.Commands.menuEditProperties:
+				dial.editProperties(dial._selectedItem);
+				break;
+			case app.Messages.Commands.menuRefreshNode:
+				dial.refreshNode(dial._selectedItem);
+				break;
+			case app.Messages.Commands.menuCaptureHere:
+				dial.captureHere(dial._selectedItem);
+				break;
+			case app.Messages.Commands.menuCapturePage:
+				dial.capturePage(dial._selectedItem);
+				break;
+			case app.Messages.Commands.menuDeleteNode:
+				dial.deleteNode();
 				break;
 		}
 	});

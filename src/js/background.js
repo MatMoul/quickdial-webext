@@ -46,7 +46,15 @@ app.Messages.Commands = {
 	refreshNode: 9,
 	capturePage: 10,
 	settingsChanged: 100,
-	gridNodesLoaded: 101
+	gridNodesLoaded: 101,
+	menuCreateBookmark: 200,
+	menuCreateFolder: 201,
+	menuEditSettings: 202,
+	menuEditProperties: 203,
+	menuRefreshNode: 204,
+	menuCaptureHere: 205,
+	menuCapturePage: 206,
+	menuDeleteNode: 207
 };
 app.Messages.init = function(){ // Init Messages Listeners
 	browser.runtime.onMessage.addListener(function(request, sender, sendResponse){
@@ -302,18 +310,14 @@ app.ContextMenus.initMenu = function(){ // (Called from app.init) Init context m
 		parentId: "pagemenunew",
 		title: browser.i18n.getMessage("menuNewBookmark"),
 		onclick(info, tab) { 
-			browser.tabs.executeScript(tab.id, {
-				code: "window.dial.createBookmark();"
-			});	
+			browser.tabs.sendMessage(tab.id, { cmd: app.Messages.Commands.menuCreateBookmark });	
 		}
 	});
 	browser.contextMenus.create({
 		parentId: "pagemenunew",
 		title: browser.i18n.getMessage("menuNewFolder"),
 		onclick(info, tab) {
-			browser.tabs.executeScript(tab.id, {
-				code: "window.dial.createFolder();"
-			});	
+			browser.tabs.sendMessage(tab.id, { cmd: app.Messages.Commands.menuCreateFolder });	
 		}
 	});
 	browser.contextMenus.create({	parentId: "pagemenu", type: "separator" });
@@ -321,9 +325,7 @@ app.ContextMenus.initMenu = function(){ // (Called from app.init) Init context m
 		parentId: "pagemenu",
 		title: browser.i18n.getMessage("menuSettings"),
 		onclick(info, tab) {
-			browser.tabs.executeScript(tab.id, {
-				code: "window.dial.editSettings();"
-			});	
+			browser.tabs.sendMessage(tab.id, { cmd: app.Messages.Commands.menuEditSettings });	
 		}
 	});
 	// Create WebExt Link Context menu
@@ -342,18 +344,14 @@ app.ContextMenus.initMenu = function(){ // (Called from app.init) Init context m
 		parentId: "itemmenunew",
 		title: browser.i18n.getMessage("menuNewBookmark"),
 		onclick(info, tab) {
-			browser.tabs.executeScript(tab.id, {
-				code: "window.dial.createBookmark();"
-			});	
+			browser.tabs.sendMessage(tab.id, { cmd: app.Messages.Commands.menuCreateBookmark });	
 		}
 	});
 	browser.contextMenus.create({
 		parentId: "itemmenunew",
 		title: browser.i18n.getMessage("menuNewFolder"),
 		onclick(info, tab) {
-			browser.tabs.executeScript(tab.id, {
-				code: "window.dial.createFolder();"
-			});	
+			browser.tabs.sendMessage(tab.id, { cmd: app.Messages.Commands.menuCreateFolder });	
 		}
 	});
 	browser.contextMenus.create({	parentId: "itemmenu", type: "separator" });
@@ -361,18 +359,14 @@ app.ContextMenus.initMenu = function(){ // (Called from app.init) Init context m
 		parentId: "itemmenu",
 		title: browser.i18n.getMessage("menuProperties"),
 		onclick(info, tab) {
-			browser.tabs.executeScript(tab.id, {
-				code: "window.dial.editProperties(window.dial._selectedItem);"
-			});	
+			browser.tabs.sendMessage(tab.id, { cmd: app.Messages.Commands.menuEditProperties });	
 		}
 	});
 	browser.contextMenus.create({
 		parentId: "itemmenu",
 		title: browser.i18n.getMessage("menuRefreshItem"),
 		onclick(info, tab) {
-			browser.tabs.executeScript(tab.id, {
-				code: "window.dial.refreshNode(window.dial._selectedItem);"
-			});	
+			browser.tabs.sendMessage(tab.id, { cmd: app.Messages.Commands.menuRefreshNode });	
 		}
 	});
 	browser.contextMenus.create({
@@ -380,27 +374,21 @@ app.ContextMenus.initMenu = function(){ // (Called from app.init) Init context m
 		title: browser.i18n.getMessage("menuCaptureHere"),
 		visible: false,
 		onclick(info, tab) {
-			browser.tabs.executeScript(tab.id, {
-				code: "window.dial.captureHere(window.dial._selectedItem);"
-			});	
+			browser.tabs.sendMessage(tab.id, { cmd: app.Messages.Commands.menuCaptureHere });	
 		}
 	});
 	browser.contextMenus.create({
 		parentId: "itemmenu",
 		title: browser.i18n.getMessage("menuCapturePage"),
 		onclick(info, tab) {
-			browser.tabs.executeScript(tab.id, {
-				code: "window.dial.capturePage(window.dial._selectedItem);"
-			});	
+			browser.tabs.sendMessage(tab.id, { cmd: app.Messages.Commands.menuCapturePage });	
 		}
 	});
 	browser.contextMenus.create({
 		parentId: "itemmenu",
 		title: browser.i18n.getMessage("menuDeleteItem"),
 		onclick(info, tab) {
-			browser.tabs.executeScript(tab.id, {
-				code: "window.dial.deleteNode();"
-			});	
+			browser.tabs.sendMessage(tab.id, { cmd: app.Messages.Commands.menuDeleteNode });	
 		}
 	});
 	browser.contextMenus.create({	parentId: "itemmenu", type: "separator" });
@@ -408,9 +396,7 @@ app.ContextMenus.initMenu = function(){ // (Called from app.init) Init context m
 		parentId: "itemmenu",
 		title: browser.i18n.getMessage("menuSettings"),
 		onclick(info, tab) {
-			browser.tabs.executeScript(tab.id, {
-				code: "window.dial.editSettings();"
-			});	
+			browser.tabs.sendMessage(tab.id, { cmd: app.Messages.Commands.menuEditSettings });	
 		}
 	});
 };

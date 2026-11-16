@@ -60,6 +60,11 @@ utils.getPath = function(){
 	if(path) return path + '/';
 	else return '/';
 };
+utils.getDialUrl = function(path){
+	var url = '?bg=' + encodeURIComponent(app.settings.backgroundColor);
+	if(path) url += '&path=' + encodeURIComponent(path);
+	return url;
+};
 
 app.init = function(){
 	app.Messages.getSettings(function(settings){
@@ -517,7 +522,7 @@ dial.populateGrid = function(){
 		link.Node = null;
 		link.className = 'Empty';
 		link.childNodes[0].style.backgroundImage = '';
-		if(link.target) delete link.target;
+		link.removeAttribute('target');
 		link.href = null;
 		link.onclick = null;
 		link.removeAttribute('contextmenu');
@@ -527,9 +532,19 @@ dial.populateGrid = function(){
 		link.className = 'Back';
 		link.childNodes[0].style.backgroundImage = '';
 		link.childNodes[1].innerText = 'Back';
-		if(link.target) delete link.target;
-		link.href = '#';
-		link.onclick = function(){ window.history.back(); }
+		link.removeAttribute('target');
+		var parentPath = dial.path.substring(0, dial.path.lastIndexOf('/', dial.path.length - 2));
+		link.href = utils.getDialUrl(parentPath);
+		link.onclick = function(e){
+			if(e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
+			if(!window.navigation || !navigation.canGoBack) return;
+			var previousUrl = navigation.entries()[navigation.currentEntry.index - 1].url;
+			if(!previousUrl) return;
+			previousUrl = new URL(previousUrl);
+			if(previousUrl.pathname != location.pathname || (previousUrl.searchParams.get('path') || '') != parentPath) return;
+			e.preventDefault();
+			navigation.back().committed.catch(function(){ location.assign(link.href); });
+		};
 		link.removeAttribute('contextmenu');
 	}
 	populateFolder = function(link, node){
@@ -544,14 +559,13 @@ dial.populateGrid = function(){
 		link.childNodes[1].innerText = node.title;
 		switch(app.settings.grid.openFolderMethod){
 			case 0:
-				if(link.target) delete link.target;
+				link.removeAttribute('target');
 				break;
 			case 1:
 				link.target = '_blank';
 				break;
 		}
-		if(dial.path) link.href = '?' + 'bg=' + encodeURIComponent(app.settings.backgroundColor) + '&path=' + encodeURIComponent(dial.path + node.title);
-		else link.href = '?' + 'bg=' + encodeURIComponent(app.settings.backgroundColor) + '&path=' + encodeURIComponent(node.title);
+		link.href = utils.getDialUrl(dial.path + node.title);
 		link.onclick = null;
 		link.setAttribute('contextmenu', 'item');
 	}
@@ -571,7 +585,7 @@ dial.populateGrid = function(){
 		link.childNodes[1].innerText = node.title;
 		switch(app.settings.grid.openBookmarkMethod){
 			case 0:
-				if(link.target) delete link.target;
+				link.removeAttribute('target');
 				break;
 			case 1:
 				link.target = '_blank';
